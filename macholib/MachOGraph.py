@@ -5,15 +5,17 @@ Utilities for reading and writing Mach-O headers
 from pkg_resources import require
 require("altgraph")
 
-import sys
 import os
+import sys
+
+from altgraph.Graph import Graph
+from altgraph.ObjectGraph import ObjectGraph
+from altgraph.compat import *
+
 from macholib.mach_o import *
 from macholib.dyld import dyld_find
 from macholib.MachO import MachO
 from macholib.itergraphreport import itergraphreport
-from altgraph.Graph import Graph
-from altgraph.ObjectGraph import ObjectGraph
-from altgraph.compat import *
 
 __all__ = ['MachOGraph']
 
