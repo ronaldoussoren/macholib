@@ -143,7 +143,7 @@ def mergetree(src, dst, condition=None, copyfn=mergecopy, srcbase=None):
         try:
             if os.path.islink(srcname):
                 # XXX: This is naive at best, should check srcbase(?)
-                realsrc = os.path.readlink(srcname)
+                realsrc = os.readlink(srcname)
                 os.symlink(realsrc, dstname)
             elif os.path.isdir(srcname):
                 mergetree(srcname, dstname,
