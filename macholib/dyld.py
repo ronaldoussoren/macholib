@@ -3,9 +3,10 @@ dyld emulation
 """
 
 import os
-from framework import framework_info
-from dylib import dylib_info
 from itertools import *
+
+from macholib.framework import framework_info
+from macholib.dylib import dylib_info
 
 __all__ = [
     'dyld_find', 'framework_find',
