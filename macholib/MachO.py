@@ -7,10 +7,12 @@ require("altgraph")
 
 import sys
 import struct
-from macholib.mach_o import *
-from macholib.dyld import dyld_find, framework_info
 
 from altgraph.compat import *
+
+from macholib.mach_o import *
+from macholib.dyld import dyld_find, framework_info
+from macholib.util import fileview
 
 __all__ = ['MachO']
 
@@ -28,11 +30,15 @@ RELOCATABLE_NAMES = {
 }
 
 def shouldRelocateCommand(cmd):
-    """Should this command id be investigated for relocation?"""
+    """
+    Should this command id be investigated for relocation?
+    """
     return cmd in RELOCATABLE
 
 class MachO(object):
-    """Provides reading/writing the Mach-O header of a specific existing file"""
+    """
+    Provides reading/writing the Mach-O header of a specific existing file
+    """
     #   filename   - the original filename of this mach-o
     #   sizediff   - the current deviation from the initial mach-o size
     #   header     - the mach-o header
@@ -58,18 +64,22 @@ class MachO(object):
         return "<MachO filename=%r>" % (self.filename,)
 
     def load(self, fh):
+        assert fh.tell() == 0
         header = struct.unpack('>I', fh.read(4))[0]
-        fh.seek(-4, 1)
+        fh.seek(0)
         if header == FAT_MAGIC:
             self.load_fat(fh)
         else:
-            self.load_header(fh, 0)
+            fh.seek(0, 2)
+            size = fh.tell()
+            fh.seek(0)
+            self.load_header(fh, 0, size)
 
     def load_fat(self, fh):
         self.fat = fat_header.from_fileobj(fh)
         archs = [fat_arch.from_fileobj(fh) for i in xrange(self.fat.nfat_arch)]
         for arch in archs:
-            self.load_header(fh, arch.offset)
+            self.load_header(fh, arch.offset, arch.size)
 
     def rewriteLoadCommands(self, *args, **kw):
         changed = False
@@ -78,28 +88,32 @@ class MachO(object):
                 changed = True
         return changed
 
-    def load_header(self, fh, offset):
+    def load_header(self, fh, offset, size):
         fh.seek(offset)
         header = struct.unpack('>I', fh.read(4))[0]
-        fh.seek(-4, 1)
-        headers = {
-            MH_MAGIC: (MachOHeader, '>'),
-            MH_CIGAM: (MachOHeader, '<'),
-            MH_MAGIC_64: (MachOHeader64, '>'),
-            MH_CIGAM_64: (MachOHeader64, '<'),
-        }
-        try:
-            cls, endian = headers[header]
-        except KeyError:
-            raise ValueError("Unknown Mach-O header: 0x%08x in %s @ %d" % (header, self.filename, offset))
-        self.headers.append(cls(self, fh, offset, endian))
+        fh.seek(offset)
+        if header == MH_MAGIC:
+            magic, hdr, endian = MH_MAGIC, mach_header, '>'
+        elif header == MH_CIGAM:
+            magic, hdr, endian = MH_MAGIC, mach_header, '<'
+        elif header == MH_MAGIC_64:
+            magic, hdr, endian = MH_MAGIC_64, mach_header_64, '>'
+        elif header == MH_CIGAM_64:
+            magic, hdr, endian = MH_MAGIC_64, mach_header_64, '<'
+        else:
+            raise ValueError("Unknown Mach-O header: 0x%08x in %r" % (
+                header, fh))
+        hdr = MachOHeader(self, fh, offset, size, magic, hdr, endian)
+        self.headers.append(hdr)
 
     def write(self, f):
         for header in self.headers:
             header.write(f)
     
 class MachOHeader(object):
-    """Provides reading/writing the Mach-O header of a specific existing file"""
+    """
+    Provides reading/writing the Mach-O header of a specific existing file
+    """
     #   filename   - the original filename of this mach-o
     #   sizediff   - the current deviation from the initial mach-o size
     #   header     - the mach-o header
@@ -110,14 +124,14 @@ class MachOHeader(object):
     #   id_cmd     - the index of my id command, or None
 
 
-    MH_MAGIC = MH_MAGIC
-    mach_header = mach_header
-
-    def __init__(self, parent, fh, offset, endian):
+    def __init__(self, parent, fh, offset, size, magic, hdr, endian):
+        self.MH_MAGIC = magic
+        self.mach_header = hdr
 
         # These are all initialized by self.load()
         self.parent = parent
         self.offset = offset
+        self.size = size
 
         self.endian = endian
         self.header = None
@@ -132,16 +146,21 @@ class MachOHeader(object):
         self.load(fh)
 
     def __repr__(self):
-        return "<%s filename=%r offset=%d endian=%r>" % (type(self).__name__, self.parent.filename, self.offset, self.endian)
+        return "<%s filename=%r offset=%d size=%d endian=%r>" % (
+            type(self).__name__, self.parent.filename, self.offset, self.size,
+            self.endian)
 
     def load(self, fh):
+        fh = fileview(fh, self.offset, self.size)
+        fh.seek(0)
+
         self.sizediff = 0
-        fh.seek(self.offset)
         kw = {'_endian_': self.endian}
         header = self.mach_header.from_fileobj(fh, **kw)
         self.header = header
         if header.magic != self.MH_MAGIC:
-            raise ValueError("header has magic %08x, expecting %08x" % (header.magic, self.MH_MAGIC))
+            raise ValueError("header has magic %08x, expecting %08x" % (
+                header.magic, self.MH_MAGIC))
 
         cmd = self.commands = []
 
@@ -171,7 +190,7 @@ class MachOHeader(object):
                 # assert that the size makes sense
                 if cmd_load.cmd == LC_SEGMENT:
                     section_cls = section
-                else:
+                else: # LC_SEGMENT_64
                     section_cls = section_64
                     
                 expected_size = (
@@ -192,7 +211,8 @@ class MachOHeader(object):
                         seg = section_cls.from_fileobj(fh, **kw)
                         # if the segment has a size and is not zero filled
                         # then its beginning is the offset of this segment
-                        if seg.offset > 0 and seg.size > 0 and ((seg.flags & S_ZEROFILL) != S_ZEROFILL):
+                        not_zerofill = ((seg.flags & S_ZEROFILL) != S_ZEROFILL)
+                        if seg.offset > 0 and seg.size > 0 and not_zerofill:
                             low_offset = min(low_offset, seg.offset)
                         segs.append(seg)
                 # data is a list of segments
@@ -208,14 +228,15 @@ class MachOHeader(object):
 
         # make sure the header made sense
         if read_bytes != header.sizeofcmds:
-            raise ValueError("Read %d bytes, header reports %d bytes" % (read_bytes, header.sizeofcmds))
+            raise ValueError("Read %d bytes, header reports %d bytes" % (
+                read_bytes, header.sizeofcmds))
         self.total_size = sizeof(self.mach_header) + read_bytes
         self.low_offset = low_offset
 
         # this header overwrites a segment, what the heck?
         if self.total_size > low_offset:
-            raise ValueError("total_size > low_offset (%d > %d)" % (self.total_size, low_offset))
-
+            raise ValueError("total_size > low_offset (%d > %d)" % (
+                self.total_size, low_offset))
 
     def walkRelocatables(self, shouldRelocateCommand=shouldRelocateCommand):
         """
@@ -274,17 +295,19 @@ class MachOHeader(object):
         self.sizediff = 0
 
     def write(self, fileobj):
+        fileobj = fileview(fileobj, self.offset, self.size)
+        fileobj.seek(0)
+
         # serialize all the mach-o commands
         self.synchronize_size()
-        # this should nearly always be 0, but we keep track anyway
-        fileobj.seek(self.offset, 1)
-        begin = fileobj.tell()
+
         self.header.to_fileobj(fileobj)
-        for (lc, cmd, data) in self.commands:
+        for lc, cmd, data in self.commands:
             lc.to_fileobj(fileobj)
             cmd.to_fileobj(fileobj)
             if isinstance(data, unicode):
                 data = data.encode('utf-8')
+            
             if isinstance(data, str):
                 fileobj.write(data)
             else:
@@ -294,23 +317,19 @@ class MachOHeader(object):
 
         # zero out the unused space, doubt this is strictly necessary
         # and is generally probably already the case
-        fileobj.write('\x00' * (self.low_offset - (fileobj.tell() - begin)))
+        fileobj.write('\x00' * (self.low_offset - fileobj.tell()))
 
     def getSymbolTableCommand(self):
-        for (lc, cmd, data) in self.commands:
+        for lc, cmd, data in self.commands:
             if lc.cmd == LC_SYMTAB:
                 return cmd
         return None
 
     def getDynamicSymbolTableCommand(self):
-        for (lc, cmd, data) in self.commands:
+        for lc, cmd, data in self.commands:
             if lc.cmd == LC_DYSYMTAB:
                 return cmd
         return None
-
-class MachOHeader64(MachOHeader):
-    MH_MAGIC = MH_MAGIC_64
-    mach_header = mach_header_64
 
 def main(fn):
     m = MachO(fn)
@@ -321,7 +340,7 @@ def main(fn):
         for idx, name, other in header.walkRelocatables():
             if other not in seen:
                 seen.add(other)
-                print '\t'+other
+                print '\t' + other
 
 if __name__ == '__main__':
     import sys
