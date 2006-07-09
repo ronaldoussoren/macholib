@@ -121,12 +121,15 @@ def mergecopy(src, dest):
         return
     copy2(src, dest)
 
-def mergetree(src, dst, condition=None, copyfn=mergecopy):
-    """Recursively merge a directory tree using mergecopy()."""
-    # XXX - symlinks
+def mergetree(src, dst, condition=None, copyfn=mergecopy, srcbase=None):
+    """
+    Recursively merge a directory tree using mergecopy().
+    """
     src = fsencoding(src)
     dst = fsencoding(dst)
-    names = os.listdir(src)
+    if srcbase is None:
+        srcbase = src
+    names = map(fsencoding, os.listdir(src))
     try:
         os.makedirs(dst)
     except OSError:
@@ -138,8 +141,13 @@ def mergetree(src, dst, condition=None, copyfn=mergecopy):
         if condition is not None and not condition(srcname):
             continue
         try:
-            if os.path.isdir(srcname):
-                mergetree(srcname, dstname, condition=condition)
+            if os.path.islink(srcname):
+                # XXX: This is naive at best, should check srcbase(?)
+                realsrc = os.path.readlink(srcname)
+                os.symlink(realsrc, dstname)
+            elif os.path.isdir(srcname):
+                mergetree(srcname, dstname,
+                    condition=condition, copyfn=copyfn, srcbase=srcbase)
             else:
                 copyfn(srcname, dstname)
         except (IOError, os.error), why:
