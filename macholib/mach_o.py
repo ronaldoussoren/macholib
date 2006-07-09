@@ -10,8 +10,9 @@ not covered at this point.
 
 See /usr/include/mach-o and friends.
 """
-from ptypes import *
 import time
+
+from macholib.ptypes import *
 
 CPU_TYPE_NAMES = {
     -1:     'ANY',
