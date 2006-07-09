@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-import sys, os
+
+import os
+import sys
+
 from macholib.util import is_platform_file
 
 def check_file(path):
