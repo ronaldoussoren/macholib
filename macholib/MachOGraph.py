@@ -41,7 +41,8 @@ class MachOGraph(ObjectGraph):
         fn = self.trans_table.get(filename)
         if fn is None:
             try:
-                fn = dyld_find(filename, env=self.env, executable_path=self.executable_path)
+                fn = dyld_find(filename, env=self.env,
+                    executable_path=self.executable_path)
                 self.trans_table[filename] = fn
             except ValueError:
                 return None
@@ -61,7 +62,7 @@ class MachOGraph(ObjectGraph):
         m = self.findNode(pathname)
         if m is None:
             if not os.path.exists(pathname):
-                raise ValueError, '%r does not exist' % (pathname,)
+                raise ValueError('%r does not exist' % (pathname,))
             m = self.createNode(MachO, pathname)
             self.createReference(caller, m, edge_data='run_file')
             self.scan_node(m)
