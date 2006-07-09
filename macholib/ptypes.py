@@ -1,6 +1,7 @@
 # Ideally we'd probably be using something like the PyObjC runtime
 # rather than the struct module to get by here.  However, this is
 # good enough for now.
+
 import struct
 from itertools import *
 
