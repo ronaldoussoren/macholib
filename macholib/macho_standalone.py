@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+
 import os
 import sys
+
 from macholib.MachOStandalone import MachOStandalone
 from macholib.util import strip_files
 
