@@ -6,6 +6,8 @@ from macholib.mach_o import *
 
 __all__ = ['SymbolTable']
 
+# XXX: Does not support 64-bit, probably broken anyway
+
 class SymbolTable(object):
     def __init__(self, macho, openfile=None):
         if openfile is None:
