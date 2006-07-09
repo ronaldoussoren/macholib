@@ -76,7 +76,8 @@ class fileview(object):
         self._end = start + size
 
     def __repr__(self):
-        return '<fileview [%d, %d] %r>' % (self._start, self._end, self._fileobj)
+        return '<fileview [%d, %d] %r>' % (
+            self._start, self._end, self._fileobj)
 
     def tell(self):
         return self._fileobj.tell() - self._start
