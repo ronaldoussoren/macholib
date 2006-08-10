@@ -147,9 +147,9 @@ class mach_header_64(mach_header):
 
 class load_command(Structure):
     _fields_ = (
-    ('cmd', p_ulong),
-    ('cmdsize', p_ulong),
-)
+        ('cmd', p_ulong),
+        ('cmdsize', p_ulong),
+    )
 
 LC_REQ_DYLD = 0x80000000L
 
