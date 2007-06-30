@@ -165,6 +165,7 @@ LC_LOAD_WEAK_DYLIB = LC_REQ_DYLD | 0x18
 
 LC_SEGMENT_64 = 0x19
 LC_ROUTINES_64 = 0x1a
+LC_UUID = 0x1b
 
 # this is really a union.. but whatever
 class lc_str(p_ulong):
@@ -467,6 +468,11 @@ class prebind_cksum_command(Structure):
         ('cksum', p_ulong),
     )
 
+class uuid_command(Structure):
+    _fields_ = (
+       ('uuid', p_ulong),
+   )
+
 class symseg_command(Structure):
     _fields_ = (
         ('offset', p_ulong),
@@ -509,6 +515,7 @@ LC_REGISTRY = {
     LC_FVMFILE:         fvmfile_command,
     LC_SEGMENT_64:      segment_command_64,
     LC_ROUTINES_64:     routines_command_64,
+    LC_UUID:		uuid_command,	
 }
 
 class nlist(Structure):
