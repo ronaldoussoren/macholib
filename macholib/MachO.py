@@ -21,12 +21,14 @@ RELOCATABLE = set((
     LC_LOAD_DYLIB,
     LC_LOAD_WEAK_DYLIB,
     LC_PREBOUND_DYLIB,
+    LC_REEXPORT_DYLIB,
 ))
 
 RELOCATABLE_NAMES = {
     LC_LOAD_DYLIB: 'load_dylib',
     LC_LOAD_WEAK_DYLIB: 'load_weak_dylib',
     LC_PREBOUND_DYLIB: 'prebound_dylib',
+    LC_REEXPORT_DYLIB: 'reexport_dylib',
 }
 
 def shouldRelocateCommand(cmd):

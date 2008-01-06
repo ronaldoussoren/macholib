@@ -166,6 +166,10 @@ LC_LOAD_WEAK_DYLIB = LC_REQ_DYLD | 0x18
 LC_SEGMENT_64 = 0x19
 LC_ROUTINES_64 = 0x1a
 LC_UUID = 0x1b
+LC_RPATH = (0x1c | LC_REQ_DYLD)
+LC_CODE_SIGNATURE = 0x1d
+LC_CODE_SEGMENT_SPLIT_INFO = 0x1e
+LC_REEXPORT_DYLIB = 0x1f | LC_REQ_DYLD
 
 # this is really a union.. but whatever
 class lc_str(p_ulong):
@@ -468,11 +472,6 @@ class prebind_cksum_command(Structure):
         ('cksum', p_ulong),
     )
 
-class uuid_command(Structure):
-    _fields_ = (
-       ('uuid', p_ulong),
-   )
-
 class symseg_command(Structure):
     _fields_ = (
         ('offset', p_ulong),
@@ -488,6 +487,23 @@ class fvmfile_command(Structure):
         ('name', lc_str),
         ('header_addr', p_ulong),
     )
+
+class uuid_command (Structure):
+    _fields_ = (
+        ('uuid', p_str16),
+    )
+
+class rpath_command (Structure):
+    _fields_ = (
+        ('path', lc_str),
+    )
+
+class linkedit_data_command (Structure):
+    _fields_ = (
+        ('dataoff',   p_ulong),
+        ('datassize', p_ulong),
+    )
+
 
 LC_REGISTRY = {
     LC_SEGMENT:         segment_command,
@@ -515,7 +531,11 @@ LC_REGISTRY = {
     LC_FVMFILE:         fvmfile_command,
     LC_SEGMENT_64:      segment_command_64,
     LC_ROUTINES_64:     routines_command_64,
-    LC_UUID:		uuid_command,	
+    LC_UUID:            uuid_command,
+    LC_RPATH:           rpath_command,
+    LC_CODE_SIGNATURE:  linkedit_data_command,
+    LC_CODE_SEGMENT_SPLIT_INFO:  linkedit_data_command,
+    LC_REEXPORT_DYLIB:  dylib_command,
 }
 
 class nlist(Structure):
