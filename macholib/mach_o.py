@@ -41,8 +41,8 @@ MH_DYLINKER_SYM = "_mh_dylinker_header"
 
 (
     MH_OBJECT, MH_EXECUTE, MH_FVMLIB, MH_CORE, MH_PRELOAD, MH_DYLIB,
-    MH_DYLINKER, MH_BUNDLE, MH_DYLIB_STUB,
-) = range(0x1, 0xa)
+    MH_DYLINKER, MH_BUNDLE, MH_DYLIB_STUB, MH_DSYM
+) = range(0x1, 0xb)
 
 (
     MH_NOUNDEFS, MH_INCRLINK, MH_DYLDLINK, MH_BINDATLOAD, MH_PREBOUND,
@@ -69,6 +69,7 @@ MH_FILETYPE_NAMES = {
     MH_DYLINKER:    'dynamic link editor',
     MH_BUNDLE:      'dynamically bound bundle',
     MH_DYLIB_STUB:  'shared library stub for static linking',
+    MH_DSYM:        'symbol information',
 }
 
 MH_FILETYPE_SHORTNAMES = {
@@ -81,6 +82,7 @@ MH_FILETYPE_SHORTNAMES = {
     MH_DYLINKER:    'dylinker',
     MH_BUNDLE:      'bundle',
     MH_DYLIB_STUB:  'dylib_stub',
+    MH_DSYM:        'dsym',
 }
 
 MH_FLAGS_NAMES = {
