@@ -172,6 +172,10 @@ LC_RPATH = (0x1c | LC_REQ_DYLD)
 LC_CODE_SIGNATURE = 0x1d
 LC_CODE_SEGMENT_SPLIT_INFO = 0x1e
 LC_REEXPORT_DYLIB = 0x1f | LC_REQ_DYLD
+LC_LAZY_LOAD_DYLIB = 0x20
+LC_ENCRYPTION_INFO = 0x21
+LC_DYLD_INFO = 0x22
+LC_DYLD_INFO_ONLY = 0x22 | LC_REQ_DYLD
 
 # this is really a union.. but whatever
 class lc_str(p_ulong):
@@ -538,6 +542,10 @@ LC_REGISTRY = {
     LC_CODE_SIGNATURE:  linkedit_data_command,
     LC_CODE_SEGMENT_SPLIT_INFO:  linkedit_data_command,
     LC_REEXPORT_DYLIB:  dylib_command,
+    LC_LAZY_LOAD_DYLIB: dylib_command,
+    LC_ENCRYPTION_INFO: dylib_command,
+    LC_DYLD_INFO:       dylib_command,
+    LC_DYLD_INFO_ONLY:  dylib_command,
 }
 
 class nlist(Structure):
