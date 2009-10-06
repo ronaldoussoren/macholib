@@ -46,6 +46,7 @@ setup(
         console_scripts=[
             'macho_find = macholib.macho_find:main',
             'macho_standalone = macholib.macho_standalone:main',
+            'macho_dump = macholib.macho_dump:main',
         ],
     ),
 )
