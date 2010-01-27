@@ -5,7 +5,7 @@ ez_setup.use_setuptools()
 
 from setuptools import setup, Extension
 
-VERSION = '1.2.1'
+VERSION = '1.2.2'
 DESCRIPTION = "Mach-O header analysis and editing"
 LONG_DESCRIPTION = """
 macholib can be used to analyze and edit Mach-O headers, the executable

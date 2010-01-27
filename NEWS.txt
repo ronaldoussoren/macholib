@@ -1,0 +1,11 @@
+macholib 1.2.2
+--------------
+
+macholib 1.2.2 is a bugfix release.
+
+Features:
+-
+
+Bug fixes:
+- Macholib should work better with 64-bit code
+  (patch by Marc-Antoine Parent)
