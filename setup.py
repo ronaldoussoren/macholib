@@ -36,6 +36,8 @@ setup(
     classifiers=CLASSIFIERS,
     author="Bob Ippolito",
     author_email="bob@redivi.com",
+    maintainer="Ronald Oussoren",
+    maintainer_email="ronaldoussoren@mac.com",
     url="http://undefined.org/python/#macholib",
     license="MIT License",
     packages=['macholib'],
