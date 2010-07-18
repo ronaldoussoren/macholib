@@ -9,7 +9,7 @@ __all__ = ['framework_info']
 STRICT_FRAMEWORK_RE = re.compile(r"""(?x)
 (?P<location>^.*)(?:^|/)
 (?P<name>
-    (?P<shortname>\w+).framework/
+    (?P<shortname>[-_A-Za-z0-9]+).framework/
     (?:Versions/(?P<version>[^/]+)/)?
     (?P=shortname)
     (?:_(?P<suffix>[^_]+))?

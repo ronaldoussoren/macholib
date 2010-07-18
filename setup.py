@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
-import ez_setup
-ez_setup.use_setuptools()
+try:
+    import setuptools
+except ImportError:
+    import distribute_setup
+    distribute_setup.use_setuptools()
 
 from setuptools import setup, Extension
+import sys
 
-VERSION = '1.2.2'
+VERSION = '1.3'
 DESCRIPTION = "Mach-O header analysis and editing"
 LONG_DESCRIPTION = """
 macholib can be used to analyze and edit Mach-O headers, the executable
@@ -23,10 +27,16 @@ CLASSIFIERS = filter(None, map(str.strip,
 Intended Audience :: Developers
 License :: OSI Approved :: MIT License
 Programming Language :: Python
+Programming Language :: Python :: 3
 Operating System :: MacOS :: MacOS X
 Topic :: Software Development :: Libraries :: Python Modules
 Topic :: Software Development :: Build Tools
 """.splitlines()))
+
+if sys.version_info[0] == 3:
+    extra_args = dict(use_2to3=True)
+else:
+    extra_args = dict()
 
 setup(
     name="macholib",
@@ -42,7 +52,7 @@ setup(
     license="MIT License",
     packages=['macholib'],
     platforms=['any'],
-    install_requires=["altgraph>=0.6.6"],
+    install_requires=["altgraph>=0.7"],
     zip_safe=True,
     entry_points=dict(
         console_scripts=[
@@ -51,4 +61,5 @@ setup(
             'macho_dump = macholib.macho_dump:main',
         ],
     ),
+    **extra_args
 )

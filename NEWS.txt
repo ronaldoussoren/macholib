@@ -1,3 +1,16 @@
+macholib 1.3
+------------
+
+macholib 1.3 is a feature release.
+
+Features:
+- Experimental Python 3.x support
+
+  This version contains lightly tested support for Python 3.
+
+Bugfixes:
+-
+
 macholib 1.2.2
 --------------
 

@@ -2,8 +2,9 @@
 dyld emulation
 """
 
-import os
-from itertools import *
+from itertools import chain
+
+import os, sys
 
 from macholib.framework import framework_info
 from macholib.dylib import dylib_info
@@ -29,11 +30,17 @@ DEFAULT_LIBRARY_FALLBACK = [
     "/usr/lib",
 ]
 
-def ensure_utf8(s):
-    """Not all of PyObjC and Python understand unicode paths very well yet"""
-    if isinstance(s, unicode):
-        return s.encode('utf8')
-    return s
+if sys.version_info[0] == 2:
+    def ensure_utf8(s):
+        """Not all of PyObjC and Python understand unicode paths very well yet"""
+        if isinstance(s, unicode):
+            return s.encode('utf8')
+        return s
+else:
+    def ensure_utf8(s):
+        assert s is None or isinstance(s, unicode), repr(s)
+        return s
+
 
 def dyld_env(env, var):
     if env is None:

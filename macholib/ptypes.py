@@ -3,7 +3,10 @@
 # good enough for now.
 
 import struct
-from itertools import *
+import sys
+from itertools import izip, imap, chain, starmap
+from macholib.compat import B
+from macholib.compat import bytes
 
 __all__ = """
 sizeof
@@ -91,7 +94,7 @@ def formatinfo(format):
     Calculate the size and number of items in a struct format.
     """
     size = struct.calcsize(format)
-    return size, len(struct.unpack(format, '\x00' * size))
+    return size, len(struct.unpack(format, B('\x00') * size))
 
 class MetaStructure(MetaPackable):
     """
@@ -178,15 +181,54 @@ class Structure(BasePackable):
         return struct.pack(self._endian_ + self._format_, *self._get_packables())
 
     def __cmp__(self, other):
-        if not type(other) is type(self):
+        if type(other) is not type(self):
             raise TypeError, 'Cannot compare objects of type %r to objects of type %r' % (type(other), type(self))
-        for cmpval in starmap(cmp, izip(self._get_packables(), other._get_packables())):
+        if sys.version_info[0] == 2:
+            _cmp = cmp
+        else:
+            def _cmp(a, b):
+                if a < b:
+                    return -1
+                elif a > b:
+                    return 1
+                elif a == b:
+                    return 0
+                else:
+                    raise TypeError()
+
+        for cmpval in starmap(_cmp, izip(self._get_packables(), other._get_packables())):
             if cmpval != 0:
                 return cmpval
         return 0
 
+    def __eq__(self, other):
+        r = self.__cmp__(other)
+        return r == 0
+
+    def __ne__(self, other):
+        r = self.__cmp__(other)
+        return r != 0
+
+    def __lt__(self, other):
+        r = self.__cmp__(other)
+        return r < 0
+
+    def __le__(self, other):
+        r = self.__cmp__(other)
+        return r <= 0
+
+    def __gt__(self, other):
+        r = self.__cmp__(other)
+        return r > 0
+
+    def __ge__(self, other):
+        r = self.__cmp__(other)
+        return r >= 0
+
+
+
 # export common packables with predictable names
-p_char = pypackable('p_char', str, 'c')
+p_char = pypackable('p_char', bytes, 'c')
 p_byte = pypackable('p_byte', int, 'b')
 p_ubyte = pypackable('p_ubyte', int, 'B')
 p_short = pypackable('p_short', int, 'h')
@@ -202,7 +244,12 @@ p_longlong = pypackable('p_longlong', long, 'q')
 p_ulonglong = pypackable('p_ulonglong', long, 'Q')
 
 def test_ptypes():
-    from cStringIO import StringIO
+    import sys
+
+    if sys.version_info[0] == 2:
+        from cStringIO import StringIO as BytesIO
+    else:
+        from io import BytesIO
     import mmap
 
     class MyStructure(Structure):
@@ -219,11 +266,11 @@ def test_ptypes():
 
     for endian in '><':
         kw = dict(_endian_=endian)
-        MYSTRUCTURE = '\x00\x11\x22\x33\xFF'
+        MYSTRUCTURE = B('\x00\x11\x22\x33\xFF')
         for fn, args in [
                     ('from_str', (MYSTRUCTURE,)),
                     ('from_mmap', (MYSTRUCTURE, 0)),
-                    ('from_fileobj', (StringIO(MYSTRUCTURE),)),
+                    ('from_fileobj', (BytesIO(MYSTRUCTURE),)),
                 ]:
             myStructure = getattr(MyStructure, fn)(*args, **kw)
             if endian == '>':
@@ -233,27 +280,27 @@ def test_ptypes():
             assert myStructure.bar == 0xFF
             assert myStructure.to_str() == MYSTRUCTURE
 
-        MYFUNSTRUCTURE = '!' + MYSTRUCTURE
+        MYFUNSTRUCTURE = B('!') + MYSTRUCTURE
         for fn, args in [
                     ('from_str', (MYFUNSTRUCTURE,)),
                     ('from_mmap', (MYFUNSTRUCTURE, 0)),
-                    ('from_fileobj', (StringIO(MYFUNSTRUCTURE),)),
+                    ('from_fileobj', (BytesIO(MYFUNSTRUCTURE),)),
                 ]:
             myFunStructure = getattr(MyFunStructure, fn)(*args, **kw)
             assert myFunStructure.mystruct == myStructure
-            assert myFunStructure.fun == '!'
+            assert myFunStructure.fun == B('!'), (myFunStructure.fun, B('!'))
             assert myFunStructure.to_str() == MYFUNSTRUCTURE
 
-        sio = StringIO()
+        sio = BytesIO()
         myFunStructure.to_fileobj(sio)
         assert sio.getvalue() == MYFUNSTRUCTURE
 
-        mm = mmap.mmap(-1, sizeof(MyFunStructure) * 2, mmap.MAP_ANONYMOUS)
-        mm[:] = '\x00' * (sizeof(MyFunStructure) * 2)
+        mm = mmap.mmap(-1, sizeof(MyFunStructure) * 2) 
+        mm[:] = B('\x00') * (sizeof(MyFunStructure) * 2)
         myFunStructure.to_mmap(mm, 0)
         assert MyFunStructure.from_mmap(mm, 0, **kw) == myFunStructure
         assert mm[:sizeof(MyFunStructure)] == MYFUNSTRUCTURE
-        assert mm[sizeof(MyFunStructure):] == '\x00' * sizeof(MyFunStructure)
+        assert mm[sizeof(MyFunStructure):] == B('\x00') * sizeof(MyFunStructure)
         myFunStructure.to_mmap(mm, sizeof(MyFunStructure))
         assert mm[:] == MYFUNSTRUCTURE + MYFUNSTRUCTURE
         assert MyFunStructure.from_mmap(mm, sizeof(MyFunStructure), **kw) == myFunStructure

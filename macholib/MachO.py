@@ -5,6 +5,7 @@ Utilities for reading and writing Mach-O headers
 from pkg_resources import require
 require("altgraph")
 
+
 import sys
 import struct
 
@@ -13,6 +14,11 @@ from altgraph.compat import *
 from macholib.mach_o import *
 from macholib.dyld import dyld_find, framework_info
 from macholib.util import fileview
+from macholib.compat import B
+try:
+    from macholib.compat import bytes
+except ImportError:
+    pass
 
 __all__ = ['MachO']
 
@@ -60,7 +66,7 @@ class MachO(object):
         # initialized by load
         self.fat = None
         self.headers = []
-        self.load(file(filename, 'rb'))
+        self.load(open(filename, 'rb'))
 
     def __repr__(self):
         return "<MachO filename=%r>" % (self.filename,)
@@ -249,7 +255,8 @@ class MachOHeader(object):
             if shouldRelocateCommand(lc.cmd):
                 name = RELOCATABLE_NAMES[lc.cmd]
                 ofs = cmd.name - sizeof(lc.__class__) - sizeof(cmd.__class__)
-                yield idx, name, data[ofs:data.find('\x00', ofs)]
+                yield idx, name, data[ofs:data.find(B('\x00'), ofs)].decode(
+                        sys.getfilesystemencoding())
 
     def rewriteInstallNameCommand(self, loadcmd):
         """Rewrite the load command of this dylib"""
@@ -270,12 +277,14 @@ class MachOHeader(object):
         data = changefunc(self.parent.filename)
         changed = False
         if data is not None:
-            if self.rewriteInstallNameCommand(data):
+            if self.rewriteInstallNameCommand(
+                    data.encode(sys.getfilesystemencoding())):
                 changed = True
         for idx, name, filename in self.walkRelocatables():
             data = changefunc(filename)
             if data is not None:
-                if self.rewriteDataForCommand(idx, data):
+                if self.rewriteDataForCommand(idx, data.encode(
+                        sys.getfilesystemencoding())):
                     changed = True
         return changed
 
@@ -283,7 +292,7 @@ class MachOHeader(object):
         lc, cmd, old_data = self.commands[idx]
         hdrsize = sizeof(lc.__class__) + sizeof(cmd.__class__)
         align = struct.calcsize('L')
-        data = data + ('\x00' * (align - (len(data) % align)))
+        data = data + (B('\x00') * (align - (len(data) % align)))
         newsize = hdrsize + len(data)
         self.commands[idx] = (lc, cmd, data)
         self.changedHeaderSizeBy(newsize - lc.cmdsize)
@@ -308,10 +317,11 @@ class MachOHeader(object):
         for lc, cmd, data in self.commands:
             lc.to_fileobj(fileobj)
             cmd.to_fileobj(fileobj)
+
             if isinstance(data, unicode):
-                data = data.encode('utf-8')
+                fileobj.write(data.encode(sys.getfilesystemencoding()))
             
-            if isinstance(data, str):
+            elif isinstance(data, (bytes, str)):
                 fileobj.write(data)
             else:
                 # segments..
@@ -320,7 +330,7 @@ class MachOHeader(object):
 
         # zero out the unused space, doubt this is strictly necessary
         # and is generally probably already the case
-        fileobj.write('\x00' * (self.low_offset - fileobj.tell()))
+        fileobj.write(B('\x00') * (self.low_offset - fileobj.tell()))
 
     def getSymbolTableCommand(self):
         for lc, cmd, data in self.commands:
@@ -343,7 +353,7 @@ def main(fn):
         for idx, name, other in header.walkRelocatables():
             if other not in seen:
                 seen.add(other)
-                print '\t' + other
+                print '\t' + name + ": " + other
 
 if __name__ == '__main__':
     import sys

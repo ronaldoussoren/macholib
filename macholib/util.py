@@ -53,18 +53,6 @@ def flipwritable(fn, mode=None):
     os.chmod(fn, stat.S_IWRITE | old_mode)
     return old_mode
 
-class writablefile(file):
-    """
-    file subclass that ensures writability while open
-    """ 
-    def __init__(self, fn, *args, **kwargs):
-        self._old_mode = flipwritable(fn)
-        file.__init__(self, fn, *args, **kwargs)
-
-    def close(self):
-        file.close(self)
-        flipwritable(self.name, self._old_mode)
-
 class fileview(object):
     """
     A proxy for file-like objects that exposes a given view of a file

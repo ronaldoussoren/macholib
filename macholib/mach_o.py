@@ -13,6 +13,8 @@ See /usr/include/mach-o and friends.
 import time
 
 from macholib.ptypes import *
+from macholib.compat import bytes
+
 
 CPU_TYPE_NAMES = {
     -1:     'ANY',
@@ -181,7 +183,7 @@ LC_DYLD_INFO_ONLY = 0x22 | LC_REQ_DYLD
 class lc_str(p_uint):
     pass
 
-p_str16 = pypackable('p_str16', str, '16s')
+p_str16 = pypackable('p_str16', bytes, '16s')
 
 vm_prot_t = p_int
 class segment_command(Structure):

@@ -7,7 +7,7 @@ from altgraph.compat import *
 
 from macholib.MachOGraph import MachOGraph, MissingMachO
 from macholib.util import iter_platform_files, in_system_path, mergecopy, \
-    mergetree, writablefile, has_filename_filter
+    mergetree, flipwritable, has_filename_filter
 from macholib.dyld import framework_info
 
 class ExcludedMachO(MissingMachO):
@@ -129,13 +129,17 @@ class MachOStandalone(object):
                 if node.rewriteLoadCommands(changefunc):
                     rewroteAny = True
             if rewroteAny:
-                f = writablefile(fn, 'rb+')
-                for header in node.headers:
-                    f.seek(0)
-                    node.write(f)
-                f.seek(0, 2)
-                f.flush()
-                f.close()
+                old_mode = flipwritable(fn)
+                try:
+                    f = open(fn, 'rb+')
+                    for header in node.headers:
+                        f.seek(0)
+                        node.write(f)
+                    f.seek(0, 2)
+                    f.flush()
+                    f.close()
+                finally:
+                    flipwritable(fn, old_mode)
 
         allfiles = [mm.locate(node.filename) for node in machfiles]
         return set(filter(None, allfiles))

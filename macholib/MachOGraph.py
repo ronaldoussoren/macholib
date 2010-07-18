@@ -38,6 +38,7 @@ class MachOGraph(ObjectGraph):
         self.executable_path = executable_path
 
     def locate(self, filename):
+        assert isinstance(filename, (str, unicode))
         fn = self.trans_table.get(filename)
         if fn is None:
             try:
@@ -49,6 +50,7 @@ class MachOGraph(ObjectGraph):
         return fn
 
     def findNode(self, name):
+        assert isinstance(name, (str, unicode))
         data = super(MachOGraph, self).findNode(name)
         if data is not None:
             return data
@@ -58,6 +60,7 @@ class MachOGraph(ObjectGraph):
         return None
 
     def run_file(self, pathname, caller=None):
+        assert isinstance(pathname, (str, unicode))
         self.msgin(2, "run_file", pathname)
         m = self.findNode(pathname)
         if m is None:
@@ -70,6 +73,7 @@ class MachOGraph(ObjectGraph):
         return m
 
     def load_file(self, name, caller=None):
+        assert isinstance(name, (str, unicode))
         self.msgin(2, "load_file", name)
         m = self.findNode(name)
         if m is None:
@@ -88,6 +92,8 @@ class MachOGraph(ObjectGraph):
         self.msgin(2, 'scan_node', node)
         for header in node.headers:
             for idx, name, filename in header.walkRelocatables():
+                assert isinstance(name, (str, unicode))
+                assert isinstance(filename, (str, unicode))
                 m = self.load_file(filename, caller=node)
                 self.createReference(node, m, edge_data=name)
         self.msgout(2, '', node)

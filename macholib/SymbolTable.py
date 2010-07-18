@@ -3,6 +3,7 @@ Class to read the symbol table from a Mach-O header
 """
 
 from macholib.mach_o import *
+from macholib.compat import B
 
 __all__ = ['SymbolTable']
 
@@ -32,7 +33,7 @@ class SymbolTable(object):
             if cmd.n_un == 0:
                 nlists.append((cmd, ''))
             else:
-                nlists.append((cmd, strtab[cmd.n_un:strtab.find('\x00', cmd.n_un)]))
+                nlists.append((cmd, strtab[cmd.n_un:strtab.find(B('\x00'), cmd.n_un)]))
         self.nlists = nlists
 
     def readDynamicSymbolTable(self, fh):
