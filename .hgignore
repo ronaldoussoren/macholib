@@ -1,0 +1,11 @@
+doc/build
+macholib.egg-info
+__pycache__
+build
+dist
+.DS_Store
+
+syntax: glob
+*.pyc
+*.dSYM
+*.swp
