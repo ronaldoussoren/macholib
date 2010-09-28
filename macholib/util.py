@@ -8,7 +8,6 @@ import operator
 import struct
 import shutil
 
-from altgraph.compat import *
 from modulegraph.util import *
 
 from macholib import mach_o

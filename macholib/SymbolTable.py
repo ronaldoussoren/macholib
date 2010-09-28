@@ -3,7 +3,7 @@ Class to read the symbol table from a Mach-O header
 """
 
 from macholib.mach_o import *
-from macholib.compat import B
+from macholib._compat import B
 
 __all__ = ['SymbolTable']
 

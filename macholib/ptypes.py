@@ -5,8 +5,7 @@
 import struct
 import sys
 from itertools import izip, imap, chain, starmap
-from macholib.compat import B
-from macholib.compat import bytes
+from macholib._compat import B, bytes
 
 __all__ = """
 sizeof

@@ -9,12 +9,10 @@ require("altgraph")
 import sys
 import struct
 
-from altgraph.compat import *
-
 from macholib.mach_o import *
 from macholib.dyld import dyld_find, framework_info
 from macholib.util import fileview
-from macholib.compat import B
+from macholib._compat import B
 try:
     from macholib.compat import bytes
 except ImportError:

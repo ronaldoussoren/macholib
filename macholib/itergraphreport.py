@@ -5,8 +5,6 @@ Utilities for creating dot output from a MachOGraph
 from pkg_resources import require
 require("altgraph")
 
-from altgraph.compat import *
-
 __all__ = ['itergraphreport']
 
 def itergraphreport(nodes, describe_edge, name='G'):

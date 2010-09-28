@@ -3,8 +3,6 @@ require("altgraph")
 
 import os
 
-from altgraph.compat import *
-
 from macholib.MachOGraph import MachOGraph, MissingMachO
 from macholib.util import iter_platform_files, in_system_path, mergecopy, \
     mergetree, flipwritable, has_filename_filter

@@ -10,7 +10,6 @@ import sys
 
 from altgraph.Graph import Graph
 from altgraph.ObjectGraph import ObjectGraph
-from altgraph.compat import *
 
 from macholib.mach_o import *
 from macholib.dyld import dyld_find

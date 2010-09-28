@@ -13,7 +13,7 @@ See /usr/include/mach-o and friends.
 import time
 
 from macholib.ptypes import *
-from macholib.compat import bytes
+from macholib._compat import bytes
 
 
 CPU_TYPE_NAMES = {
