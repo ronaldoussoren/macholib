@@ -204,6 +204,7 @@ setup(
     platforms=['any'],
     install_requires=["altgraph>=0.7"],
     zip_safe=True,
+    test_suite='macholib_tests',
     entry_points=dict(
         console_scripts=[
             'macho_find = macholib.macho_find:main',
