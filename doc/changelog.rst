@@ -13,6 +13,12 @@ Features:
 
 - The repository has moved to bitbucket
 
+- There now is a testsuite
+
+Bug fixes:
+
+- It is once again possible to install using python2.5
+
 macholib 1.3
 ------------
 
