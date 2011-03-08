@@ -12,6 +12,7 @@ try:
     from distutils.core import PyPIRCCommand
 except ImportError:
     # Old python version
+    PyPIRCCommand = None
     from distutils.core import Command
 
 from distutils.errors  import DistutilsError

@@ -1,5 +1,7 @@
 """
 Utilities for creating dot output from a MachOGraph
+
+XXX: need to rewrite this based on altgraph.Dot
 """
 
 from pkg_resources import require
