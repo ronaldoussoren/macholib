@@ -19,6 +19,9 @@ Bug fixes:
 
 - It is once again possible to install using python2.5
 
+- The source distribution includes all files, this was broken
+  due to the switch to mercurial (which confused setuptools)
+
 macholib 1.3
 ------------
 
