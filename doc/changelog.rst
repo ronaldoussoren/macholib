@@ -26,7 +26,7 @@ Features:
   an new names (the old names are still available, but are deprecated and
   will be removed in a future release).
 
-  +==============+==============+
+  +--------------+--------------+
   | **Old name** | **New name** |
   +==============+==============+
   | p_byte       | p_int8       |
@@ -48,7 +48,7 @@ Features:
   | p_longlong   | p_int64      |
   +--------------+--------------+
   | p_ulonglong  | p_uint64     |
-  +==============+==============+
+  +--------------+--------------+
 
   ``Macholib.ptypes.p_ptr`` is no longer present as it had an unclear 
   definition and isn't actually used in the codebase.

@@ -30,6 +30,6 @@ Usage::
         
         $ macho_dump dir...
 
-Print the MachO headers of all binaries in the
-given directories.
-
+Prints information about all architectures in a 
+Mach-O file as well as all libraries it links 
+to.
