@@ -38,6 +38,11 @@ class DyldPatcher (object):
 
 
 class TestDyld (unittest.TestCase):
+    if not hasattr(unittest.TestCase, 'assertIsInstance'):
+        def assertIsInstance(self, value, types, message=None):
+            self.assertTrue(isinstance(value, types),
+                message or "%r is not an instance of %r"%(value, types))
+
     def setUp(self):
         self._environ = os.environ
         os.environ = dict([(k, os.environ[k]) for k in os.environ if 'DYLD' not in k])

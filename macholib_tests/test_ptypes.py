@@ -22,12 +22,17 @@ class TestPTypes (unittest.TestCase):
             self.assertTrue(issubclass(class1, class2),
                     message or "%r is not a subclass of %r"%(class1, class2))
 
+    if not hasattr(unittest.TestCase, 'assertIsInstance'):
+        def assertIsInstance(self, value, types, message=None):
+            self.assertTrue(isinstance(value, types),
+                    message or "%r is not an instance of %r"%(value, types))
+
     def test_sizeof(self):
         self.assertEqual(ptypes.sizeof(B("foobar")), 6)
 
         self.assertRaises(ValueError, ptypes.sizeof, [])
         self.assertRaises(ValueError, ptypes.sizeof, {})
-        self.assertRaises(ValueError, ptypes.sizeof, B"foo".decode('ascii'))
+        self.assertRaises(ValueError, ptypes.sizeof, B("foo").decode('ascii'))
 
         class M (object):
             pass
