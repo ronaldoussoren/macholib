@@ -12,11 +12,6 @@ try:
 except ImportError:
     from io import StringIO
 
-try:
-    expectedFailure = unittest.expectedFailure
-except AttributeError:
-    expectedFailure = lambda function: function
-
 class TestCmdLine (unittest.TestCase):
     def test_main_is_shared(self):
         self.assertTrue(macho_dump.main is _cmdline.main)
@@ -31,13 +26,15 @@ class TestCmdLine (unittest.TestCase):
         self.assertEqual(record, [(sys.stdout, '/bin/sh')])
 
         saved_stderr = sys.stderr 
+        saved_argv = sys.argv
         try:
             sys.stderr = StringIO()
+            sys.argv = ['macho_test']
 
             record[:] = []
             self.assertEqual(_cmdline.check_file(sys.stdout, '/bin/no-shell', record_cb), 1)
             self.assertEqual(record, [])
-            self.assertEqual(sys.stderr.getvalue(), "test_command_line.py: /bin/no-shell: No such file or directory\n")
+            self.assertEqual(sys.stderr.getvalue(), "macho_test: /bin/no-shell: No such file or directory\n")
             self.assertEqual(record, [])
 
             shutil.copy('/bin/sh', 'test.exec')
@@ -46,12 +43,13 @@ class TestCmdLine (unittest.TestCase):
             sys.stderr = StringIO()
             self.assertEqual(_cmdline.check_file(sys.stdout, 'test.exec', record_cb), 1)
             self.assertEqual(record, [])
-            self.assertEqual(sys.stderr.getvalue(), "test_command_line.py: test.exec: [Errno 13] Permission denied: 'test.exec'\n")
+            self.assertEqual(sys.stderr.getvalue(), "macho_test: test.exec: [Errno 13] Permission denied: 'test.exec'\n")
             self.assertEqual(record, [])
             
 
         finally:
             sys.stderr = sys.stderr
+            sys.argv = saved_argv
             if os.path.exists('test.exec'):
                 os.unlink('test.exec')
 
