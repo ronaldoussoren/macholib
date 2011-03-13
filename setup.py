@@ -20,21 +20,20 @@ from distutils import log
 
 import sys
 
-VERSION = '1.3'
+def filecontents(fn):
+    fp = open(fn, 'rU')
+    try:
+        return fp.read()
+    finally:
+        fp.close()
+
+VERSION = '1.4'
 DESCRIPTION = "Mach-O header analysis and editing"
-LONG_DESCRIPTION = """
-macholib can be used to analyze and edit Mach-O headers, the executable
-format used by Mac OS X.
-
-It's typically used as a dependency analysis tool, and also to rewrite dylib
-references in Mach-O headers to be @executable_path relative.
-
-Though this tool targets a platform specific file format, it is pure python
-code that is platform and endian independent.
-
-"""
-
-LONG_DESCRIPTION += open('doc/changelog.rst', 'rU').read()
+LONG_DESCRIPTION = "".join([
+    filecontents("README.txt"),
+    "\n\n",
+    filecontents("doc/changelog.rst"),
+])
 
 
 CLASSIFIERS = filter(None, map(str.strip,
@@ -216,8 +215,8 @@ setup(
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     classifiers=CLASSIFIERS,
-    author="Bob Ippolito",
-    author_email="bob@redivi.com",
+#    author="Bob Ippolito",
+#    author_email="bob@redivi.com",
     maintainer="Ronald Oussoren",
     maintainer_email="ronaldoussoren@mac.com",
     url="http://bitbucket.org/ronaldoussoren/macholib",

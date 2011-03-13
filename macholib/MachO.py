@@ -20,7 +20,7 @@ except ImportError:
 
 __all__ = ['MachO']
 
-RELOCATABLE = set((
+_RELOCATABLE = set((
     # relocatable commands that should be used for dependency walking
     LC_LOAD_DYLIB,
     LC_LOAD_WEAK_DYLIB,
@@ -28,18 +28,18 @@ RELOCATABLE = set((
     LC_REEXPORT_DYLIB,
 ))
 
-RELOCATABLE_NAMES = {
+_RELOCATABLE_NAMES = {
     LC_LOAD_DYLIB: 'load_dylib',
     LC_LOAD_WEAK_DYLIB: 'load_weak_dylib',
     LC_PREBOUND_DYLIB: 'prebound_dylib',
     LC_REEXPORT_DYLIB: 'reexport_dylib',
 }
 
-def shouldRelocateCommand(cmd):
+def _shouldRelocateCommand(cmd):
     """
     Should this command id be investigated for relocation?
     """
-    return cmd in RELOCATABLE
+    return cmd in _RELOCATABLE
 
 class MachO(object):
     """
@@ -244,14 +244,14 @@ class MachOHeader(object):
             raise ValueError("total_size > low_offset (%d > %d)" % (
                 self.total_size, low_offset))
 
-    def walkRelocatables(self, shouldRelocateCommand=shouldRelocateCommand):
+    def walkRelocatables(self, shouldRelocateCommand=_shouldRelocateCommand):
         """
         for all relocatable commands
         yield (command_index, command_name, filename)
         """
         for (idx, (lc, cmd, data)) in enumerate(self.commands):
             if shouldRelocateCommand(lc.cmd):
-                name = RELOCATABLE_NAMES[lc.cmd]
+                name = _RELOCATABLE_NAMES[lc.cmd]
                 ofs = cmd.name - sizeof(lc.__class__) - sizeof(cmd.__class__)
                 yield idx, name, data[ofs:data.find(B('\x00'), ofs)].decode(
                         sys.getfilesystemencoding())

@@ -1,10 +1,10 @@
 Release history
 ===============
 
-macholib 1.3.1
---------------
+macholib 1.4
+-------------
 
-macholib 1.3.1 is a minor feature release
+macholib 1.4 is a feature release
 
 Features:
 
@@ -14,6 +14,45 @@ Features:
 - The repository has moved to bitbucket
 
 - There now is a testsuite
+
+- Private functionality inside modules was renamed to
+  a name starting with an underscore. 
+
+  .. note:: if this change affects your code you are relying on undefined
+     implementation features, please stop using private functions.
+
+- The basic packable types in ``macholib.ptypes`` were renamed to better
+  represent the corresponding C type. The table below lists the old
+  an new names (the old names are still available, but are deprecated and
+  will be removed in a future release).
+
+  +==============+==============+
+  | **Old name** | **New name** |
+  +==============+==============+
+  | p_byte       | p_int8       |
+  +--------------+--------------+
+  | p_ubyte      | p_uint8      |
+  +--------------+--------------+
+  | p_short      | p_int16      |
+  +--------------+--------------+
+  | p_ushort     | p_uint16     |
+  +--------------+--------------+
+  | p_int        | p_int32      |
+  +--------------+--------------+
+  | p_uint       | p_uint32     |
+  +--------------+--------------+
+  | p_long       | p_int32      |
+  +--------------+--------------+
+  | p_ulong      | p_uint32     |
+  +--------------+--------------+
+  | p_longlong   | p_int64      |
+  +--------------+--------------+
+  | p_ulonglong  | p_uint64     |
+  +==============+==============+
+
+  ``Macholib.ptypes.p_ptr`` is no longer present as it had an unclear 
+  definition and isn't actually used in the codebase.
+
 
 Bug fixes:
 

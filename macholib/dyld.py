@@ -16,29 +16,31 @@ __all__ = [
 
 # These are the defaults as per man dyld(1)
 #
-DEFAULT_FRAMEWORK_FALLBACK = [
+_DEFAULT_FRAMEWORK_FALLBACK = [
     os.path.expanduser("~/Library/Frameworks"),
     "/Library/Frameworks",
     "/Network/Library/Frameworks",
     "/System/Library/Frameworks",
 ]
 
-DEFAULT_LIBRARY_FALLBACK = [
+_DEFAULT_LIBRARY_FALLBACK = [
     os.path.expanduser("~/lib"),
     "/usr/local/lib",
     "/lib",
     "/usr/lib",
 ]
 
+# XXX: Is this function still needed?
 if sys.version_info[0] == 2:
-    def ensure_utf8(s):
+    def _ensure_utf8(s):
         """Not all of PyObjC and Python understand unicode paths very well yet"""
         if isinstance(s, unicode):
             return s.encode('utf8')
         return s
 else:
-    def ensure_utf8(s):
-        assert s is None or isinstance(s, unicode), repr(s)
+    def _ensure_utf8(s):
+        if s is not None and not isinstance(s, unicode):
+            raise ValueError(s)
         return s
 
 
@@ -120,19 +122,19 @@ def dyld_default_search(name, env=None):
         yield os.path.join(path, os.path.basename(name))
 
     if framework is not None and not fallback_framework_path:
-        for path in DEFAULT_FRAMEWORK_FALLBACK:
+        for path in _DEFAULT_FRAMEWORK_FALLBACK:
             yield os.path.join(path, framework['name'])
 
     if not fallback_library_path:
-        for path in DEFAULT_LIBRARY_FALLBACK:
+        for path in _DEFAULT_LIBRARY_FALLBACK:
             yield os.path.join(path, os.path.basename(name))
 
 def dyld_find(name, executable_path=None, env=None):
     """
     Find a library or framework using dyld semantics
     """
-    name = ensure_utf8(name)
-    executable_path = ensure_utf8(executable_path)
+    name = _ensure_utf8(name)
+    executable_path = _ensure_utf8(executable_path)
     for path in dyld_image_suffix_search(chain(
                 dyld_override_search(name, env),
                 dyld_executable_path_search(name, executable_path),
@@ -164,11 +166,3 @@ def framework_find(fn, executable_path=None, env=None):
         return dyld_find(fn, executable_path=executable_path, env=env)
     except ValueError:
         raise e
-
-def test_dyld_find():
-    env = {}
-    assert dyld_find('libSystem.dylib') == '/usr/lib/libSystem.dylib'
-    assert dyld_find('System.framework/System') == '/System/Library/Frameworks/System.framework/System'
-
-if __name__ == '__main__':
-    test_dyld_find()

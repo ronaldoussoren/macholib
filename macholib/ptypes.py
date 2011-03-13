@@ -1,14 +1,16 @@
-# Ideally we'd probably be using something like the PyObjC runtime
-# rather than the struct module to get by here.  However, this is
-# good enough for now.
-
+"""
+This module defines packable types, that is types than can be easily converted to a binary format
+as used in MachO headers.
+"""
 import struct
 import sys
 from itertools import izip, imap, chain, starmap
 from macholib._compat import B, bytes
+import warnings
 
 __all__ = """
 sizeof
+BasePackable
 Structure
 pypackable
 p_char
@@ -20,11 +22,18 @@ p_int
 p_uint
 p_long
 p_ulong
-p_float
-p_double
-p_ptr
 p_longlong
 p_ulonglong
+p_int8
+p_uint8
+p_int16
+p_uint16
+p_int32
+p_uint32
+p_int64
+p_uint64
+p_float
+p_double
 """.split()
 
 def sizeof(s):
@@ -33,7 +42,11 @@ def sizeof(s):
     """
     if hasattr(s, '_size_'):
         return s._size_
-    return len(s)
+
+    elif isinstance(s, bytes):
+        return len(s)
+
+    raise ValueError(s)
 
 class MetaPackable(type):
     """
@@ -53,10 +66,9 @@ class MetaPackable(type):
         return cls(tpl[0], **kw)
 
 class BasePackable(object):
-    # XXX - use big endian everywhere, because we're only parsing Mach-O
     _endian_ = '>'
 
-    def to_str(self, s):
+    def to_str(self):
         raise NotImplementedError
 
     def to_fileobj(self, f):
@@ -81,14 +93,14 @@ def pypackable(name, pytype, format):
     Create a "mix-in" class with a python type and a
     Packable with the given struct format
     """
-    size, items = formatinfo(format)
+    size, items = _formatinfo(format)
     return type(Packable)(name, (pytype, Packable), {
         '_format_': format,
         '_size_': size,
         '_items_': items,
     })
 
-def formatinfo(format):
+def _formatinfo(format):
     """
     Calculate the size and number of items in a struct format.
     """
@@ -181,7 +193,7 @@ class Structure(BasePackable):
 
     def __cmp__(self, other):
         if type(other) is not type(self):
-            raise TypeError, 'Cannot compare objects of type %r to objects of type %r' % (type(other), type(self))
+            raise TypeError('Cannot compare objects of type %r to objects of type %r' % (type(other), type(self)))
         if sys.version_info[0] == 2:
             _cmp = cmp
         else:
@@ -225,19 +237,25 @@ class Structure(BasePackable):
         return r >= 0
 
 
-
 # export common packables with predictable names
 p_char = pypackable('p_char', bytes, 'c')
-p_byte = pypackable('p_byte', int, 'b')
-p_ubyte = pypackable('p_ubyte', int, 'B')
-p_short = pypackable('p_short', int, 'h')
-p_ushort = pypackable('p_ushort', int, 'H')
-p_int = pypackable('p_int', int, 'i')
-p_uint = pypackable('p_uint', long, 'I')
-p_long = pypackable('p_long', int, 'l')
-p_ulong = pypackable('p_ulong', long, 'L')
+p_int8 = pypackable('p_int8', int, 'b')
+p_uint8 = pypackable('p_uint8', int, 'B')
+p_int16 = pypackable('p_int16', int, 'h')
+p_uint16 = pypackable('p_uint16', int, 'H')
+p_int32 = pypackable('p_int32', int, 'i')
+p_uint32 = pypackable('p_uint32', long, 'I')
+p_int64 = pypackable('p_int64', long, 'q')
+p_uint64 = pypackable('p_uint64', long, 'Q')
 p_float = pypackable('p_float', float, 'f')
 p_double = pypackable('p_double', float, 'd')
-p_ptr = pypackable('p_ptr', long, 'P')
-p_longlong = pypackable('p_longlong', long, 'q')
-p_ulonglong = pypackable('p_ulonglong', long, 'Q')
+
+# Deprecated names, need trick to emit deprecation warning.
+p_byte = p_int8
+p_ubyte = p_uint8
+p_short = p_int16
+p_ushort = p_uint16
+p_int = p_long = p_int32
+p_uint = p_ulong = p_uint32
+p_longlong = p_int64
+p_ulonglong = p_uint64

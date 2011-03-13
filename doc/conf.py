@@ -53,7 +53,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'macholib'
-copyright = u'2010, Ronald Oussoren'
+copyright = u'2010-2011, Ronald Oussoren'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

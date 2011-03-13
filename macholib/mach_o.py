@@ -57,7 +57,7 @@ MH_CIGAM = 0xcefaedfeL
 MH_MAGIC_64 = 0xfeedfacfL
 MH_CIGAM_64 = 0xcffaedfeL
 
-integer_t = p_int
+integer_t = p_int32
 cpu_type_t = integer_t
 cpu_subtype_t = integer_t
 
@@ -104,13 +104,13 @@ MH_FLAGS_NAMES = {
 class mach_version_helper(Structure):
     _fields_ = (
         ('major', p_ushort),
-        ('minor', p_ubyte),
-        ('rev', p_ubyte),
+        ('minor', p_uint8),
+        ('rev', p_uint8),
     )
     def __str__(self):
         return '%s.%s.%s' % (self.major, self.minor, self.rev)
 
-class mach_timestamp_helper(p_uint):
+class mach_timestamp_helper(p_uint32):
     def __str__(self):
         return time.ctime(self)
 
@@ -119,13 +119,13 @@ def read_struct(f, s, **kw):
 
 class mach_header(Structure):
     _fields_ = (
-        ('magic', p_uint),
+        ('magic', p_uint32),
         ('cputype', cpu_type_t),
         ('cpusubtype', cpu_subtype_t),
-        ('filetype', p_uint),
-        ('ncmds', p_uint),
-        ('sizeofcmds', p_uint),
-        ('flags', p_uint),
+        ('filetype', p_uint32),
+        ('ncmds', p_uint32),
+        ('sizeofcmds', p_uint32),
+        ('flags', p_uint32),
     )
     def _describe(self):
         bit = 1L
@@ -147,12 +147,12 @@ class mach_header(Structure):
         )
 
 class mach_header_64(mach_header):
-    _fields_ = mach_header._fields_ + (('reserved', p_uint),)
+    _fields_ = mach_header._fields_ + (('reserved', p_uint32),)
 
 class load_command(Structure):
     _fields_ = (
-        ('cmd', p_uint),
-        ('cmdsize', p_uint),
+        ('cmd', p_uint32),
+        ('cmdsize', p_uint32),
     )
 
 LC_REQ_DYLD = 0x80000000L
@@ -180,36 +180,36 @@ LC_DYLD_INFO = 0x22
 LC_DYLD_INFO_ONLY = 0x22 | LC_REQ_DYLD
 
 # this is really a union.. but whatever
-class lc_str(p_uint):
+class lc_str(p_uint32):
     pass
 
 p_str16 = pypackable('p_str16', bytes, '16s')
 
-vm_prot_t = p_int
+vm_prot_t = p_int32
 class segment_command(Structure):
     _fields_ = (
         ('segname', p_str16),
-        ('vmaddr', p_uint),
-        ('vmsize', p_uint),
-        ('fileoff', p_uint),
-        ('filesize', p_uint),
+        ('vmaddr', p_uint32),
+        ('vmsize', p_uint32),
+        ('fileoff', p_uint32),
+        ('filesize', p_uint32),
         ('maxprot', vm_prot_t),
         ('initprot', vm_prot_t),
-        ('nsects', p_uint), # read the section structures ?
-        ('flags', p_uint),
+        ('nsects', p_uint32), # read the section structures ?
+        ('flags', p_uint32),
     )
 
 class segment_command_64(Structure):
     _fields_ = (
         ('segname', p_str16),
-        ('vmaddr', p_ulonglong),
-        ('vmsize', p_ulonglong),
-        ('fileoff', p_ulonglong),
-        ('filesize', p_ulonglong),
+        ('vmaddr', p_uint64),
+        ('vmsize', p_uint64),
+        ('fileoff', p_uint64),
+        ('filesize', p_uint64),
         ('maxprot', vm_prot_t),
         ('initprot', vm_prot_t),
-        ('nsects', p_uint), # read the section structures ?
-        ('flags', p_uint),
+        ('nsects', p_uint32), # read the section structures ?
+        ('flags', p_uint32),
     )
 
 SG_HIGHVM = 0x1
@@ -220,31 +220,31 @@ class section(Structure):
     _fields_ = (
         ('sectname', p_str16),
         ('segname', p_str16),
-        ('addr', p_uint),
-        ('size', p_uint),
-        ('offset', p_uint),
-        ('align', p_uint),
-        ('reloff', p_uint),
-        ('nreloc', p_uint),
-        ('flags', p_uint),
-        ('reserved1', p_uint),
-        ('reserved2', p_uint),
+        ('addr', p_uint32),
+        ('size', p_uint32),
+        ('offset', p_uint32),
+        ('align', p_uint32),
+        ('reloff', p_uint32),
+        ('nreloc', p_uint32),
+        ('flags', p_uint32),
+        ('reserved1', p_uint32),
+        ('reserved2', p_uint32),
     )
 
 class section_64(Structure):
     _fields_ = (
         ('sectname', p_str16),
         ('segname', p_str16),
-        ('addr', p_ulonglong),
-        ('size', p_ulonglong),
-        ('offset', p_uint),
-        ('align', p_uint),
-        ('reloff', p_uint),
-        ('nreloc', p_uint),
-        ('flags', p_uint),
-        ('reserved1', p_uint),
-        ('reserved2', p_uint),
-        ('reserved3', p_uint),
+        ('addr', p_uint64),
+        ('size', p_uint64),
+        ('offset', p_uint32),
+        ('align', p_uint32),
+        ('reloff', p_uint32),
+        ('nreloc', p_uint32),
+        ('flags', p_uint32),
+        ('reserved1', p_uint32),
+        ('reserved2', p_uint32),
+        ('reserved3', p_uint32),
     )
 
 SECTION_TYPE = 0xffL
@@ -302,7 +302,7 @@ class fvmlib(Structure):
     _fields_ = (
         ('name', lc_str),
         ('minor_version', mach_version_helper),
-        ('header_addr', p_uint),
+        ('header_addr', p_uint32),
     )
 
 class fvmlib_command(Structure):
@@ -343,7 +343,7 @@ class sub_library_command(Structure):
 class prebound_dylib_command(Structure):
     _fields_ = (
         ('name', lc_str),
-        ('nmodules', p_uint),
+        ('nmodules', p_uint32),
         ('linked_modules', lc_str),
     )
 
@@ -358,56 +358,56 @@ class thread_command(Structure):
 
 class routines_command(Structure):
     _fields_ = (
-        ('init_address', p_uint),
-        ('init_module', p_uint),
-        ('reserved1', p_uint),
-        ('reserved2', p_uint),
-        ('reserved3', p_uint),
-        ('reserved4', p_uint),
-        ('reserved5', p_uint),
-        ('reserved6', p_uint),
+        ('init_address', p_uint32),
+        ('init_module', p_uint32),
+        ('reserved1', p_uint32),
+        ('reserved2', p_uint32),
+        ('reserved3', p_uint32),
+        ('reserved4', p_uint32),
+        ('reserved5', p_uint32),
+        ('reserved6', p_uint32),
     )
 
 class routines_command_64(Structure):
     _fields_ = (
-        ('init_address', p_ulonglong),
-        ('init_module', p_ulonglong),
-        ('reserved1', p_ulonglong),
-        ('reserved2', p_ulonglong),
-        ('reserved3', p_ulonglong),
-        ('reserved4', p_ulonglong),
-        ('reserved5', p_ulonglong),
-        ('reserved6', p_ulonglong),
+        ('init_address', p_uint64),
+        ('init_module', p_uint64),
+        ('reserved1', p_uint64),
+        ('reserved2', p_uint64),
+        ('reserved3', p_uint64),
+        ('reserved4', p_uint64),
+        ('reserved5', p_uint64),
+        ('reserved6', p_uint64),
     )
 
 class symtab_command(Structure):
     _fields_ = (
-        ('symoff', p_uint),
-        ('nsyms', p_uint),
-        ('stroff', p_uint),
-        ('strsize', p_uint),
+        ('symoff', p_uint32),
+        ('nsyms', p_uint32),
+        ('stroff', p_uint32),
+        ('strsize', p_uint32),
     )
 
 class dysymtab_command(Structure):
     _fields_ = (
-        ('ilocalsym', p_uint),
-        ('nlocalsym', p_uint),
-        ('iextdefsym', p_uint),
-        ('nextdefsym', p_uint),
-        ('iundefsym', p_uint),
-        ('nundefsym', p_uint),
-        ('tocoff', p_uint),
-        ('ntoc', p_uint),
-        ('modtaboff', p_uint),
-        ('nmodtab', p_uint),
-        ('extrefsymoff', p_uint),
-        ('nextrefsyms', p_uint),
-        ('indirectsymoff', p_uint),
-        ('nindirectsyms', p_uint),
-        ('extreloff', p_uint),
-        ('nextrel', p_uint),
-        ('locreloff', p_uint),
-        ('nlocrel', p_uint),
+        ('ilocalsym', p_uint32),
+        ('nlocalsym', p_uint32),
+        ('iextdefsym', p_uint32),
+        ('nextdefsym', p_uint32),
+        ('iundefsym', p_uint32),
+        ('nundefsym', p_uint32),
+        ('tocoff', p_uint32),
+        ('ntoc', p_uint32),
+        ('modtaboff', p_uint32),
+        ('nmodtab', p_uint32),
+        ('extrefsymoff', p_uint32),
+        ('nextrefsyms', p_uint32),
+        ('indirectsymoff', p_uint32),
+        ('nindirectsyms', p_uint32),
+        ('extreloff', p_uint32),
+        ('nextrel', p_uint32),
+        ('locreloff', p_uint32),
+        ('nlocrel', p_uint32),
     )
 
 INDIRECT_SYMBOL_LOCAL = 0x80000000L
@@ -415,75 +415,75 @@ INDIRECT_SYMBOL_ABS = 0x40000000L
 
 class dylib_table_of_contents(Structure):
     _fields_ = (
-        ('symbol_index', p_uint),
-        ('module_index', p_uint),
+        ('symbol_index', p_uint32),
+        ('module_index', p_uint32),
     )
 
 class dylib_module(Structure):
     _fields_ = (
-        ('module_name', p_uint),
-        ('iextdefsym', p_uint),
-        ('nextdefsym', p_uint),
-        ('irefsym', p_uint),
-        ('nrefsym', p_uint),
-        ('ilocalsym', p_uint),
-        ('nlocalsym', p_uint),
-        ('iextrel', p_uint),
-        ('nextrel', p_uint),
-        ('iinit_iterm', p_uint),
-        ('ninit_nterm', p_uint),
-        ('objc_module_info_addr', p_uint),
-        ('objc_module_info_size', p_uint),
+        ('module_name', p_uint32),
+        ('iextdefsym', p_uint32),
+        ('nextdefsym', p_uint32),
+        ('irefsym', p_uint32),
+        ('nrefsym', p_uint32),
+        ('ilocalsym', p_uint32),
+        ('nlocalsym', p_uint32),
+        ('iextrel', p_uint32),
+        ('nextrel', p_uint32),
+        ('iinit_iterm', p_uint32),
+        ('ninit_nterm', p_uint32),
+        ('objc_module_info_addr', p_uint32),
+        ('objc_module_info_size', p_uint32),
     )
 
 class dylib_module_64(Structure):
     _fields_ = (
-        ('module_name', p_uint),
-        ('iextdefsym', p_uint),
-        ('nextdefsym', p_uint),
-        ('irefsym', p_uint),
-        ('nrefsym', p_uint),
-        ('ilocalsym', p_uint),
-        ('nlocalsym', p_uint),
-        ('iextrel', p_uint),
-        ('nextrel', p_uint),
-        ('iinit_iterm', p_uint),
-        ('ninit_nterm', p_uint),
-        ('objc_module_info_size', p_uint),
-        ('objc_module_info_addr', p_ulonglong),
+        ('module_name', p_uint32),
+        ('iextdefsym', p_uint32),
+        ('nextdefsym', p_uint32),
+        ('irefsym', p_uint32),
+        ('nrefsym', p_uint32),
+        ('ilocalsym', p_uint32),
+        ('nlocalsym', p_uint32),
+        ('iextrel', p_uint32),
+        ('nextrel', p_uint32),
+        ('iinit_iterm', p_uint32),
+        ('ninit_nterm', p_uint32),
+        ('objc_module_info_size', p_uint32),
+        ('objc_module_info_addr', p_uint64),
     )
 
 class dylib_reference(Structure):
     _fields_ = (
         # XXX - ick, fix
-        ('isym_flags', p_uint),
-        #('isym', p_ubyte * 3),
-        #('flags', p_ubyte),
+        ('isym_flags', p_uint32),
+        #('isym', p_uint8 * 3),
+        #('flags', p_uint8),
     )
 
 class twolevel_hints_command(Structure):
     _fields_ = (
-        ('offset', p_uint),
-        ('nhints', p_uint),
+        ('offset', p_uint32),
+        ('nhints', p_uint32),
     )
 
 class twolevel_hint(Structure):
     _fields_ = (
       # XXX - ick, fix
-      ('isub_image_itoc', p_uint),
-      #('isub_image', p_ubyte),
-      #('itoc', p_ubyte * 3),
+      ('isub_image_itoc', p_uint32),
+      #('isub_image', p_uint8),
+      #('itoc', p_uint8 * 3),
   )
 
 class prebind_cksum_command(Structure):
     _fields_ = (
-        ('cksum', p_uint),
+        ('cksum', p_uint32),
     )
 
 class symseg_command(Structure):
     _fields_ = (
-        ('offset', p_uint),
-        ('size', p_uint),
+        ('offset', p_uint32),
+        ('size', p_uint32),
     )
 
 class ident_command(Structure):
@@ -493,7 +493,7 @@ class ident_command(Structure):
 class fvmfile_command(Structure):
     _fields_ = (
         ('name', lc_str),
-        ('header_addr', p_uint),
+        ('header_addr', p_uint32),
     )
 
 class uuid_command (Structure):
@@ -508,8 +508,8 @@ class rpath_command (Structure):
 
 class linkedit_data_command (Structure):
     _fields_ = (
-        ('dataoff',   p_uint),
-        ('datassize', p_uint),
+        ('dataoff',   p_uint32),
+        ('datassize', p_uint32),
     )
 
 
@@ -551,17 +551,26 @@ LC_REGISTRY = {
 }
 
 #this is another union.
-class n_un(p_int):
+class n_un(p_int32):
     pass
 
 class nlist(Structure):
     _fields_ = (
         ('n_un', n_un),
-        ('n_type', p_ubyte),
-        ('n_sect', p_ubyte),
+        ('n_type', p_uint8),
+        ('n_sect', p_uint8),
         ('n_desc', p_short),
-        ('n_value', p_uint),
+        ('n_value', p_uint32),
     )
+
+class nlist_64(Structure):
+    _fields_ = [
+        ('n_un',    n_un),
+        ('n_type', p_uint8),
+        ('n_sect', p_uint8),
+        ('n_desc', p_short),
+        ('n_value', p_int64),
+    ]
 
 N_STAB = 0xe0
 N_PEXT = 0x10
@@ -606,15 +615,15 @@ N_WEAK_DEF = 0x0080
 FAT_MAGIC = 0xcafebabeL
 class fat_header(Structure):
     _fields_ = (
-        ('magic', p_uint),
-        ('nfat_arch', p_uint),
+        ('magic', p_uint32),
+        ('nfat_arch', p_uint32),
     )
 
 class fat_arch(Structure):
     _fields_ = (
         ('cputype', cpu_type_t),
         ('cpusubtype', cpu_subtype_t),
-        ('offset', p_uint),
-        ('size', p_uint),
-        ('align', p_uint),
+        ('offset', p_uint32),
+        ('size', p_uint32),
+        ('align', p_uint32),
     )

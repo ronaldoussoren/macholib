@@ -1,8 +1,3 @@
-.. macholib documentation master file, created by
-   sphinx-quickstart on Tue Sep 28 22:23:35 2010.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Documentation for macholib
 ==========================
 
@@ -10,13 +5,13 @@ macholib can be used to analyze and edit Mach-O headers, the executable
 format used by Mac OS X.
 
 It's typically used as a dependency analysis tool, and also to rewrite dylib
-references in Mach-O headers to be @executable_path relative.
+references in Mach-O headers to be ``@executable_path`` relative.
 
 Though this tool targets a platform specific file format, it is pure python
 code that is platform and endian independent.
 
-
-Contents:
+General documentation
+---------------------
 
 .. toctree::
    :maxdepth: 1
@@ -25,6 +20,22 @@ Contents:
    license
    scripts
 
+Reference Guide
+---------------
+
+.. toctree::
+   :maxdepth: 1
+
+   MachO
+   MachoOGraph
+   MachoOStandalone
+   SymbolTable
+   dyld
+   dylib
+   framework
+   macho_o
+   ptypes
+
 Online Resources
 ================
 
@@ -32,7 +43,12 @@ Online Resources
 
 * `The issue tracker <http://bitbucket.org/ronaldoussoren/macholib/issues>`_
 
+* `Mac OS X ABI Mach-O File Format Reference at Apple <http://developer.apple.com/library/mac/#documentation/DeveloperTools/Conceptual/MachORuntime/Reference/reference.html>`_
 
+Contributors
+============
+
+Macholib was written by Bob Ippolito and is currently maintained by Ronald Oussoren <ronaldoussoren@mac.com>.
 
 Indices and tables
 ==================

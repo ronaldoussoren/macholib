@@ -6,7 +6,7 @@ import re
 
 __all__ = ['framework_info']
 
-STRICT_FRAMEWORK_RE = re.compile(r"""(?x)
+_STRICT_FRAMEWORK_RE = re.compile(r"""(?x)
 (?P<location>^.*)(?:^|/)
 (?P<name>
     (?P<shortname>[-_A-Za-z0-9]+).framework/
@@ -36,7 +36,7 @@ def framework_info(filename):
     Note that SomeVersion and Suffix are optional and may be None
     if not present
     """
-    is_framework = STRICT_FRAMEWORK_RE.match(filename)
+    is_framework = _STRICT_FRAMEWORK_RE.match(filename)
     if not is_framework:
         return None
     return is_framework.groupdict()
