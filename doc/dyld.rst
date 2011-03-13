@@ -104,6 +104,13 @@ w.r.t. looking for library files and framworks.
    library or framework using the default locations
    used by the system dynamic linker.
 
+   This function will look in ``~/Library/Frameworks`` 
+   for frameworks, even though the system dynamic linker
+   doesn't.
+
+   The *env* argument is a dictionary, which defaults
+   to :data:`os.environ`.
+
 .. function:: dyld_find(name[, executable_path[, env]])
 
    Returns the path of the requested dynamic library, 

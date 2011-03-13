@@ -44,11 +44,11 @@ else:
         return s
 
 
-def dyld_env(env, var):
+def _dyld_env(env, var):
     if env is None:
         env = os.environ
     rval = env.get(var)
-    if rval is None:
+    if rval is None or rval == '':
         return []
     return rval.split(':')
 
@@ -58,16 +58,16 @@ def dyld_image_suffix(env=None):
     return env.get('DYLD_IMAGE_SUFFIX')
 
 def dyld_framework_path(env=None):
-    return dyld_env(env, 'DYLD_FRAMEWORK_PATH')
+    return _dyld_env(env, 'DYLD_FRAMEWORK_PATH')
 
 def dyld_library_path(env=None):
-    return dyld_env(env, 'DYLD_LIBRARY_PATH')
+    return _dyld_env(env, 'DYLD_LIBRARY_PATH')
 
 def dyld_fallback_framework_path(env=None):
-    return dyld_env(env, 'DYLD_FALLBACK_FRAMEWORK_PATH')
+    return _dyld_env(env, 'DYLD_FALLBACK_FRAMEWORK_PATH')
 
 def dyld_fallback_library_path(env=None):
-    return dyld_env(env, 'DYLD_FALLBACK_LIBRARY_PATH')
+    return _dyld_env(env, 'DYLD_FALLBACK_LIBRARY_PATH')
 
 def dyld_image_suffix_search(iterator, env=None):
     """For a potential path iterator, add DYLD_IMAGE_SUFFIX semantics"""
@@ -114,18 +114,21 @@ def dyld_default_search(name, env=None):
 
     if framework is not None:
         fallback_framework_path = dyld_fallback_framework_path(env)
-        for path in fallback_framework_path:
-            yield os.path.join(path, framework['name'])
+
+        if fallback_framework_path:
+            for path in fallback_framework_path:
+                yield os.path.join(path, framework['name'])
+
+        else:
+            for path in _DEFAULT_FRAMEWORK_FALLBACK:
+                yield os.path.join(path, framework['name'])
 
     fallback_library_path = dyld_fallback_library_path(env)
-    for path in fallback_library_path:
-        yield os.path.join(path, os.path.basename(name))
+    if fallback_library_path:
+        for path in fallback_library_path:
+            yield os.path.join(path, os.path.basename(name))
 
-    if framework is not None and not fallback_framework_path:
-        for path in _DEFAULT_FRAMEWORK_FALLBACK:
-            yield os.path.join(path, framework['name'])
-
-    if not fallback_library_path:
+    else:
         for path in _DEFAULT_LIBRARY_FALLBACK:
             yield os.path.join(path, os.path.basename(name))
 
@@ -155,14 +158,11 @@ def framework_find(fn, executable_path=None, env=None):
     """
     try:
         return dyld_find(fn, executable_path=executable_path, env=env)
-    except ValueError, e:
+    except ValueError:
         pass
     fmwk_index = fn.rfind('.framework')
     if fmwk_index == -1:
         fmwk_index = len(fn)
         fn += '.framework'
     fn = os.path.join(fn, os.path.basename(fn[:fmwk_index]))
-    try:
-        return dyld_find(fn, executable_path=executable_path, env=env)
-    except ValueError:
-        raise e
+    return dyld_find(fn, executable_path=executable_path, env=env)

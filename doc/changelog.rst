@@ -56,6 +56,15 @@ Features:
 
 Bug fixes:
 
+- The semantics of ``dyld.dyld_default_search`` were changed a bit,
+  it now first searches the framework path (if appropriate) and then
+  the linker path, irrespective of the value of the ``DYLD_FALLBACK*``
+  environment variables.
+  
+  Previous versions would change the search order when those variables
+  was set, which is odd and doesn't correspond with the documented
+  behaviour of the system dyld.
+
 - It is once again possible to install using python2.5
 
 - The source distribution includes all files, this was broken
