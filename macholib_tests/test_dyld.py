@@ -27,21 +27,21 @@ class TestDyld (unittest.TestCase):
             self.assertEqual(dyld._ensure_utf8(None), None)
             self.assertRaises(ValueError, dyld._ensure_utf8, B("hello"))
 
-    def test_dyld_env(self):
+    def test__dyld_env(self):
         _env = os.environ
         new = os.environ = dict([(k, _env[k]) for k in _env if 'DYLD' not in k])
 
         try:
-            self.assertEqual(dyld.dyld_env(None, 'DYLD_FOO'), [])
-            self.assertEqual(dyld.dyld_env({'DYLD_FOO':'bar'}, 'DYLD_FOO'), ['bar'])
-            self.assertEqual(dyld.dyld_env({'DYLD_FOO':'bar:baz'}, 'DYLD_FOO'), ['bar', 'baz'])
-            self.assertEqual(dyld.dyld_env({}, 'DYLD_FOO'), [])
+            self.assertEqual(dyld._dyld_env(None, 'DYLD_FOO'), [])
+            self.assertEqual(dyld._dyld_env({'DYLD_FOO':'bar'}, 'DYLD_FOO'), ['bar'])
+            self.assertEqual(dyld._dyld_env({'DYLD_FOO':'bar:baz'}, 'DYLD_FOO'), ['bar', 'baz'])
+            self.assertEqual(dyld._dyld_env({}, 'DYLD_FOO'), [])
             os.environ['DYLD_FOO'] = 'foobar'
-            self.assertEqual(dyld.dyld_env(None, 'DYLD_FOO'), ['foobar'])
+            self.assertEqual(dyld._dyld_env(None, 'DYLD_FOO'), ['foobar'])
             os.environ['DYLD_FOO'] = 'foobar:nowhere'
-            self.assertEqual(dyld.dyld_env(None, 'DYLD_FOO'), ['foobar', 'nowhere'])
-            self.assertEqual(dyld.dyld_env({'DYLD_FOO':'bar'}, 'DYLD_FOO'), ['bar'])
-            self.assertEqual(dyld.dyld_env({}, 'DYLD_FOO'), [])
+            self.assertEqual(dyld._dyld_env(None, 'DYLD_FOO'), ['foobar', 'nowhere'])
+            self.assertEqual(dyld._dyld_env({'DYLD_FOO':'bar'}, 'DYLD_FOO'), ['bar'])
+            self.assertEqual(dyld._dyld_env({}, 'DYLD_FOO'), [])
 
 
             self.assertEqual(dyld.dyld_image_suffix(), None)
@@ -56,12 +56,12 @@ class TestDyld (unittest.TestCase):
 
     def test_dyld_helpers(self):
         record = []
-        def fake_dyld_env(env, key):
+        def fake__dyld_env(env, key):
             record.append((env, key))
             return ['hello']
 
-        orig_env = dyld.dyld_env
-        dyld.dyld_env = fake_dyld_env
+        orig_env = dyld._dyld_env
+        dyld._dyld_env = fake__dyld_env
         try:
             self.assertEqual(dyld.dyld_framework_path(), ['hello'])
             self.assertEqual(dyld.dyld_framework_path({}), ['hello'])
@@ -76,7 +76,7 @@ class TestDyld (unittest.TestCase):
             self.assertEqual(dyld.dyld_fallback_library_path({}), ['hello'])
 
         finally:
-            dyld.dyld_env = orig_env
+            dyld._dyld_env = orig_env
 
         self.assertEqual(record, [
             (None, 'DYLD_FRAMEWORK_PATH'),
