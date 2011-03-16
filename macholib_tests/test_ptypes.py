@@ -78,7 +78,7 @@ class TestPTypes (unittest.TestCase):
             self.assertEqual(ptype.from_tuple((v,)), pv)
 
     def test_basic_types(self):
-        self.verifyType(ptypes.p_char, 1, bytes, ['a', 'b'])
+        self.verifyType(ptypes.p_char, 1, bytes, [B('a'), B('b')])
         self.verifyType(ptypes.p_int8, 1, int, [1, 42, -4])
         self.verifyType(ptypes.p_uint8, 1, int, [1, 42, 253])
 
@@ -115,9 +115,12 @@ class TestPTypesPrivate (unittest.TestCase):
     # API.
 
     def test_formatinfo(self):
-        self.assertEqual(ptypes._formatinfo("b"), (1, 1))
-        self.assertEqual(ptypes._formatinfo("h"), (2, 1))
-        self.assertEqual(ptypes._formatinfo("HhL"), (8, 3))
+        self.assertEqual(ptypes._formatinfo(">b"), (1, 1))
+        self.assertEqual(ptypes._formatinfo(">h"), (2, 1))
+        self.assertEqual(ptypes._formatinfo(">HhL"), (8, 3))
+        self.assertEqual(ptypes._formatinfo("<b"), (1, 1))
+        self.assertEqual(ptypes._formatinfo("<h"), (2, 1))
+        self.assertEqual(ptypes._formatinfo("<HhL"), (8, 3))
 
 
 class MyStructure (ptypes.Structure):
