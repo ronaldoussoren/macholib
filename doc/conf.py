@@ -16,9 +16,9 @@ import sys, os
 def get_version():
     fn = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            'setup.py')
+            'setup.cfg')
     for ln in open(fn):
-        if ln.startswith('VERSION'):
+        if ln.startswith('version'):
             version = ln.split('=')[-1].strip()[1:-1]
             return version
 

@@ -66,7 +66,7 @@ def parse_setup_cfg():
     _opt_value(cfg, metadata, 'metadata', 'author_email')
     _opt_value(cfg, metadata, 'metadata', 'url')
     _opt_value(cfg, metadata, 'metadata', 'download_url')
-    _opt_value(cfg, metadata, 'metadata', 'classifiers', _as_list)
+    _opt_value(cfg, metadata, 'metadata', 'classifiers', _as_lines)
     _opt_value(cfg, metadata, 'metadata', 'platforms', _as_list)
     _opt_value(cfg, metadata, 'metadata', 'packages', _as_list)
     _opt_value(cfg, metadata, 'metadata', 'install_requires', _as_lines)
