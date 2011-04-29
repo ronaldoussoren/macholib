@@ -1,6 +1,18 @@
 Release history
 ===============
 
+macholib 1.4.1
+------------
+
+macholib 1.4.1 is a minor feature release
+
+Features:
+
+- Add support for a number of new MachO load commands that were added
+  during the lifetime of OSX 10.6: ``LC_LOAD_UPWARD_DYLIB``,
+  ``LC_VERSION_MIN_MACOSX``, ``LC_VERSION_MIN_IPHONEOS`` and
+  ``LC_FUNCTION_STARTS``.
+
 macholib 1.4
 -------------
 

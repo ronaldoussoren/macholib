@@ -178,6 +178,10 @@ LC_LAZY_LOAD_DYLIB = 0x20
 LC_ENCRYPTION_INFO = 0x21
 LC_DYLD_INFO = 0x22
 LC_DYLD_INFO_ONLY = 0x22 | LC_REQ_DYLD
+LC_LOAD_UPWARD_DYLIB = 0x23 | LC_REQ_DYLD
+LC_VERSION_MIN_MACOSX = 0x24
+LC_VERSION_MIN_IPHONEOS = 0x24
+LC_FUNCTION_STARTS = 0x25
 
 # this is really a union.. but whatever
 class lc_str(p_uint32):
@@ -512,6 +516,12 @@ class linkedit_data_command (Structure):
         ('datassize', p_uint32),
     )
 
+class version_min_command (Structure):
+    _fields_ = (
+        ('version', p_uint32), # X.Y.Z is encoded in nibbles xxxx.yy.zz
+        ('reserved', p_uint32),
+    )
+
 
 LC_REGISTRY = {
     LC_SEGMENT:         segment_command,
@@ -548,6 +558,10 @@ LC_REGISTRY = {
     LC_ENCRYPTION_INFO: dylib_command,
     LC_DYLD_INFO:       dylib_command,
     LC_DYLD_INFO_ONLY:  dylib_command,
+    LC_LOAD_UPWARD_DYLIB: dylib_command, 
+    LC_VERSION_MIN_MACOSX: version_min_command,
+    LC_VERSION_MIN_IPHONEOS: version_min_command,
+    LC_FUNCTION_STARTS:  linkedit_data_command,
 }
 
 #this is another union.
