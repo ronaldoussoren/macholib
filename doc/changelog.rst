@@ -1,8 +1,16 @@
 Release history
 ===============
 
+macholib 1.4.2
+--------------
+
+macholib 1.4.2 is a minor bugfix release
+
+* The support for new load commands that was added in 1.4.1 
+  contained a typo that caused problems on OSX 10.7 (Lion).
+
 macholib 1.4.1
-------------
+--------------
 
 macholib 1.4.1 is a minor feature release
 
