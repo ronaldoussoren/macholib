@@ -1,5 +1,5 @@
-Documentation for macholib
-==========================
+Macholib - Analyze and edit Mach-O headers
+==========================================
 
 macholib can be used to analyze and edit Mach-O headers, the executable
 format used by Mac OS X.
@@ -37,7 +37,7 @@ Reference Guide
    ptypes
 
 Online Resources
-================
+----------------
 
 * `Sourcecode repository on bitbucket <http://bitbucket.org/ronaldoussoren/macholib/>`_
 
@@ -46,12 +46,12 @@ Online Resources
 * `Mac OS X ABI Mach-O File Format Reference at Apple <http://developer.apple.com/library/mac/#documentation/DeveloperTools/Conceptual/MachORuntime/Reference/reference.html>`_
 
 Contributors
-============
+------------
 
 Macholib was written by Bob Ippolito and is currently maintained by Ronald Oussoren <ronaldoussoren@mac.com>.
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
