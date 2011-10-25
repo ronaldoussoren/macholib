@@ -16,11 +16,14 @@ from macholib.ptypes import *
 from macholib._compat import bytes
 
 
+_CPU_ARCH_ABI64  = 0x01000000
+
 CPU_TYPE_NAMES = {
     -1:     'ANY',
     1:      'VAX',
     6:      'MC680x0',
     7:      'i386',
+    _CPU_ARCH_ABI64  | 7:    'x86_64',
     8:      'MIPS',
     10:     'MC98000',
     11:     'HPPA',
@@ -30,6 +33,7 @@ CPU_TYPE_NAMES = {
     15:     'i860',
     16:     'Alpha',
     18:     'PowerPC',
+    _CPU_ARCH_ABI64  | 18:    'PowerPC64',
 }
 
 _MH_EXECUTE_SYM = "__mh_execute_header"

@@ -4,7 +4,11 @@ Release history
 macholib 1.4.3
 --------------
 
-?
+macholib 1.4.3 is a minor feature release
+
+* Added strings for 'x86_64' and 'ppc64' to
+  macholib.mach_o.CPU_TYPE_NAMES.
+
 
 macholib 1.4.2
 --------------
