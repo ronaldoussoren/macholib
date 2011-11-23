@@ -154,6 +154,8 @@ def sdk_normalize(filename):
         filename = '/'.join(pathcomp)
     return filename
 
+NOT_SYSTEM_FILES=[]
+
 def in_system_path(filename):
     """
     Return True if the file is in a system path
@@ -162,6 +164,8 @@ def in_system_path(filename):
     if fn.startswith('/usr/local/'):
         return False
     elif fn.startswith('/System/') or fn.startswith('/usr/'):
+        if fn in NOT_SYSTEM_FILES:
+            return False
         return True
     else:
         return False

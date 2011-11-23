@@ -9,6 +9,16 @@ macholib 1.4.3 is a minor feature release
 * Added strings for 'x86_64' and 'ppc64' to
   macholib.mach_o.CPU_TYPE_NAMES.
 
+* macho_find and macho_dump were broken in the 1.4.2 release
+
+* added 'macholib.util.NOT_SYSTEM_FILES', a list of
+  files that aren't system path's even though they are
+  located in system locations.
+
+  Needed to work around a bug in PySide (see issue #32 in the
+  py2app tracker)
+ 
+
 
 macholib 1.4.2
 --------------
