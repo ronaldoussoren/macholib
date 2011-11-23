@@ -3,7 +3,7 @@
 import os
 import sys
 
-from macholib._cmdline import main
+from macholib._cmdline import main as _main
 from macholib.MachO import MachO
 from mach_o import *
 
@@ -31,7 +31,8 @@ def print_file(fp, path):
                 seen.add(other)
                 print >>fp, '\t' + other
 
-
+def main():
+    _main(print_file)
 
 if __name__ == '__main__':
     try:
