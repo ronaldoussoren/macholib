@@ -1,6 +1,12 @@
 Release history
 ===============
 
+macholib 1.4.4
+--------------
+
+macholib 1.4.4 is a ?
+
+
 macholib 1.4.3
 --------------
 
