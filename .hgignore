@@ -7,5 +7,6 @@ dist
 
 syntax: glob
 *.pyc
+*.pyo
 *.dSYM
 *.swp
