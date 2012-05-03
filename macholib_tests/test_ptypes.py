@@ -1,5 +1,4 @@
 from macholib import ptypes
-from macholib._compat import B, bytes
 
 import unittest
 import sys
@@ -28,11 +27,11 @@ class TestPTypes (unittest.TestCase):
                     message or "%r is not an instance of %r"%(value, types))
 
     def test_sizeof(self):
-        self.assertEqual(ptypes.sizeof(B("foobar")), 6)
+        self.assertEqual(ptypes.sizeof(b"foobar"), 6)
 
         self.assertRaises(ValueError, ptypes.sizeof, [])
         self.assertRaises(ValueError, ptypes.sizeof, {})
-        self.assertRaises(ValueError, ptypes.sizeof, B("foo").decode('ascii'))
+        self.assertRaises(ValueError, ptypes.sizeof, b"foo".decode('ascii'))
 
         class M (object):
             pass
@@ -69,16 +68,16 @@ class TestPTypes (unittest.TestCase):
             self.assertEqual(data, packed)
 
             mm = mmap.mmap(-1, size+20)
-            mm[:] = B('\x00') * (size+20)
+            mm[:] = b'\x00' * (size+20)
             pv.to_mmap(mm, 10)
 
             self.assertEqual(ptype.from_mmap(mm, 10), pv)
-            self.assertEqual(mm[:], (B('\x00')*10) + packed + (B('\x00')*10))
+            self.assertEqual(mm[:], (b'\x00'*10) + packed + (b'\x00'*10))
 
             self.assertEqual(ptype.from_tuple((v,)), pv)
 
     def test_basic_types(self):
-        self.verifyType(ptypes.p_char, 1, bytes, [B('a'), B('b')])
+        self.verifyType(ptypes.p_char, 1, bytes, [b'a', b'b'])
         self.verifyType(ptypes.p_int8, 1, int, [1, 42, -4])
         self.verifyType(ptypes.p_uint8, 1, int, [1, 42, 253])
 
@@ -145,7 +144,7 @@ class TestPTypesSimple (unittest.TestCase):
     def testBasic(self):
         for endian in '><':
             kw = dict(_endian_=endian)
-            MYSTRUCTURE = B('\x00\x11\x22\x33\xFF')
+            MYSTRUCTURE = b'\x00\x11\x22\x33\xFF'
             for fn, args in [
                         ('from_str', (MYSTRUCTURE,)),
                         ('from_mmap', (MYSTRUCTURE, 0)),
@@ -159,7 +158,7 @@ class TestPTypesSimple (unittest.TestCase):
                 self.assertEqual(myStructure.bar, 0xFF)
                 self.assertEqual(myStructure.to_str(), MYSTRUCTURE)
 
-            MYFUNSTRUCTURE = B('!') + MYSTRUCTURE
+            MYFUNSTRUCTURE = b'!' + MYSTRUCTURE
             for fn, args in [
                         ('from_str', (MYFUNSTRUCTURE,)),
                         ('from_mmap', (MYFUNSTRUCTURE, 0)),
@@ -167,7 +166,7 @@ class TestPTypesSimple (unittest.TestCase):
                     ]:
                 myFunStructure = getattr(MyFunStructure, fn)(*args, **kw)
                 self.assertEqual(myFunStructure.mystruct, myStructure)
-                self.assertEqual(myFunStructure.fun, B('!'), (myFunStructure.fun, B('!')))
+                self.assertEqual(myFunStructure.fun, b'!', (myFunStructure.fun, b'!'))
                 self.assertEqual(myFunStructure.to_str(), MYFUNSTRUCTURE)
 
             sio = BytesIO()
@@ -175,11 +174,11 @@ class TestPTypesSimple (unittest.TestCase):
             self.assertEqual(sio.getvalue(), MYFUNSTRUCTURE)
 
             mm = mmap.mmap(-1, ptypes.sizeof(MyFunStructure) * 2) 
-            mm[:] = B('\x00') * (ptypes.sizeof(MyFunStructure) * 2)
+            mm[:] = b'\x00' * (ptypes.sizeof(MyFunStructure) * 2)
             myFunStructure.to_mmap(mm, 0)
             self.assertEqual(MyFunStructure.from_mmap(mm, 0, **kw), myFunStructure)
             self.assertEqual(mm[:ptypes.sizeof(MyFunStructure)], MYFUNSTRUCTURE)
-            self.assertEqual(mm[ptypes.sizeof(MyFunStructure):], B('\x00') * ptypes.sizeof(MyFunStructure))
+            self.assertEqual(mm[ptypes.sizeof(MyFunStructure):], b'\x00' * ptypes.sizeof(MyFunStructure))
             myFunStructure.to_mmap(mm, ptypes.sizeof(MyFunStructure))
             self.assertEqual(mm[:], MYFUNSTRUCTURE + MYFUNSTRUCTURE)
             self.assertEqual(MyFunStructure.from_mmap(mm, ptypes.sizeof(MyFunStructure), **kw), myFunStructure)

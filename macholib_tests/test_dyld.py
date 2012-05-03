@@ -1,5 +1,4 @@
 from macholib import dyld
-from macholib._compat import B
 
 import unittest
 import sys
@@ -65,7 +64,7 @@ class TestDyld (unittest.TestCase):
         def test_ensure_utf8(self):
             self.assertEqual(dyld._ensure_utf8("hello"), "hello")
             self.assertEqual(dyld._ensure_utf8(None), None)
-            self.assertRaises(ValueError, dyld._ensure_utf8, B("hello"))
+            self.assertRaises(ValueError, dyld._ensure_utf8, b"hello")
 
     def test__dyld_env(self):
         new = os.environ
@@ -339,7 +338,7 @@ class TestDyld (unittest.TestCase):
         self.assertEqual(result, '/usr/lib/libSystem.dylib')
         self.assertIsInstance(result, str) # bytes on 2.x, unicode on 3.x
 
-        result = dyld.dyld_find(B('/usr/lib/libSystem.dylib').decode('ascii'))
+        result = dyld.dyld_find(b'/usr/lib/libSystem.dylib'.decode('ascii'))
         self.assertEqual(result, '/usr/lib/libSystem.dylib')
         self.assertIsInstance(result, str) # bytes on 2.x, unicode on 3.x
 
@@ -394,7 +393,7 @@ class TestDyld (unittest.TestCase):
         self.assertEqual(result, '/System/Library/Frameworks/Cocoa.framework/Versions/Current/Cocoa')
         self.assertIsInstance(result, str) # bytes on 2.x, unicode on 3.x
 
-        result = dyld.framework_find(B('/System/Library/Frameworks/Cocoa.framework/Versions/Current/Cocoa').decode('latin1'))
+        result = dyld.framework_find(b'/System/Library/Frameworks/Cocoa.framework/Versions/Current/Cocoa'.decode('latin1'))
         self.assertEqual(result, '/System/Library/Frameworks/Cocoa.framework/Versions/Current/Cocoa')
         self.assertIsInstance(result, str) # bytes on 2.x, unicode on 3.x
 

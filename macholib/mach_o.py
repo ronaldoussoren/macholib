@@ -13,7 +13,6 @@ See /usr/include/mach-o and friends.
 import time
 
 from macholib.ptypes import *
-from macholib._compat import bytes
 
 
 _CPU_ARCH_ABI64  = 0x01000000
@@ -56,10 +55,10 @@ MH_DYLINKER_SYM = "_mh_dylinker_header"
     MH_NOFIXPREBINDING
 ) = map((1).__lshift__, range(11))
 
-MH_MAGIC = 0xfeedfaceL
-MH_CIGAM = 0xcefaedfeL
-MH_MAGIC_64 = 0xfeedfacfL
-MH_CIGAM_64 = 0xcffaedfeL
+MH_MAGIC = 0xfeedface
+MH_CIGAM = 0xcefaedfe
+MH_MAGIC_64 = 0xfeedfacf
+MH_CIGAM_64 = 0xcffaedfe
 
 integer_t = p_int32
 cpu_type_t = integer_t
@@ -132,14 +131,14 @@ class mach_header(Structure):
         ('flags', p_uint32),
     )
     def _describe(self):
-        bit = 1L
+        bit = 1
         flags = self.flags
         dflags = []
-        while flags and bit < (1<<32L):
+        while flags and bit < (1<<32):
             if flags & bit:
                 dflags.append(MH_FLAGS_NAMES.get(bit, str(bit)))
                 flags = flags ^ bit
-            bit <<= 1L
+            bit <<= 1
         return (
             ('magic', '0x%08X' % self.magic),
             ('cputype', CPU_TYPE_NAMES.get(self.cputype, self.cputype)),
@@ -159,7 +158,7 @@ class load_command(Structure):
         ('cmdsize', p_uint32),
     )
 
-LC_REQ_DYLD = 0x80000000L
+LC_REQ_DYLD = 0x80000000
 
 (
     LC_SEGMENT, LC_SYMTAB, LC_SYMSEG, LC_THREAD, LC_UNIXTHREAD, LC_LOADFVMLIB,
@@ -255,8 +254,8 @@ class section_64(Structure):
         ('reserved3', p_uint32),
     )
 
-SECTION_TYPE = 0xffL
-SECTION_ATTRIBUTES = 0xffffff00L
+SECTION_TYPE = 0xff
+SECTION_ATTRIBUTES = 0xffffff00
 S_REGULAR = 0x0
 S_ZEROFILL = 0x1
 S_CSTRING_LITERALS = 0x2
@@ -270,14 +269,14 @@ S_MOD_INIT_FUNC_POINTERS = 0x9
 S_MOD_TERM_FUNC_POINTERS = 0xa
 S_COALESCED = 0xb
 
-SECTION_ATTRIBUTES_USR = 0xff000000L
-S_ATTR_PURE_INSTRUCTIONS = 0x80000000L
-S_ATTR_NO_TOC = 0x40000000L
-S_ATTR_STRIP_STATIC_SYMS = 0x20000000L
-SECTION_ATTRIBUTES_SYS = 0x00ffff00L
-S_ATTR_SOME_INSTRUCTIONS = 0x00000400L
-S_ATTR_EXT_RELOC = 0x00000200L
-S_ATTR_LOC_RELOC = 0x00000100L
+SECTION_ATTRIBUTES_USR = 0xff000000
+S_ATTR_PURE_INSTRUCTIONS = 0x80000000
+S_ATTR_NO_TOC = 0x40000000
+S_ATTR_STRIP_STATIC_SYMS = 0x20000000
+SECTION_ATTRIBUTES_SYS = 0x00ffff00
+S_ATTR_SOME_INSTRUCTIONS = 0x00000400
+S_ATTR_EXT_RELOC = 0x00000200
+S_ATTR_LOC_RELOC = 0x00000100
 
 
 SEG_PAGEZERO =    "__PAGEZERO"
@@ -418,8 +417,8 @@ class dysymtab_command(Structure):
         ('nlocrel', p_uint32),
     )
 
-INDIRECT_SYMBOL_LOCAL = 0x80000000L
-INDIRECT_SYMBOL_ABS = 0x40000000L
+INDIRECT_SYMBOL_LOCAL = 0x80000000
+INDIRECT_SYMBOL_ABS = 0x40000000
 
 class dylib_table_of_contents(Structure):
     _fields_ = (
@@ -630,7 +629,7 @@ N_WEAK_REF = 0x0040
 N_WEAK_DEF = 0x0080
 
 # /usr/include/mach-o/fat.h
-FAT_MAGIC = 0xcafebabeL
+FAT_MAGIC = 0xcafebabe
 class fat_header(Structure):
     _fields_ = (
         ('magic', p_uint32),

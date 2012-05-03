@@ -1,10 +1,15 @@
 Release history
 ===============
 
-macholib 1.4.4
+macholib 1.5
 --------------
 
-macholib 1.4.4 is a ?
+macholib 1.5 is a minor feature release
+
+* No longer use 2to3 to provide Python 3 support
+
+  As a side-effect of this macholib no longer supports
+  Python 2.5 and earlier.
 
 
 macholib 1.4.3

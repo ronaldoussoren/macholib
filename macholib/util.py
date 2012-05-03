@@ -1,6 +1,3 @@
-from pkg_resources import require
-require("altgraph")
-
 import os
 import sys
 import stat
@@ -93,7 +90,7 @@ class fileview(object):
         self._checkwindow(here + len(bytes), 'write')
         self._fileobj.write(bytes)
 
-    def read(self, size=sys.maxint):
+    def read(self, size=sys.maxsize):
         assert size >= 0
         here = self._fileobj.tell()
         self._checkwindow(here, 'read')
@@ -138,7 +135,7 @@ def mergetree(src, dst, condition=None, copyfn=mergecopy, srcbase=None):
                     condition=condition, copyfn=copyfn, srcbase=srcbase)
             else:
                 copyfn(srcname, dstname)
-        except (IOError, os.error), why:
+        except (IOError, os.error) as why:
             errors.append((srcname, dstname, why))
     if errors:
         raise IOError(errors)

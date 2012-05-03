@@ -2,12 +2,34 @@
 Shared setup file for simple python packages. Uses a setup.cfg that
 is the same as the distutils2 project, unless noted otherwise.
 
-Currently does not support extensions, distribution_requires, 
-and platform tests.
+It exists for two reasons:
+1) This makes it easier to reuse setup.py code between my own
+   projects
+
+2) Easier migration to distutils2 when that catches on.
+
+Additional functionality:
+
+* Section 'x-setup-stub': 
+
+    distribute-version: minimal distribute version
+    setuptools-version: minimal setuptools version
+        (for both: script will bail out when you have a too old
+         version installed, and will install the version when
+         it isn't installed)
+    prefer-distribute = 1  
+        If true install distribute when neither setuptools
+        nor distribute is present, otherwise install setuptools
+
+* Section metadata:
+    requires-test:  Same as 'tests_require' option for setuptools.
+
 """
 
 import sys
 import os
+import re
+import platform
 from fnmatch import fnmatch
 
 if sys.version_info[0] == 2:
@@ -17,9 +39,50 @@ else:
 
 ROOTDIR = os.path.dirname(os.path.abspath(__file__))
 
+def eval_marker(value):
+    """
+    Evaluate an distutils2 environment marker.
+
+    This code is unsafe when used with hostile setup.cfg files,
+    but that's not a problem for our own files.
+    """
+    value = value.strip()
+
+    class M:
+        def __init__(self, **kwds):
+            for k, v in kwds.items():
+                setattr(self, k, v)
+
+    variables = {
+        'python_version': '%d.%d'%(sys.version_info[0], sys.version_info[1]),
+        'python_full_version': sys.version.split()[0],
+        'os': M(
+            name=os.name,
+        ),
+        'sys': M(
+            platform=sys.platform,
+        ),
+        'platform': M(
+            version=platform.version(),
+            machine=platform.machine(),
+        ),
+    }
+
+    return bool(eval(value, variables, variables))
+
+
+    return True
+
 def _opt_value(cfg, into, section, key, transform = None):
     try:
         v = cfg.get(section, key)
+        if transform != _as_lines and ';' in v:
+            v, marker = v.rsplit(';', 1)
+            if not eval_marker(marker):
+                return
+
+            v = v.strip()
+
         if v:
             if transform:
                 into[key] = transform(v.strip())
@@ -43,8 +106,53 @@ def _as_list(value):
     return value.split()
 
 def _as_lines(value):
-    return [ln for ln in value.splitlines() if ln]
+    result = []
+    for v in value.splitlines():
+        if ';' in value:
+            v, marker = v.rsplit(';', 1)
+            if not eval_marker(marker):
+                continue
 
+            v = v.strip()
+            if v:
+                result.append(v)
+    return result
+            
+def _map_requirement(value):
+    m = re.search(r'(\S+)\s*(?:\((.*)\))?', value)
+    name = m.group(1)
+    version = m.group(2)
+
+    if version is None:
+        return name
+
+    else:
+        mapped = []
+        for v in version.split(','):
+            v = v.strip()
+            if v[0].isdigit():
+                # Checks for a specific version prefix
+                m = v.rsplit('.', 1)
+                mapped.append('>=%s,<%s.%s'%(
+                    v, m[0], int(m[1])+1))
+
+            else:
+                mapped.append(v)
+        return '%s %s'%(name, ','.join(mapped),)
+
+def _as_requires(value):
+    requires = []
+    for req in value.splitlines():
+        if ';' in req:
+            req, marker = v.rsplit(';', 1)
+            if not eval_marker(marker):
+                continue
+            req = req.strip()
+
+        if not req:
+            continue
+        requires.append(_map_requirement(req))
+    return requires
 
 def parse_setup_cfg():
     cfg = RawConfigParser()
@@ -69,7 +177,28 @@ def parse_setup_cfg():
     _opt_value(cfg, metadata, 'metadata', 'classifiers', _as_lines)
     _opt_value(cfg, metadata, 'metadata', 'platforms', _as_list)
     _opt_value(cfg, metadata, 'metadata', 'packages', _as_list)
-    _opt_value(cfg, metadata, 'metadata', 'install_requires', _as_lines)
+
+    try:
+        v = cfg.get('metadata', 'requires-dist')
+
+    except (NoOptionError, NoSectionError):
+        pass
+
+    else:
+        requires = _as_requires(v)
+        if requires:
+            metadata['install_requires'] = requires
+
+    try:
+        v = cfg.get('metadata', 'requires-test')
+
+    except (NoOptionError, NoSectionError):
+        pass
+
+    else:
+        requires = _as_requires(v)
+        if requires:
+            metadata['tests_require'] = requires
 
 
     try:
@@ -137,13 +266,6 @@ except ImportError:
 from distutils.core import Command
 from distutils.errors  import DistutilsError
 from distutils import log
-
-# XXX: This needs to be in setup.cfg as well
-if sys.version_info[0] == 3:
-    extra_args = dict(use_2to3=True)
-else:
-    extra_args = dict()
-
 
 if PyPIRCCommand is None:
     class upload_docs (Command):
@@ -379,26 +501,16 @@ class test (Command):
         from pkg_resources import normalize_path, add_activation_listener
         from pkg_resources import working_set, require
 
-        if getattr(self.distribution, 'use_2to3', False):
+        self.reinitialize_command('egg_info')
+        self.run_command('egg_info')
+        self.reinitialize_command('build_ext', inplace=1)
+        self.run_command('build_ext')
 
-            # Using 2to3, cannot do this inplace:
-            self.reinitialize_command('build_py', inplace=0)
-            self.run_command('build_py')
-            bpy_cmd = self.get_finalized_command("build_py")
-            build_path = normalize_path(bpy_cmd.build_lib)
 
-            self.reinitialize_command('egg_info', egg_base=build_path)
-            self.run_command('egg_info')
+        # Check if this distribution is already on sys.path
+        # and remove that version, this ensures that the right
+        # copy of the package gets tested.
 
-            self.reinitialize_command('build_ext', inplace=0)
-            self.run_command('build_ext')
-
-        else:
-            self.reinitialize_command('egg_info')
-            self.run_command('egg_info')
-            self.reinitialize_command('build_ext', inplace=1)
-            self.run_command('build_ext')
-        
         self.__old_path = sys.path[:]
         self.__old_modules = sys.modules.copy()
 
@@ -406,7 +518,17 @@ class test (Command):
         ei_cmd = self.get_finalized_command('egg_info')
         sys.path.insert(0, normalize_path(ei_cmd.egg_base))
         sys.path.insert(1, os.path.dirname(__file__))
-            
+
+        # Strip the namespace packages defined in this distribution
+        # from sys.modules, needed to reset the search path for
+        # those modules.
+
+        nspkgs = getattr(self.distribution, 'namespace_packages')
+        if nspkgs is not None:
+            for nm in nspkgs:
+                del sys.modules[nm]
+        
+        # Reset pkg_resources state:
         add_activation_listener(lambda dist: dist.activate())
         working_set.__init__()
         require('%s==%s'%(ei_cmd.egg_name, ei_cmd.egg_version))
@@ -453,7 +575,6 @@ class test (Command):
             self.remove_from_sys_path()
 
 
-metadata.update(extra_args)
 setup(
     cmdclass=dict(
         upload_docs=upload_docs,
