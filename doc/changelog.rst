@@ -11,6 +11,7 @@ macholib 1.5 is a minor feature release
   As a side-effect of this macholib no longer supports
   Python 2.5 and earlier.
 
+* Adds suppport for some new macho load commands
 
 macholib 1.4.3
 --------------
