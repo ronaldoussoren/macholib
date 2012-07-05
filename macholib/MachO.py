@@ -14,6 +14,11 @@ try:
 except ImportError:
     pass
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 __all__ = ['MachO']
 
 _RELOCATABLE = set((

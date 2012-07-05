@@ -223,7 +223,7 @@ def strip_files(files, argv_max=(256 * 1024)):
     while tostrip:
         cmd = list(STRIPCMD)
         flips = []
-        pathlen = reduce(operator.add, [len(s) + 1 for s in cmd])
+        pathlen = sum([len(s) + 1 for s in cmd])
         while pathlen < argv_max:
             if not tostrip:
                 break
