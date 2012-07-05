@@ -186,20 +186,19 @@ def is_platform_file(path):
     if not os.path.exists(path) or os.path.islink(path):
         return False
     # If the header is fat, we need to read into the first arch
-    fileobj = open(path, 'rb')
-    bytes = fileobj.read(MAGIC_LEN)
-    if bytes == FAT_MAGIC_BYTES:
-        # Read in the fat header
-        fileobj.seek(0)
-        header = mach_o.fat_header.from_fileobj(fileobj, _endian_='>')
-        if header.nfat_arch < 1:
-            return False
-        # Read in the first fat arch header
-        arch = mach_o.fat_arch.from_fileobj(fileobj, _endian_='>')
-        fileobj.seek(arch.offset)
-        # Read magic off the first header
+    with open(path, 'rb') as fileobj:
         bytes = fileobj.read(MAGIC_LEN)
-    fileobj.close()
+        if bytes == FAT_MAGIC_BYTES:
+            # Read in the fat header
+            fileobj.seek(0)
+            header = mach_o.fat_header.from_fileobj(fileobj, _endian_='>')
+            if header.nfat_arch < 1:
+                return False
+            # Read in the first fat arch header
+            arch = mach_o.fat_arch.from_fileobj(fileobj, _endian_='>')
+            fileobj.seek(arch.offset)
+            # Read magic off the first header
+            bytes = fileobj.read(MAGIC_LEN)
     for magic in MAGIC:
         if bytes == magic:
             return True
