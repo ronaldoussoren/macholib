@@ -16,10 +16,13 @@ class SymbolTable(object):
         self.symtab = macho.getSymbolTableCommand()
         self.dysymtab = macho.getDynamicSymbolTableCommand()
         fh = openfile(self.macho.filename, 'rb')
-        if self.symtab is not None:
-            self.readSymbolTable(fh)
-        if self.dysymtab is not None:
-            self.readDynamicSymbolTable(fh)
+        try:
+            if self.symtab is not None:
+                self.readSymbolTable(fh)
+            if self.dysymtab is not None:
+                self.readDynamicSymbolTable(fh)
+        finally:
+            fh.close()
 
     def readSymbolTable(self, fh):
         cmd = self.symtab
