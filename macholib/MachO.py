@@ -65,7 +65,8 @@ class MachO(object):
         # initialized by load
         self.fat = None
         self.headers = []
-        self.load(open(filename, 'rb'))
+        with open(filename, 'rb') as fp:
+            self.load(fp)
 
     def __repr__(self):
         return "<MachO filename=%r>" % (self.filename,)
