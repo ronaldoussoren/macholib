@@ -12,7 +12,7 @@ from macholib.mach_o import *
 ARCH_MAP={
     ('<', '64-bit'): 'x86_64',
     ('<', '32-bit'): 'i386',
-    ('>', '64-bit'): 'pp64',
+    ('>', '64-bit'): 'ppc64',
     ('>', '32-bit'): 'ppc',
 }
 
@@ -38,6 +38,6 @@ def main():
 
 if __name__ == '__main__':
     try:
-        sys.exit(main(print_file))
+        sys.exit(main())
     except KeyboardInterrupt:
         pass
