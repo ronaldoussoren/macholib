@@ -5,7 +5,7 @@ import operator
 import struct
 import shutil
 
-from modulegraph.util import *
+#from modulegraph.util import *
 
 from macholib import mach_o
 
@@ -16,6 +16,11 @@ MAGIC = [
 FAT_MAGIC_BYTES = struct.pack('!L', mach_o.FAT_MAGIC)
 MAGIC_LEN = 4
 STRIPCMD = ['/usr/bin/strip', '-x', '-S', '-']
+
+try:
+    unicode
+except NameError:
+    unicode = str
 
 
 def fsencoding(s, encoding=sys.getfilesystemencoding()):
