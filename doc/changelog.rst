@@ -17,6 +17,10 @@ macholib 1.5 is a minor feature release
 
   Patch by Guanqun Lu.
 
+* Fix for some issues in macho_dump.py
+
+  Patch by Nam Nguyen
+
 macholib 1.4.3
 --------------
 
