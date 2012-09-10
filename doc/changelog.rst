@@ -13,6 +13,10 @@ macholib 1.5 is a minor feature release
 
 * Adds suppport for some new macho load commands
 
+* Fix for py3k problem in macho_standalone.py
+
+  Patch by Guanqun Lu.
+
 macholib 1.4.3
 --------------
 
