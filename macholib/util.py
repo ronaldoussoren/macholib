@@ -96,7 +96,8 @@ class fileview(object):
         self._fileobj.write(bytes)
 
     def read(self, size=sys.maxsize):
-        assert size >= 0
+        if size < 0:
+            raise ValueError("Invalid size %s while reading from %s", size, self._fileobj)
         here = self._fileobj.tell()
         self._checkwindow(here, 'read')
         bytes = min(size, self._end - here)
