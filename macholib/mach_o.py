@@ -582,7 +582,7 @@ LC_REGISTRY = {
     LC_FUNCTION_STARTS:  linkedit_data_command,
     LC_DYLD_ENVIRONMENT: dylinker_command, 
     LC_MAIN: 		entry_point_command, 
-    LC_DATA_IN_CODE:	dylib_command,
+    LC_DATA_IN_CODE:	linkedit_data_command,
     LC_SOURCE_VERSION:	source_version_command,
     LC_DYLIB_CODE_SIGN_DRS:  linkedit_data_command,
 }
