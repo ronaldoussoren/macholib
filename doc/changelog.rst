@@ -39,6 +39,19 @@ macholib 1.5 is a minor feature release
   and no longer used by macholib itself. It will be removed
   in the next release.
 
+
+* The command-line tools ``macho_find``, ``macho_dump`` and
+  ``macho_standalone`` are deprecated. Use "python -mmacholib" 
+  instead. That is::
+
+   $ python -mmacholib dump /usr/bin/grep
+   
+   $ python -mmacholib find ~
+
+   $ python -mmacholib standalone myapp.app
+
+  This makes it clearer which version of the tools are used.
+
 macholib 1.4.3
 --------------
 

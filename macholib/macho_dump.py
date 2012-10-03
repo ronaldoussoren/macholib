@@ -35,8 +35,10 @@ def print_file(fp, path):
             if other not in seen:
                 seen.add(other)
                 print('\t' + other, file=fp)
+    print('', file=fp)
 
 def main():
+    print("WARNING: 'macho_dump' is deprecated, use 'python -mmacholib dump' instead")
     _main(print_file)
 
 if __name__ == '__main__':
