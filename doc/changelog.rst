@@ -21,7 +21,7 @@ macholib 1.5 is a minor feature release
 
   Patch by Nam Nguyen
 
-* Fix for LC_DATA_IN_CODE linker commands, without 
+* Issue #10: Fix for LC_DATA_IN_CODE linker commands, without 
   this fix py2app cannot build application bundles when
   the source binaries have been compiled with Xcode 4.5.
 
