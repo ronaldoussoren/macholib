@@ -25,6 +25,20 @@ macholib 1.5 is a minor feature release
   this fix py2app cannot build application bundles when
   the source binaries have been compiled with Xcode 4.5.
 
+* Issue #6: Fix for LC_ENCRYPTION_INFO linker commands
+
+* Use the mach header information to print the cpu type of a
+  binary, instead of trying to deduce that from pointer width
+  and endianness. 
+
+  Changed the code because of issue #6, in which a user tries to
+  dump a iOS binary which results in bogus output in the previous
+  releases.
+
+* The mapping ``macholib.macho_dump.ARCH_MAP`` is undocumented
+  and no longer used by macholib itself. It will be removed
+  in the next release.
+
 macholib 1.4.3
 --------------
 
