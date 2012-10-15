@@ -118,9 +118,12 @@ class TestCmdLine (unittest.TestCase):
         self.assertEqual(lines[0], "/bin/sh")
         self.assertTrue(len(lines) > 3)
 
+        self.assertEqual(lines[-1], '')
+        del lines[-1]
+
         idx = 1
         while idx < len(lines):
-            self.assertTrue(lines[idx].startswith('    [MachOHeader endian'))
+            self.assertTrue(lines[idx].startswith('    [MachOHeader endian'), repr(lines[idx]))
             idx+=1
 
             lc = 0
