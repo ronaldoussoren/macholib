@@ -8,7 +8,7 @@ import functools
 try:
     expectedFailure = unittest.expectedFailure
 except AttributeError:
-    expectedFailure = lambda function: function
+    from macholib_tests.test_MachOGraph import expectedFailure
 
 class DyldPatcher (object):
     def __init__(self):

@@ -5,8 +5,7 @@ import unittest
 try:
     expectedFailure = unittest.expectedFailure
 except AttributeError:
-    expectedFailure = lambda function: function
-
+    from macholib_tests.test_MachOGraph import expectedFailure
 
 class TestIterGraphReport (unittest.TestCase):
     @expectedFailure

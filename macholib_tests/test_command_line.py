@@ -123,7 +123,7 @@ class TestCmdLine (unittest.TestCase):
 
         idx = 1
         while idx < len(lines):
-            self.assertTrue(lines[idx].startswith('    [MachOHeader endian'), repr(lines[idx]))
+            self.assertTrue(lines[idx].startswith('    [MachOHeader endian'))
             idx+=1
 
             lc = 0

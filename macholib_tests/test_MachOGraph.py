@@ -5,7 +5,13 @@ import unittest
 try:
     expectedFailure = unittest.expectedFailure
 except AttributeError:
-    expectedFailure = lambda function: function
+    def expectedFailure(function):
+        def wrapper(self):
+            try:
+                function(self)
+            except AssertionError, msg:
+                print "ignore expected failure"
+        return wrapper
 
 
 class TestMachOGraph (unittest.TestCase):
