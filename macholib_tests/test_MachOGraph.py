@@ -9,8 +9,8 @@ except AttributeError:
         def wrapper(self):
             try:
                 function(self)
-            except AssertionError, msg:
-                print "ignore expected failure"
+            except AssertionError:
+                print ("ignore expected failure")
         return wrapper
 
 
