@@ -1,11 +1,10 @@
 from macholib import framework
 
-import unittest
-
-try:
-    expectedFailure = unittest.expectedFailure
-except AttributeError:
-    from macholib_tests.test_MachOGraph import expectedFailure
+import sys
+if sys.version_info[:2] <= (2,6):
+    import unittest2 as unittest
+else:
+    import unittest
 
 
 class TestFramework (unittest.TestCase):

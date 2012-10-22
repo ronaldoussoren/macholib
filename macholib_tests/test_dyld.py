@@ -1,14 +1,13 @@
 from macholib import dyld
 
-import unittest
 import sys
 import os
 import functools
 
-try:
-    expectedFailure = unittest.expectedFailure
-except AttributeError:
-    from macholib_tests.test_MachOGraph import expectedFailure
+if sys.version_info[:2] <= (2,6):
+    import unittest2 as unittest
+else:
+    import unittest
 
 class DyldPatcher (object):
     def __init__(self):

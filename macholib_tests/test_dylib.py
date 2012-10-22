@@ -1,5 +1,10 @@
-import unittest
 from macholib import dylib
+
+import sys
+if sys.version_info[:2] <= (2,6):
+    import unittest2 as unittest
+else:
+    import unittest
 
 def d(location=None, name=None, shortname=None, version=None, suffix=None):
     return dict(

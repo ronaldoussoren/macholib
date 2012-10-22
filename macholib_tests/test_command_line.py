@@ -3,10 +3,15 @@ from macholib import macho_find
 from macholib import _cmdline
 from macholib import util
 
-import unittest
 import sys
 import shutil
 import os
+
+if sys.version_info[:2] <= (2,6):
+    import unittest2 as unittest
+else:
+    import unittest
+
 try:
     from StringIO import StringIO
 except ImportError:

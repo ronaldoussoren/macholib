@@ -235,10 +235,14 @@ def parse_setup_cfg():
 
         metadata['entry_points']['console_scripts'] = v.splitlines()
 
-
-
     options = {}
     _opt_value(cfg, options, 'x-setup-stub', 'distribute-version')
+
+    if sys.version_info[:2] <= (2,6):
+        try:
+            metadata['tests_require'] += ", unittest2"
+        except KeyError:
+            metadata['tests_require'] = "unittest2"
 
     return metadata, options
 

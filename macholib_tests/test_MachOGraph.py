@@ -1,21 +1,13 @@
 from macholib import MachOGraph
 
-import unittest
-
-try:
-    expectedFailure = unittest.expectedFailure
-except AttributeError:
-    def expectedFailure(function):
-        def wrapper(self):
-            try:
-                function(self)
-            except AssertionError:
-                print ("ignore expected failure")
-        return wrapper
-
+import sys
+if sys.version_info[:2] <= (2,6):
+    import unittest2 as unittest
+else:
+    import unittest
 
 class TestMachOGraph (unittest.TestCase):
-    @expectedFailure
+    @unittest.expectedFailure
     def test_missing(self):
         self.fail("tests are missing")
 
