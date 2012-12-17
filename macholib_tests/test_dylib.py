@@ -21,7 +21,7 @@ class TestDylib (unittest.TestCase):
         self.assertTrue(dylib.dylib_info('completely/invalid_debug') is None)
 
     def testUnversioned(self):
-        self.assertEqual(dylib.dylib_info('P/Foo.dylib'), 
+        self.assertEqual(dylib.dylib_info('P/Foo.dylib'),
                 d('P', 'Foo.dylib', 'Foo'))
         self.assertEqual(dylib.dylib_info('P/Foo_debug.dylib'),
                 d('P', 'Foo_debug.dylib', 'Foo', suffix='debug'))

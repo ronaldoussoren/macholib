@@ -139,7 +139,7 @@ class MyFunStructure (ptypes.Structure):
     )
 
 class TestPTypesSimple (unittest.TestCase):
-    # Quick port of tests that used to be part of 
+    # Quick port of tests that used to be part of
     # the macholib.ptypes source code
     #
     # Moving these in a structured manner to TestPTypes
@@ -177,7 +177,7 @@ class TestPTypesSimple (unittest.TestCase):
             myFunStructure.to_fileobj(sio)
             self.assertEqual(sio.getvalue(), MYFUNSTRUCTURE)
 
-            mm = mmap.mmap(-1, ptypes.sizeof(MyFunStructure) * 2) 
+            mm = mmap.mmap(-1, ptypes.sizeof(MyFunStructure) * 2)
             mm[:] = b'\x00' * (ptypes.sizeof(MyFunStructure) * 2)
             myFunStructure.to_mmap(mm, 0)
             self.assertEqual(MyFunStructure.from_mmap(mm, 0, **kw), myFunStructure)

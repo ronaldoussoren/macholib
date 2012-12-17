@@ -32,7 +32,7 @@ class TestCmdLine (unittest.TestCase):
         self.assertEqual(_cmdline.check_file(sys.stdout, '/bin/sh', record_cb), 0)
         self.assertEqual(record, [(sys.stdout, '/bin/sh')])
 
-        saved_stderr = sys.stderr 
+        saved_stderr = sys.stderr
         saved_argv = sys.argv
         try:
             sys.stderr = StringIO()
@@ -52,7 +52,7 @@ class TestCmdLine (unittest.TestCase):
             self.assertEqual(record, [])
             self.assertEqual(sys.stderr.getvalue(), "macho_test: test.exec: [Errno 13] Permission denied: 'test.exec'\n")
             self.assertEqual(record, [])
-            
+
 
         finally:
             sys.stderr = sys.stderr
@@ -61,7 +61,7 @@ class TestCmdLine (unittest.TestCase):
                 os.unlink('test.exec')
 
     def test_shared_main(self):
-        
+
         saved_stderr = sys.stderr
         saved_argv = sys.argv
         try:
@@ -83,7 +83,7 @@ class TestCmdLine (unittest.TestCase):
             self.assertEqual(_cmdline.main(record_names), 0)
             self.assertEqual(sys.stderr.getvalue(), '')
             self.assertEqual(names, ['/bin/sh'])
-            
+
             names = []
             sys.stderr = StringIO()
             sys.argv = ['macho_tool', '/bin/sh', '/bin/ls']
@@ -135,7 +135,7 @@ class TestCmdLine (unittest.TestCase):
             while idx < len(lines):
                 if not lines[idx].startswith('\t'):
                     break
-                
+
                 lc +=1
                 self.assertTrue(os.path.exists(lines[idx].lstrip()))
                 idx += 1

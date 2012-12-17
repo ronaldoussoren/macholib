@@ -230,16 +230,16 @@ class TestDyld (unittest.TestCase):
     def test_executable_path_search(self):
         self.assertEqual(list(dyld.dyld_executable_path_search("/usr/lib/foo.dyld", "/usr/bin")), [])
         self.assertEqual(
-                list(dyld.dyld_executable_path_search("@executable_path/foo.dyld", "/usr/bin")), 
+                list(dyld.dyld_executable_path_search("@executable_path/foo.dyld", "/usr/bin")),
                 ['/usr/bin/foo.dyld'])
         self.assertEqual(
-                list(dyld.dyld_executable_path_search("@executable_path/../../lib/foo.dyld", "/usr/bin")), 
+                list(dyld.dyld_executable_path_search("@executable_path/../../lib/foo.dyld", "/usr/bin")),
                 ['/usr/bin/../../lib/foo.dyld'])
 
     def test_default_search(self):
         self.assertEqual(
                 list(dyld.dyld_default_search('/usr/lib/mylib.dylib', None)), [
-                    '/usr/lib/mylib.dylib', 
+                    '/usr/lib/mylib.dylib',
                     os.path.join(os.path.expanduser('~/lib'), 'mylib.dylib'),
                     '/usr/local/lib/mylib.dylib',
                     '/lib/mylib.dylib',
@@ -249,7 +249,7 @@ class TestDyld (unittest.TestCase):
 
         self.assertEqual(
                 list(dyld.dyld_default_search('/Library/Frameworks/Python.framework/Versions/2.7/Python', None)), [
-                    '/Library/Frameworks/Python.framework/Versions/2.7/Python', 
+                    '/Library/Frameworks/Python.framework/Versions/2.7/Python',
                     os.path.join(os.path.expanduser('~/Library/Frameworks'), 'Python.framework/Versions/2.7/Python'),
                     '/Library/Frameworks/Python.framework/Versions/2.7/Python',
                     '/Network/Library/Frameworks/Python.framework/Versions/2.7/Python',
@@ -268,15 +268,15 @@ class TestDyld (unittest.TestCase):
 
         self.assertEqual(
                 list(dyld.dyld_default_search('/usr/lib/mylib.dylib', None)), [
-                    '/usr/lib/mylib.dylib', 
+                    '/usr/lib/mylib.dylib',
                     '/local/lib/mylib.dylib',
                     '/network/lib/mylib.dylib',
                 ])
 
-        
+
         self.assertEqual(
                 list(dyld.dyld_default_search('/Library/Frameworks/Python.framework/Versions/2.7/Python', None)), [
-                    '/Library/Frameworks/Python.framework/Versions/2.7/Python', 
+                    '/Library/Frameworks/Python.framework/Versions/2.7/Python',
                     os.path.join(os.path.expanduser('~/Library/Frameworks'), 'Python.framework/Versions/2.7/Python'),
                     '/Library/Frameworks/Python.framework/Versions/2.7/Python',
                     '/Network/Library/Frameworks/Python.framework/Versions/2.7/Python',
@@ -292,7 +292,7 @@ class TestDyld (unittest.TestCase):
 
         self.assertEqual(
                 list(dyld.dyld_default_search('/usr/lib/mylib.dylib', None)), [
-                    '/usr/lib/mylib.dylib', 
+                    '/usr/lib/mylib.dylib',
                     os.path.join(os.path.expanduser('~/lib'), 'mylib.dylib'),
                     '/usr/local/lib/mylib.dylib',
                     '/lib/mylib.dylib',
@@ -302,7 +302,7 @@ class TestDyld (unittest.TestCase):
 
         self.assertEqual(
                 list(dyld.dyld_default_search('/Library/Frameworks/Python.framework/Versions/2.7/Python', None)), [
-                    '/Library/Frameworks/Python.framework/Versions/2.7/Python', 
+                    '/Library/Frameworks/Python.framework/Versions/2.7/Python',
                     '/MyFrameworks/Python.framework/Versions/2.7/Python',
                     '/OtherFrameworks/Python.framework/Versions/2.7/Python',
                     os.path.join(os.path.expanduser('~/lib'), 'Python'),
@@ -317,7 +317,7 @@ class TestDyld (unittest.TestCase):
 
         self.assertEqual(
                 list(dyld.dyld_default_search('/usr/lib/mylib.dylib', None)), [
-                    '/usr/lib/mylib.dylib', 
+                    '/usr/lib/mylib.dylib',
                     '/local/lib/mylib.dylib',
                     '/network/lib/mylib.dylib',
 
@@ -325,7 +325,7 @@ class TestDyld (unittest.TestCase):
 
         self.assertEqual(
                 list(dyld.dyld_default_search('/Library/Frameworks/Python.framework/Versions/2.7/Python', None)), [
-                    '/Library/Frameworks/Python.framework/Versions/2.7/Python', 
+                    '/Library/Frameworks/Python.framework/Versions/2.7/Python',
                     '/MyFrameworks/Python.framework/Versions/2.7/Python',
                     '/OtherFrameworks/Python.framework/Versions/2.7/Python',
                     '/local/lib/Python',
@@ -403,32 +403,32 @@ class TestDyld (unittest.TestCase):
         result = dyld.framework_find('Cocoa')
         self.assertEqual(result, '/System/Library/Frameworks/Cocoa.framework/Cocoa')
         self.assertIsInstance(result, str) # bytes on 2.x, unicode on 3.x
-    
+
         patcher = DyldPatcher()
         try:
             patcher.log_calls('dyld_find')
 
             result = dyld.framework_find('/System/Library/Frameworks/Cocoa.framework/Versions/Current/Cocoa')
             self.assertEqual(patcher.calls, [
-                ('dyld_find', ('/System/Library/Frameworks/Cocoa.framework/Versions/Current/Cocoa',), 
+                ('dyld_find', ('/System/Library/Frameworks/Cocoa.framework/Versions/Current/Cocoa',),
                     {'env':None, 'executable_path': None}),
             ])
             patcher.clear_calls()
 
             result = dyld.framework_find('Cocoa')
             self.assertEqual(patcher.calls, [
-                ('dyld_find', ('Cocoa',), 
+                ('dyld_find', ('Cocoa',),
                     {'env':None, 'executable_path': None}),
-                ('dyld_find', ('Cocoa.framework/Cocoa',), 
+                ('dyld_find', ('Cocoa.framework/Cocoa',),
                     {'env':None, 'executable_path': None}),
             ])
             patcher.clear_calls()
 
             result = dyld.framework_find('Cocoa', '/my/sw/bin', {})
             self.assertEqual(patcher.calls, [
-                ('dyld_find', ('Cocoa',), 
+                ('dyld_find', ('Cocoa',),
                     {'env':{}, 'executable_path': '/my/sw/bin'}),
-                ('dyld_find', ('Cocoa.framework/Cocoa',), 
+                ('dyld_find', ('Cocoa.framework/Cocoa',),
                     {'env':{}, 'executable_path': '/my/sw/bin'}),
             ])
             patcher.clear_calls()
@@ -436,7 +436,7 @@ class TestDyld (unittest.TestCase):
 
         finally:
             patcher.cleanup()
-           
+
 
 
 

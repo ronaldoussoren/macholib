@@ -61,7 +61,7 @@ class MachO(object):
         # supports the ObjectGraph protocol
         self.graphident = filename
         self.filename = filename
-        
+
         # initialized by load
         self.fat = None
         self.headers = []
@@ -117,7 +117,7 @@ class MachO(object):
     def write(self, f):
         for header in self.headers:
             header.write(f)
-    
+
 class MachOHeader(object):
     """
     Provides reading/writing the Mach-O header of a specific existing file
@@ -200,7 +200,7 @@ class MachOHeader(object):
                     section_cls = section
                 else: # LC_SEGMENT_64
                     section_cls = section_64
-                    
+
                 expected_size = (
                     sizeof(klass) + sizeof(load_command) +
                     (sizeof(section_cls) * cmd_cmd.nsects)
@@ -321,7 +321,7 @@ class MachOHeader(object):
             if sys.version_info[0] == 2:
                 if isinstance(data, unicode):
                     fileobj.write(data.encode(sys.getfilesystemencoding()))
-                
+
                 elif isinstance(data, (bytes, str)):
                     fileobj.write(data)
                 else:
@@ -331,7 +331,7 @@ class MachOHeader(object):
             else:
                 if isinstance(data, str):
                     fileobj.write(data.encode(sys.getfilesystemencoding()))
-                
+
                 elif isinstance(data, bytes):
                     fileobj.write(data)
 

@@ -370,8 +370,8 @@ class thread_command(Structure):
 
 class entry_point_command(Structure):
     _fields_ = (
-	('entryoff', 	p_uint64),
-	('stacksize', 	p_uint64),
+        ('entryoff',    p_uint64),
+        ('stacksize',   p_uint64),
     )
 
 class routines_command(Structure):
@@ -598,14 +598,14 @@ LC_REGISTRY = {
     LC_ENCRYPTION_INFO: encryption_info_command,
     LC_DYLD_INFO:       dyld_info_command,
     LC_DYLD_INFO_ONLY:  dyld_info_command,
-    LC_LOAD_UPWARD_DYLIB: dylib_command, 
+    LC_LOAD_UPWARD_DYLIB: dylib_command,
     LC_VERSION_MIN_MACOSX: version_min_command,
     LC_VERSION_MIN_IPHONEOS: version_min_command,
     LC_FUNCTION_STARTS:  linkedit_data_command,
-    LC_DYLD_ENVIRONMENT: dylinker_command, 
-    LC_MAIN: 		entry_point_command, 
-    LC_DATA_IN_CODE:	linkedit_data_command,
-    LC_SOURCE_VERSION:	source_version_command,
+    LC_DYLD_ENVIRONMENT: dylinker_command,
+    LC_MAIN:            entry_point_command,
+    LC_DATA_IN_CODE:    linkedit_data_command,
+    LC_SOURCE_VERSION:  source_version_command,
     LC_DYLIB_CODE_SIGN_DRS:  linkedit_data_command,
 }
 

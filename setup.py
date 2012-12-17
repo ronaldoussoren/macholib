@@ -10,14 +10,14 @@ It exists for two reasons:
 
 Additional functionality:
 
-* Section 'x-setup-stub': 
+* Section 'x-setup-stub':
 
     distribute-version: minimal distribute version
     setuptools-version: minimal setuptools version
         (for both: script will bail out when you have a too old
          version installed, and will install the version when
          it isn't installed)
-    prefer-distribute = 1  
+    prefer-distribute = 1
         If true install distribute when neither setuptools
         nor distribute is present, otherwise install setuptools
 
@@ -117,7 +117,7 @@ def _as_lines(value):
             if v:
                 result.append(v)
     return result
-            
+
 def _map_requirement(value):
     m = re.search(r'(\S+)\s*(?:\((.*)\))?', value)
     name = m.group(1)
@@ -215,7 +215,7 @@ def parse_setup_cfg():
 
         metadata['long_description'] = '\n\n'.join(parts)
 
-        
+
     try:
         v = cfg.get('metadata', 'zip-safe')
     except (NoOptionError, NoSectionError):
@@ -333,7 +333,7 @@ else:
             # Collect sphinx output
             if not os.path.exists('dist'):
                 os.mkdir('dist')
-            zf = zipfile.ZipFile('dist/%s-docs.zip'%(name,), 'w', 
+            zf = zipfile.ZipFile('dist/%s-docs.zip'%(name,), 'w',
                     compression=zipfile.ZIP_DEFLATED)
 
             for toplevel, dirs, files in os.walk('doc/_build/html'):
@@ -350,7 +350,7 @@ else:
             # Upload the results, this code is based on the distutils
             # 'upload' command.
             content = open('dist/%s-docs.zip'%(name,), 'rb').read()
-            
+
             data = {
                 ':action': 'doc_upload',
                 'name': name,
@@ -422,7 +422,7 @@ else:
                 self.announce('Upload failed (%s): %s' % (r.status, r.reason),
                     log.ERROR)
 
-                print ('-'*75) 
+                print ('-'*75)
                 print (r.read())
                 print ('-'*75)
 
@@ -439,9 +439,9 @@ def recursiveGlob(root, pathPattern):
             if fnmatch(fn, pathPattern):
                 result.append(os.path.join(rootpath, fn))
     return result
-        
 
-def importExternalTestCases(unittest, 
+
+def importExternalTestCases(unittest,
         pathPattern="test_*.py", root=".", package=None):
     """
     Import all unittests in the PyObjC tree starting at 'root'
@@ -453,7 +453,7 @@ def importExternalTestCases(unittest,
         testModules = [(package + '.' + m) for m in testModules]
 
     suites = []
-   
+
     for modName in testModules:
         try:
             module = __import__(modName)
@@ -531,7 +531,7 @@ class test (Command):
         if nspkgs is not None:
             for nm in nspkgs:
                 del sys.modules[nm]
-        
+
         # Reset pkg_resources state:
         add_activation_listener(lambda dist: dist.activate())
         working_set.__init__()
@@ -557,7 +557,7 @@ class test (Command):
             meta = self.distribution.metadata
             name = meta.get_name()
             test_pkg = name + "_tests"
-            suite = importExternalTestCases(unittest, 
+            suite = importExternalTestCases(unittest,
                     "test_*.py", test_pkg, test_pkg)
 
             runner = unittest.TextTestRunner(verbosity=self.verbosity)
