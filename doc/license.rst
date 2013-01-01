@@ -3,7 +3,7 @@ License
 
 Copyright (c) Bob Ippolito
 
-Parts are copyright (c) 2010 Ronald Oussoren
+Parts are copyright (c) 2010-2013 Ronald Oussoren
 
 MIT License
 ...........
