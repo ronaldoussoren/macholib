@@ -1,6 +1,12 @@
 Release history
 ===============
 
+macholib 1.5.1
+--------------
+
+* There were no 'classifiers' in the package metadata due to 
+  a bug in setup.py.
+
 macholib 1.5
 --------------
 
