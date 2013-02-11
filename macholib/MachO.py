@@ -268,7 +268,7 @@ class MachOHeader(object):
     def changedHeaderSizeBy(self, bytes):
         self.sizediff += bytes
         if (self.total_size + self.sizediff) > self.low_offset:
-            print("WARNING: Mach-O header may be too large to relocate")
+            print("WARNING: Mach-O header in %r may be too large to relocate"%(self.parent.filename,))
 
     def rewriteLoadCommands(self, changefunc):
         """
@@ -301,7 +301,7 @@ class MachOHeader(object):
 
     def synchronize_size(self):
         if (self.total_size + self.sizediff) > self.low_offset:
-            raise ValueError("New Mach-O header is too large to relocate")
+            raise ValueError("New Mach-O header is too large to relocate in %r"%(self.parent.filename,))
         self.header.sizeofcmds += self.sizediff
         self.total_size = sizeof(self.mach_header) + self.header.sizeofcmds
         self.sizediff = 0
