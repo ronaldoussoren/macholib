@@ -1,10 +1,17 @@
 Release history
 ===============
 
+macholib 1.5.2
+--------------
+
+* Issue #93: Show the name of the affected file in the exception message
+  for Mach-O headers that are too large to relocate.
+
+
 macholib 1.5.1
 --------------
 
-* There were no 'classifiers' in the package metadata due to 
+* There were no 'classifiers' in the package metadata due to
   a bug in setup.py.
 
 macholib 1.5
@@ -27,7 +34,7 @@ macholib 1.5 is a minor feature release
 
   Patch by Nam Nguyen
 
-* Issue #10: Fix for LC_DATA_IN_CODE linker commands, without 
+* Issue #10: Fix for LC_DATA_IN_CODE linker commands, without
   this fix py2app cannot build application bundles when
   the source binaries have been compiled with Xcode 4.5.
 
@@ -35,7 +42,7 @@ macholib 1.5 is a minor feature release
 
 * Use the mach header information to print the cpu type of a
   binary, instead of trying to deduce that from pointer width
-  and endianness. 
+  and endianness.
 
   Changed the code because of issue #6, in which a user tries to
   dump a iOS binary which results in bogus output in the previous
@@ -47,11 +54,11 @@ macholib 1.5 is a minor feature release
 
 
 * The command-line tools ``macho_find``, ``macho_dump`` and
-  ``macho_standalone`` are deprecated. Use "python -mmacholib" 
+  ``macho_standalone`` are deprecated. Use "python -mmacholib"
   instead. That is::
 
    $ python -mmacholib dump /usr/bin/grep
-   
+
    $ python -mmacholib find ~
 
    $ python -mmacholib standalone myapp.app
@@ -74,7 +81,7 @@ macholib 1.4.3 is a minor feature release
 
   Needed to work around a bug in PySide (see issue #32 in the
   py2app tracker)
- 
+
 
 
 macholib 1.4.2
@@ -82,7 +89,7 @@ macholib 1.4.2
 
 macholib 1.4.2 is a minor bugfix release
 
-* The support for new load commands that was added in 1.4.1 
+* The support for new load commands that was added in 1.4.1
   contained a typo that caused problems on OSX 10.7 (Lion).
 
 macholib 1.4.1
@@ -112,7 +119,7 @@ Features:
 - There now is a testsuite
 
 - Private functionality inside modules was renamed to
-  a name starting with an underscore. 
+  a name starting with an underscore.
 
   .. note:: if this change affects your code you are relying on undefined
      implementation features, please stop using private functions.
@@ -146,7 +153,7 @@ Features:
   | p_ulonglong  | p_uint64     |
   +--------------+--------------+
 
-  ``Macholib.ptypes.p_ptr`` is no longer present as it had an unclear 
+  ``Macholib.ptypes.p_ptr`` is no longer present as it had an unclear
   definition and isn't actually used in the codebase.
 
 
@@ -156,7 +163,7 @@ Bug fixes:
   it now first searches the framework path (if appropriate) and then
   the linker path, irrespective of the value of the ``DYLD_FALLBACK*``
   environment variables.
-  
+
   Previous versions would change the search order when those variables
   was set, which is odd and doesn't correspond with the documented
   behaviour of the system dyld.
