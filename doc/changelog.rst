@@ -1,6 +1,27 @@
 Release history
 ===============
 
+macholib 1.6
+------------
+
+* Add support for '@loader_path' link command in
+  macholib.dyld:
+
+  - Added function ``macholib.dyld.dyld_loader_search``
+
+  - This function is used by ``macholib.dyld.dyld_find``,
+    and that function now has an new (optional) argument
+    with the path to the loader.
+
+* Also add support for '@loader_path' to macholib.MachoGraph,
+  using the newly added '@loader_path' support in the
+  dyld module.
+
+  Due to this suppport the *macho_standalone* tool can
+  now rewrite binaries that contain an '@loader_path' load
+  command.
+
+
 macholib 1.5.2
 --------------
 

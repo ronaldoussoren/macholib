@@ -110,6 +110,7 @@ def mergecopy(src, dest):
     """
     if os.path.exists(dest) and os.stat(dest).st_mtime >= os.stat(src).st_mtime:
         return
+
     copy2(src, dest)
 
 def mergetree(src, dst, condition=None, copyfn=mergecopy, srcbase=None):
