@@ -267,7 +267,7 @@ def parse_setup_cfg():
 #
 
 
-SETUPTOOLS_PACKAGE='distribute'
+SETUPTOOLS_PACKAGE='setuptools'
 
 
 try:
@@ -308,6 +308,8 @@ try:
         for info in pkgdata['urls']:
             if info['packagetype'] == 'sdist' and info['url'].endswith('tar.gz'):
                 return (info.get('md5_digest'), info['url'])
+
+        raise RuntimeError("Cannot determine downlink link for %s"%(package,))
 
 except ImportError:
     # Python 2.5 compatibility, no JSON in stdlib but luckily JSON syntax is
@@ -398,7 +400,7 @@ def _build_egg(egg, tarball, to_dir):
         log.warn('Now working in %s', subdir)
 
         # building an egg
-        log.warn('Building a Distribute egg in %s', to_dir)
+        log.warn('Building a %s egg in %s', egg, to_dir)
         _python_cmd('setup.py', '-q', 'bdist_egg', '--dist-dir', to_dir)
 
     finally:
@@ -412,8 +414,8 @@ def _build_egg(egg, tarball, to_dir):
 def _do_download(to_dir, packagename=SETUPTOOLS_PACKAGE):
     tarball = download_setuptools(packagename, to_dir)
     version = tarball.split('-')[-1][:-7]
-    egg = os.path.join(to_dir, 'distribute-%s-py%d.%d.egg'
-                       % (version, sys.version_info[0], sys.version_info[1]))
+    egg = os.path.join(to_dir, '%s-%s-py%d.%d.egg'
+                       % (packagename, version, sys.version_info[0], sys.version_info[1]))
     if not os.path.exists(egg):
         _build_egg(egg, tarball, to_dir)
     sys.path.insert(0, egg)

@@ -19,8 +19,8 @@ class FilteredMachOGraph(MachOGraph):
         res = super(FilteredMachOGraph, self).createNode(cls, name)
         return res
 
-    def locate(self, filename):
-        newname = super(FilteredMachOGraph, self).locate(filename)
+    def locate(self, filename, loader=None):
+        newname = super(FilteredMachOGraph, self).locate(filename, loader)
         if newname is None:
             return None
         return self.delegate.locate(newname)
