@@ -25,7 +25,10 @@ import sys
 import time
 import tempfile
 import tarfile
-import urllib
+try:
+    import urllib.request as urllib
+except ImportError:
+    import urllib
 from distutils import log
 try:
     from hashlib import md5
@@ -301,7 +304,7 @@ try:
         except urllib.error:
             raise RuntimeError("Cannot determine download link for %s"%(package,))
 
-        pkgdata = json.loads(data)
+        pkgdata = json.loads(data.decode('utf-8'))
         if 'urls' not in pkgdata:
             raise RuntimeError("Cannot determine download link for %s"%(package,))
 
