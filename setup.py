@@ -304,7 +304,10 @@ try:
         except urllib.error:
             raise RuntimeError("Cannot determine download link for %s"%(package,))
 
-        pkgdata = json.loads(data.decode('utf-8'))
+        if sys.version_info[0] == 3:
+            pkgdata = json.loads(data.decode('utf-8'))
+        else:
+            pkgdata = json.loads(data)
         if 'urls' not in pkgdata:
             raise RuntimeError("Cannot determine download link for %s"%(package,))
 
