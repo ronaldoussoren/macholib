@@ -190,6 +190,9 @@ LC_MAIN = 0x28 | LC_REQ_DYLD
 LC_DATA_IN_CODE = 0x29
 LC_SOURCE_VERSION = 0x2a
 LC_DYLIB_CODE_SIGN_DRS = 0x2b
+LC_ENCRYPTION_INFO_64 = 0x2c
+LC_LINKER_OPTION = 0x2d
+
 
 # this is really a union.. but whatever
 class lc_str(p_uint32):
@@ -548,6 +551,14 @@ class encryption_info_command (Structure):
         ('cryptid',     p_uint32),
     )
 
+class encryption_info_command_64 (Structure):
+    _fields_ = (
+        ('cryptoff',    p_uint32),
+        ('cryptsize',   p_uint32),
+        ('cryptid',     p_uint32),
+        ('pad',         p_uint32),
+    )
+
 class dyld_info_command (Structure):
     _fields_ = (
         ('rebase_off',     p_uint32),
@@ -562,6 +573,10 @@ class dyld_info_command (Structure):
         ('export_size',    p_uint32),
     )
 
+class linker_option_command (Structure):
+    _fields_ = (
+        ('count',         p_uint32),
+    )
 
 LC_REGISTRY = {
     LC_SEGMENT:         segment_command,
@@ -607,6 +622,8 @@ LC_REGISTRY = {
     LC_DATA_IN_CODE:    linkedit_data_command,
     LC_SOURCE_VERSION:  source_version_command,
     LC_DYLIB_CODE_SIGN_DRS:  linkedit_data_command,
+    LC_ENCRYPTION_INFO_64: encryption_info_command_64,
+    LC_LINKER_OPTION:  linker_option_command,
 }
 
 #this is another union.
