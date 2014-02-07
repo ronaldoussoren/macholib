@@ -27,6 +27,7 @@ CPU_TYPE_NAMES = {
     10:     'MC98000',
     11:     'HPPA',
     12:     'ARM',
+    _CPU_ARCH_ABI64 | 12:     'ARM64',
     13:     'MC88000',
     14:     'SPARC',
     15:     'i860',
