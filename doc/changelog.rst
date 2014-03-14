@@ -4,7 +4,9 @@ Release history
 macholib 1.7
 ------------
 
-* ?
+* Added support for ARM64, LC_ENCRYPTION_INFO_64 and LC_LINKER_OPTION
+
+  Patch by Matthias Ringwald.
 
 macholib 1.6.1
 --------------
