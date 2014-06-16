@@ -103,11 +103,11 @@ class MachO(object):
         if header == MH_MAGIC:
             magic, hdr, endian = MH_MAGIC, mach_header, '>'
         elif header == MH_CIGAM:
-            magic, hdr, endian = MH_MAGIC, mach_header, '<'
+            magic, hdr, endian = MH_CIGAM, mach_header, '<'
         elif header == MH_MAGIC_64:
             magic, hdr, endian = MH_MAGIC_64, mach_header_64, '>'
         elif header == MH_CIGAM_64:
-            magic, hdr, endian = MH_MAGIC_64, mach_header_64, '<'
+            magic, hdr, endian = MH_CIGAM_64, mach_header_64, '<'
         else:
             raise ValueError("Unknown Mach-O header: 0x%08x in %r" % (
                 header, fh))
@@ -166,9 +166,9 @@ class MachOHeader(object):
         kw = {'_endian_': self.endian}
         header = self.mach_header.from_fileobj(fh, **kw)
         self.header = header
-        if header.magic != self.MH_MAGIC:
-            raise ValueError("header has magic %08x, expecting %08x" % (
-                header.magic, self.MH_MAGIC))
+        #if header.magic != self.MH_MAGIC:
+        #    raise ValueError("header has magic %08x, expecting %08x" % (
+        #        header.magic, self.MH_MAGIC))
 
         cmd = self.commands = []
 
