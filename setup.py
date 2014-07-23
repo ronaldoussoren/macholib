@@ -193,6 +193,7 @@ def parse_setup_cfg():
     _opt_value(cfg, metadata, 'metadata', 'classifiers', _as_lines)
     _opt_value(cfg, metadata, 'metadata', 'platforms', _as_list)
     _opt_value(cfg, metadata, 'metadata', 'packages', _as_list)
+    _opt_value(cfg, metadata, 'metadata', 'keywords', _as_list)
 
     try:
         v = cfg.get('metadata', 'requires-dist')
@@ -304,10 +305,7 @@ try:
         except urllib.error:
             raise RuntimeError("Cannot determine download link for %s"%(package,))
 
-        if sys.version_info[0] == 3:
-            pkgdata = json.loads(data.decode('utf-8'))
-        else:
-            pkgdata = json.loads(data)
+        pkgdata = json.loads(data.decode('utf-8'))
         if 'urls' not in pkgdata:
             raise RuntimeError("Cannot determine download link for %s"%(package,))
 
