@@ -103,11 +103,11 @@ class MachO(object):
         if header == MH_MAGIC:
             magic, hdr, endian = MH_MAGIC, mach_header, '>'
         elif header == MH_CIGAM:
-            magic, hdr, endian = MH_MAGIC, mach_header, '<'
+            magic, hdr, endian = MH_CIGAM, mach_header, '<'
         elif header == MH_MAGIC_64:
             magic, hdr, endian = MH_MAGIC_64, mach_header_64, '>'
         elif header == MH_CIGAM_64:
-            magic, hdr, endian = MH_MAGIC_64, mach_header_64, '<'
+            magic, hdr, endian = MH_CIGAM_64, mach_header_64, '<'
         else:
             raise ValueError("Unknown Mach-O header: 0x%08x in %r" % (
                 header, fh))
@@ -166,13 +166,13 @@ class MachOHeader(object):
         kw = {'_endian_': self.endian}
         header = self.mach_header.from_fileobj(fh, **kw)
         self.header = header
-        if header.magic != self.MH_MAGIC:
-            raise ValueError("header has magic %08x, expecting %08x" % (
-                header.magic, self.MH_MAGIC))
+        #if header.magic != self.MH_MAGIC:
+        #    raise ValueError("header has magic %08x, expecting %08x" % (
+        #        header.magic, self.MH_MAGIC))
 
         cmd = self.commands = []
 
-        self.filetype = MH_FILETYPE_SHORTNAMES[header.filetype]
+        self.filetype = self.get_filetype_shortname(header.filetype)
 
         read_bytes = 0
         low_offset = sys.maxsize
@@ -222,9 +222,25 @@ class MachOHeader(object):
                         not_zerofill = ((seg.flags & S_ZEROFILL) != S_ZEROFILL)
                         if seg.offset > 0 and seg.size > 0 and not_zerofill:
                             low_offset = min(low_offset, seg.offset)
+                        if not_zerofill:
+                            c = fh.tell()
+                            fh.seek(seg.offset)
+                            sd = fh.read(seg.size)
+                            seg.add_section_data(sd)
+                            fh.seek(c)
                         segs.append(seg)
                 # data is a list of segments
                 cmd_data = segs
+            elif cmd_load.cmd == LC_CODE_SIGNATURE:
+                c = fh.tell()
+                fh.seek(cmd_cmd.dataoff)
+                cmd_data = fh.read(cmd_cmd.datasize)
+                fh.seek(c)
+            elif cmd_load.cmd == LC_SYMTAB:
+                c = fh.tell()
+                fh.seek(cmd_cmd.stroff)
+                cmd_data = fh.read(cmd_cmd.strsize)
+                fh.seek(c)
             else:
                 # data is a raw str
                 data_size = (
@@ -355,6 +371,12 @@ class MachOHeader(object):
             if lc.cmd == LC_DYSYMTAB:
                 return cmd
         return None
+
+    def get_filetype_shortname(self, filetype):
+        if filetype in MH_FILETYPE_SHORTNAMES:
+            return MH_FILETYPE_SHORTNAMES[filetype]
+        else:
+            return 'unknown'
 
 def main(fn):
     m = MachO(fn)
