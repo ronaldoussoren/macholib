@@ -231,16 +231,19 @@ class MachOHeader(object):
                         segs.append(seg)
                 # data is a list of segments
                 cmd_data = segs
-            elif cmd_load.cmd == LC_CODE_SIGNATURE:
-                c = fh.tell()
-                fh.seek(cmd_cmd.dataoff)
-                cmd_data = fh.read(cmd_cmd.datasize)
-                fh.seek(c)
-            elif cmd_load.cmd == LC_SYMTAB:
-                c = fh.tell()
-                fh.seek(cmd_cmd.stroff)
-                cmd_data = fh.read(cmd_cmd.strsize)
-                fh.seek(c)
+
+            # XXX: Disabled for now because writing back doesn't work
+            #elif cmd_load.cmd == LC_CODE_SIGNATURE:
+            #    c = fh.tell()
+            #    fh.seek(cmd_cmd.dataoff)
+            #    cmd_data = fh.read(cmd_cmd.datasize)
+            #    fh.seek(c)
+            #elif cmd_load.cmd == LC_SYMTAB:
+            #    c = fh.tell()
+            #    fh.seek(cmd_cmd.stroff)
+            #    cmd_data = fh.read(cmd_cmd.strsize)
+            #    fh.seek(c)
+
             else:
                 # data is a raw str
                 data_size = (
