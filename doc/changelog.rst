@@ -8,6 +8,20 @@ macholib 1.7
 
   Patch by Matthias Ringwald.
 
+* Load commands now have a "describe" method that returns more information
+  about the command.
+
+  Patch by David Dorsey.
+
+* The MAGIC value in the header was always represented in the native
+  byte order, instead of as the value read from the binary.
+
+  Patch by David Dorsey.
+
+* Added various new constants to "macholib.mach_o".
+
+  Patch by David Dorsey.
+
 macholib 1.6.1
 --------------
 
