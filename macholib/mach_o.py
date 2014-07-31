@@ -777,10 +777,15 @@ class dylinker_command(Structure):
 
 class thread_command(Structure):
     _fields_ = (
+        ('flavor', p_uint32),
+        ('count', p_uint32)
     )
 
     def describe(self):
-        return {}
+        s = {}
+        s['flavor'] = int(self.flavour)
+        s['count'] = int(self.count)
+        return s
 
 class entry_point_command(Structure):
     _fields_ = (
