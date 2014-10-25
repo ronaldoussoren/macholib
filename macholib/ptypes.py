@@ -63,7 +63,7 @@ class MetaPackable(type):
         return cls.from_str(f.read(cls._size_), **kw)
 
     def from_str(cls, s, **kw):
-        endian = kw.get('_endian_', cls._endian_)
+        endian = kw.pop('_endian_', cls._endian_)
         return cls.from_tuple(struct.unpack(endian + cls._format_, s), **kw)
 
     def from_tuple(cls, tpl, **kw):
@@ -94,6 +94,7 @@ def _make():
     return MetaPackable("Packable", (BasePackable,), {'to_str': to_str})
 Packable = _make()
 del _make
+
 
 def pypackable(name, pytype, format):
     """
