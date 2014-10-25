@@ -9,10 +9,11 @@ __all__ = ['SymbolTable']
 
 
 class SymbolTable(object):
-    # TODO: HEADER, nicht File! - oder eine pro header.
-    def __init__(self, macho, header, openfile=None):
+    def __init__(self, macho, header=None, openfile=None):
         if openfile is None:
             openfile = open
+        if header is None:
+            header = macho.headers[0]
         self.macho_header = header
         with openfile(macho.filename, 'rb') as fh:
             self.symtab = header.getSymbolTableCommand()
@@ -20,7 +21,6 @@ class SymbolTable(object):
             try:
                 if self.symtab is not None:
                     self.nlists = self.readSymbolTable(fh)
-                    print self.nlists
 
                 if self.dysymtab is not None:
                     self.readDynamicSymbolTable(fh)
