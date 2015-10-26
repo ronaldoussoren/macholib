@@ -22,6 +22,9 @@ class TestCmdLine(unittest.TestCase):
         self.assertTrue(macho_dump.main is _cmdline.main)
         self.assertTrue(macho_find.main is _cmdline.main)
 
+    @unittest.skipUnless(
+        "darwin" == sys.platform, """'/bin/sh' is a MachO-file only on macOS"""
+    )
     def test_check_file(self):
         record = []
 
@@ -66,6 +69,9 @@ class TestCmdLine(unittest.TestCase):
             if os.path.exists("test.exec"):
                 os.unlink("test.exec")
 
+    @unittest.skipUnless(
+        "darwin" == sys.platform, """'/bin/sh' is a MachO-file only on macOS"""
+    )
     def test_shared_main(self):
 
         saved_stderr = sys.stderr
@@ -123,6 +129,9 @@ class TestCmdLine(unittest.TestCase):
         macho_find.print_file(fp, "file2")
         self.assertEqual(fp.getvalue(), "file1\nfile2\n")
 
+    @unittest.skipUnless(
+        "darwin" == sys.platform, """'/bin/sh' is a MachO-file only on macOS"""
+    )
     def test_macho_dump(self):
         fp = StringIO()
         macho_dump.print_file(fp, "/bin/sh")
