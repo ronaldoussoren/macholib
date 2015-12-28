@@ -398,6 +398,9 @@ LC_SOURCE_VERSION = 0x2a
 LC_DYLIB_CODE_SIGN_DRS = 0x2b
 LC_ENCRYPTION_INFO_64 = 0x2c
 LC_LINKER_OPTION = 0x2d
+LC_LINKER_OPTIMIZATION_HINT = 0x2e
+LC_VERSION_MIN_TVOS = 0x2f
+LC_VERSION_MIN_WATCHOS = 0x30
 
 
 # this is really a union.. but whatever
@@ -1042,7 +1045,7 @@ class linkedit_data_command (Structure):
 class version_min_command (Structure):
     _fields_ = (
         ('version', p_uint32), # X.Y.Z is encoded in nibbles xxxx.yy.zz
-        ('reserved', p_uint32),
+        ('sdk', p_uint32),
     )
 
     def describe(self):
@@ -1052,7 +1055,13 @@ class version_min_command (Structure):
         v2 = v & 0xFF
         v = v >> 8
         v1 = v & 0xFFFF
-        return {'version': str(int(v1)) + "." + str(int(v2)) + "." + str(int(v3))}
+        s = int(self.sdk)
+        s3 = s & 0xFF
+        s = s >> 8
+        s2 = s & 0xFF
+        s = s >> 8
+        s1 = s & 0xFFFF
+        return {'version': str(int(v1)) + "." + str(int(v2)) + "." + str(int(v3)), 'sdk': str(int(s1)) + "." + str(int(s2)) + "." + str(int(s3))}
 
 class source_version_command (Structure):
     _fields_ = (
@@ -1183,6 +1192,9 @@ LC_REGISTRY = {
     LC_DYLIB_CODE_SIGN_DRS:  linkedit_data_command,
     LC_ENCRYPTION_INFO_64: encryption_info_command_64,
     LC_LINKER_OPTION:  linker_option_command,
+    LC_LINKER_OPTIMIZATION_HINT:  linkedit_data_command,
+    LC_VERSION_MIN_TVOS: version_min_command,
+    LC_VERSION_MIN_WATCHOS: version_min_command,
 }
 
 LC_NAMES = {
@@ -1229,6 +1241,9 @@ LC_NAMES = {
     LC_DATA_IN_CODE:                'LC_DATA_IN_CODE',
     LC_SOURCE_VERSION:              'LC_SOURCE_VERSION',
     LC_DYLIB_CODE_SIGN_DRS:         'LC_DYLIB_CODE_SIGN_DRS',
+    LC_LINKER_OPTIMIZATION_HINT:    'LC_LINKER_OPTIMIZATION_HINT',
+    LC_VERSION_MIN_TVOS:            'LC_VERSION_MIN_TVOS',
+    LC_VERSION_MIN_WATCHOS:         'LC_VERSION_MIN_WATCHOS',
 }
 
 
