@@ -260,11 +260,6 @@ class MachOHeader(object):
         self.total_size = sizeof(self.mach_header) + read_bytes
         self.low_offset = low_offset
 
-        # this header overwrites a segment, what the heck?
-        if self.total_size > low_offset:
-            raise ValueError("total_size > low_offset (%d > %d)" % (
-                self.total_size, low_offset))
-
     def walkRelocatables(self, shouldRelocateCommand=_shouldRelocateCommand):
         """
         for all relocatable commands
