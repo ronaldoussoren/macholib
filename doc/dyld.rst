@@ -120,7 +120,7 @@ w.r.t. looking for library files and framworks.
    The *env* argument is a dictionary, which defaults
    to :data:`os.environ`.
 
-.. function:: dyld_find(name[, executable_path[, env [, loader]]])
+.. function:: dyld_find(name[, executable_path[, env [, loader_path]]])
 
    Returns the path of the requested dynamic library,
    raises :exc:`ValueError` when the library cannot be found.
