@@ -40,6 +40,8 @@ macholib 1.8
 
   Patch by Christian Klein <chris@5711.org>
 
+* Issue #17: add LC_LOAD_UPWARD_DYLIB to _RELOCATABLE set
+
 
 macholib 1.7
 ------------
