@@ -5,10 +5,4 @@ See the relevant header files in /usr/include/mach-o
 
 And also Apple's documentation.
 """
-from __future__ import print_function
-import pkg_resources
-try:
-    __version__ = pkg_resources.require('macholib')[0].version
-except:
-    __version__ = 0
-
+__version__ = '1.8'
