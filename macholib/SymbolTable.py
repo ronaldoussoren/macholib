@@ -4,6 +4,7 @@ Class to read the symbol table from a Mach-O header
 from __future__ import with_statement
 
 from macholib.mach_o import *
+import sys
 
 __all__ = ['SymbolTable']
 
