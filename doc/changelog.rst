@@ -49,6 +49,11 @@ macholib 1.8
   the python process could hang when reading invalid input, due
   to trying to construct an enormous list.
 
+* Issue #18: Bad version parsing in macho_version_helper
+
+  The order of subfields in macho_version_helper was reversed from
+  reality.
+
 
 macholib 1.7
 ------------

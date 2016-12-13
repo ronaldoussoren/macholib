@@ -321,9 +321,9 @@ MH_FLAGS_DESCRIPTIONS = {
 
 class mach_version_helper(Structure):
     _fields_ = (
-        ('major', p_ushort),
-        ('minor', p_uint8),
         ('rev', p_uint8),
+        ('minor', p_uint8),
+        ('major', p_uint16),
     )
     def __str__(self):
         return '%s.%s.%s' % (self.major, self.minor, self.rev)
