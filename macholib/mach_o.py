@@ -132,7 +132,12 @@ ARM_SUBTYPE = {
     8 : "CPU_SUBTYPE_ARM_XSCALE",
     9 : "CPU_SUBTYPE_ARM_V7",
     10 : "CPU_SUBTYPE_ARM_V7F",
+    11 : "CPU_SUBTYPE_ARM_V7S",
     12 : "CPU_SUBTYPE_ARM_V7K"
+}
+
+ARM64_SUBTYPE = {
+    0 : "CPU_SUBTYPE_ARM64_ALL",
 }
 
 VAX_SUBTYPE = {
@@ -171,6 +176,8 @@ def get_cpu_subtype(cpu_type, cpu_subtype):
         subtype = HPPA_SUBTYPE.get(st, st)
     elif cpu_type == 12:
         subtype = ARM_SUBTYPE.get(st, st)
+    elif cpu_type == 12 | _CPU_ARCH_ABI64:
+        subtype = ARM64_SUBTYPE.get(st, st)
     elif cpu_type == 13:
         subtype = MC88_SUBTYPE.get(st, st)
     elif cpu_type == 14:
@@ -792,8 +799,8 @@ class thread_command(Structure):
 
 class entry_point_command(Structure):
     _fields_ = (
-	    ('entryoff', 	p_uint64),
-	    ('stacksize', 	p_uint64),
+        ('entryoff', 	p_uint64),
+        ('stacksize', 	p_uint64),
     )
 
     def describe(self):

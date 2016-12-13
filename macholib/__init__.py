@@ -7,4 +7,8 @@ And also Apple's documentation.
 """
 from __future__ import print_function
 import pkg_resources
-__version__ = pkg_resources.require('macholib')[0].version
+try:
+    __version__ = pkg_resources.require('macholib')[0].version
+except:
+    __version__ = 0
+

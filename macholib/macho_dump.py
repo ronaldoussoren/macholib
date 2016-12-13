@@ -21,16 +21,20 @@ def print_file(fp, path):
     m = MachO(path)
     for header in m.headers:
         seen = set()
-        if header.MH_MAGIC == MH_MAGIC_64:
+        
+        if header.MH_MAGIC == MH_MAGIC_64 or header.MH_MAGIC == MH_CIGAM_64:
             sz = '64-bit'
         else:
             sz = '32-bit'
 
         arch = CPU_TYPE_NAMES.get(header.header.cputype,
                 header.header.cputype)
+        
+        subarch = get_cpu_subtype(header.header.cputype,
+                header.header.cpusubtype)
 
-        print('    [%s endian=%r size=%r arch=%r]' % (header.__class__.__name__,
-                header.endian, sz, arch), file=fp)
+        print('    [%s endian=%r size=%r arch=%r subarch=%r]' % (header.__class__.__name__,
+                header.endian, sz, arch, subarch), file=fp)
         for idx, name, other in header.walkRelocatables():
             if other not in seen:
                 seen.add(other)
