@@ -54,6 +54,10 @@ macholib 1.8
   The order of subfields in ``mach_version_helper`` was reversed from
   reality.
 
+* Issue #19: Fix aligment issue that prevented code signing
+
+  Patch by Brendan Simon
+
 
 macholib 1.7
 ------------

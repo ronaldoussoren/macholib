@@ -317,7 +317,7 @@ class MachOHeader(object):
     def rewriteDataForCommand(self, idx, data):
         lc, cmd, old_data = self.commands[idx]
         hdrsize = sizeof(lc.__class__) + sizeof(cmd.__class__)
-        align = struct.calcsize('L')
+        align = struct.calcsize('Q')
         data = data + (b'\x00' * (align - (len(data) % align)))
         newsize = hdrsize + len(data)
         self.commands[idx] = (lc, cmd, data)
