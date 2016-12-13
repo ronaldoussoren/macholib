@@ -844,6 +844,8 @@ class test (Command):
                 skip=len(getattr(result, 'skipped', [])),
             )
             print("SUMMARY: %s"%(summary,))
+            if summary['fails'] or summary['errors']:
+                sys.exit(1)
 
         finally:
             self.remove_from_sys_path()
