@@ -46,7 +46,7 @@ class MachOGraph(ObjectGraph):
                 try:
                     fn = dyld_find(filename, env=self.env,
                         executable_path=self.executable_path,
-                        loader=loader.filename)
+                        loader_path=loader.filename)
                     self.trans_table[(loader.filename, filename)] = fn
                 except ValueError:
                     return None
