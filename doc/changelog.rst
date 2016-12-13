@@ -51,7 +51,7 @@ macholib 1.8
 
 * Issue #18: Bad version parsing in macho_version_helper
 
-  The order of subfields in macho_version_helper was reversed from
+  The order of subfields in ``mach_version_helper`` was reversed from
   reality.
 
 
