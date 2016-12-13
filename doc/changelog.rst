@@ -4,12 +4,42 @@ Release history
 macholib 1.8
 ------------
 
-* ?
+* Use the same dependency walk logic as otool
 
-macholib 1.7.1
---------------
+  Patch by Taras Tsugrii <ttsugrii@fb.com>
 
-* ?
+* Added support for new load commands
+
+  Patch by David Dorsey <trogdorsey@gmail.com>
+
+* Fix procesing DSYM file from XCODE 6.x
+
+  Patch by HolmsBlazhey <andrey.blazhey@gmail.com>
+
+* MachOGraph.locate(): When calling dyld_find(), use kwarg 'loader_path', not 'loader'.
+
+  Patch by Stuart Berg <bergs@janelia.hhmi.org>
+
+* Add fields to thread_command
+
+  Patch by Asger Hautop Drewsen <asgerdrewsen@gmail.com>
+
+* Add missing ARM_V7S subtype.
+
+  Patch by "NN"
+
+* Fix for SymbolTable
+
+  Patch by Christian Klein <chris@5711.org>
+
+* Use first Mach-O header as the default header
+
+  Patch by Christian Klein <chris@5711.org>
+
+* Strip local keyword arguments before calling super
+
+  Patch by Christian Klein <chris@5711.org>
+
 
 macholib 1.7
 ------------
