@@ -38,7 +38,8 @@ CPU_TYPE_NAMES = {
 
 INTEL64_SUBTYPE = {
     3 : "CPU_SUBTYPE_X86_64_ALL",
-    4 : "CPU_SUBTYPE_X86_ARCH1"
+    4 : "CPU_SUBTYPE_X86_ARCH1",
+    8 : "CPU_SUBTYPE_X86_64_H",
 }
 
 #define CPU_SUBTYPE_INTEL(f, m) ((cpu_subtype_t) (f) + ((m) << 4))
@@ -133,11 +134,16 @@ ARM_SUBTYPE = {
     9 : "CPU_SUBTYPE_ARM_V7",
     10 : "CPU_SUBTYPE_ARM_V7F",
     11 : "CPU_SUBTYPE_ARM_V7S",
-    12 : "CPU_SUBTYPE_ARM_V7K"
+    12 : "CPU_SUBTYPE_ARM_V7K",
+    13 : "CPU_SUBTYPE_ARM_V8",
+    14 : "CPU_SUBTYPE_ARM_V6M",
+    15 : "CPU_SUBTYPE_ARM_V7M",
+    16 : "CPU_SUBTYPE_ARM_V7EM",
 }
 
 ARM64_SUBTYPE = {
     0 : "CPU_SUBTYPE_ARM64_ALL",
+    1 : "CPU_SUBTYPE_ARM64_V8",
 }
 
 VAX_SUBTYPE = {
@@ -216,8 +222,9 @@ MH_DYLINKER_SYM = "_mh_dylinker_header"
     MH_NOFIXPREBINDING, MH_PREBINDABLE, MH_ALLMODSBOUND, MH_SUBSECTIONS_VIA_SYMBOLS,
     MH_CANONICAL, MH_WEAK_DEFINES, MH_BINDS_TO_WEAK, MH_ALLOW_STACK_EXECUTION,
     MH_ROOT_SAFE, MH_SETUID_SAFE, MH_NO_REEXPORTED_DYLIBS, MH_PIE,
-    MH_DEAD_STRIPPABLE_DYLIB, MH_HAS_TLV_DESCRIPTORS, MH_NO_HEAP_EXECUTION
-) = map((1).__lshift__, range(25))
+    MH_DEAD_STRIPPABLE_DYLIB, MH_HAS_TLV_DESCRIPTORS, MH_NO_HEAP_EXECUTION,
+    MH_APP_EXTENSION_SAFE
+) = map((1).__lshift__, range(26))
 
 MH_MAGIC = 0xfeedface
 MH_CIGAM = 0xcefaedfe
@@ -280,6 +287,7 @@ MH_FLAGS_NAMES = {
     MH_DEAD_STRIPPABLE_DYLIB:   'MH_DEAD_STRIPPABLE_DYLIB',
     MH_HAS_TLV_DESCRIPTORS:     'MH_HAS_TLV_DESCRIPTORS',
     MH_NO_HEAP_EXECUTION:       'MH_NO_HEAP_EXECUTION',
+    MH_APP_EXTENSION_SAFE:      'MH_APP_EXTENSION_SAFE',
 }
 
 MH_FLAGS_DESCRIPTIONS = {
@@ -308,6 +316,7 @@ MH_FLAGS_DESCRIPTIONS = {
     MH_DEAD_STRIPPABLE_DYLIB:   'the static linker will automatically not create a LC_LOAD_DYLIB load command to the dylib if no symbols are being referenced from the dylib',
     MH_HAS_TLV_DESCRIPTORS:     'contains a section of type S_THREAD_LOCAL_VARIABLES',
     MH_NO_HEAP_EXECUTION:       'the OS will run the main executable with a non-executable heap even on platforms that don\'t require it',
+    MH_APP_EXTENSION_SAFE:      'the code was linked for use in an application extension.',
 }
 
 class mach_version_helper(Structure):
@@ -526,6 +535,7 @@ class segment_command_64(Structure):
 SG_HIGHVM = 0x1
 SG_FVMLIB = 0x2
 SG_NORELOC = 0x4
+SG_PROTECTED_VERSION_1  = 0x8
 
 class section(Structure):
     _fields_ = (
@@ -625,54 +635,70 @@ S_SYMBOL_STUBS = 0x8
 S_MOD_INIT_FUNC_POINTERS = 0x9
 S_MOD_TERM_FUNC_POINTERS = 0xa
 S_COALESCED = 0xb
+S_GB_ZEROFILL = 0xc
+S_INTERPOSING = 0xd
+S_16BYTE_LITERALS = 0xe
+S_DTRACE_DOF = 0xf
+S_LAZY_DYLIB_SYMBOL_POINTERS = 0x10
+S_THREAD_LOCAL_REGULAR = 0x11
+S_THREAD_LOCAL_ZEROFILL = 0x12
+S_THREAD_LOCAL_VARIABLES = 0x13
+S_THREAD_LOCAL_VARIABLE_POINTERS = 0x14
+S_THREAD_LOCAL_INIT_FUNCTION_POINTERS = 0x15
+
 
 FLAG_SECTION_TYPES = {
-    0x0 : "S_REGULAR",
-    0x1 : "S_ZEROFILL",
-    0x2 : "S_CSTRING_LITERALS",
-    0x3 : "S_4BYTE_LITERALS",
-    0x4 : "S_8BYTE_LITERALS",
-    0x5 : "S_LITERAL_POINTERS",
-    0x6 : "S_NON_LAZY_SYMBOL_POINTERS",
-    0x7 : "S_LAZY_SYMBOL_POINTERS",
-    0x8 : "S_SYMBOL_STUBS",
-    0x9 : "S_MOD_INIT_FUNC_POINTERS",
-    0xa : "S_MOD_TERM_FUNC_POINTERS",
-    0xb : "S_COALESCED",
-    0xc : "S_GB_ZEROFILL",
-    0xd : "S_INTERPOSING",
-    0xe : "S_16BYTE_LITERALS",
-    0xf : "S_DTRACE_DOF",
-    0x10 : "S_LAZY_DYLIB_SYMBOL_POINTERS",
-    0x11 : "S_THREAD_LOCAL_REGULAR",
-    0x12 : "S_THREAD_LOCAL_ZEROFILL",
-    0x13 : "S_THREAD_LOCAL_VARIABLES",
-    0x14 : "S_THREAD_LOCAL_VARIABLE_POINTERS",
-    0x15 : "S_THREAD_LOCAL_INIT_FUNCTION_POINTERS"
+    S_REGULAR : "S_REGULAR",
+    S_ZEROFILL : "S_ZEROFILL",
+    S_CSTRING_LITERALS : "S_CSTRING_LITERALS",
+    S_4BYTE_LITERALS : "S_4BYTE_LITERALS",
+    S_8BYTE_LITERALS : "S_8BYTE_LITERALS",
+    S_LITERAL_POINTERS : "S_LITERAL_POINTERS",
+    S_NON_LAZY_SYMBOL_POINTERS : "S_NON_LAZY_SYMBOL_POINTERS",
+    S_LAZY_SYMBOL_POINTERS : "S_LAZY_SYMBOL_POINTERS",
+    S_SYMBOL_STUBS : "S_SYMBOL_STUBS",
+    S_MOD_INIT_FUNC_POINTERS : "S_MOD_INIT_FUNC_POINTERS",
+    S_MOD_TERM_FUNC_POINTERS : "S_MOD_TERM_FUNC_POINTERS",
+    S_COALESCED : "S_COALESCED",
+    S_GB_ZEROFILL : "S_GB_ZEROFILL",
+    S_INTERPOSING : "S_INTERPOSING",
+    S_16BYTE_LITERALS : "S_16BYTE_LITERALS",
+    S_DTRACE_DOF : "S_DTRACE_DOF",
+    S_LAZY_DYLIB_SYMBOL_POINTERS : "S_LAZY_DYLIB_SYMBOL_POINTERS",
+    S_THREAD_LOCAL_REGULAR : "S_THREAD_LOCAL_REGULAR",
+    S_THREAD_LOCAL_ZEROFILL : "S_THREAD_LOCAL_ZEROFILL",
+    S_THREAD_LOCAL_VARIABLES : "S_THREAD_LOCAL_VARIABLES",
+    S_THREAD_LOCAL_VARIABLE_POINTERS : "S_THREAD_LOCAL_VARIABLE_POINTERS",
+    S_THREAD_LOCAL_INIT_FUNCTION_POINTERS : "S_THREAD_LOCAL_INIT_FUNCTION_POINTERS"
 }
 
+SECTION_ATTRIBUTES_USR     = 0xff000000
+S_ATTR_PURE_INSTRUCTIONS   = 0x80000000
+S_ATTR_NO_TOC              = 0x40000000
+S_ATTR_STRIP_STATIC_SYMS   = 0x20000000
+S_ATTR_NO_DEAD_STRIP       = 0x10000000
+S_ATTR_LIVE_SUPPORT        = 0x08000000
+S_ATTR_SELF_MODIFYING_CODE = 0x04000000
+S_ATTR_DEBUG               = 0x02000000
 
-FLAG_SECTION_ATTRIBUTES = {
-    0x80000000 : "S_ATTR_PURE_INSTRUCTIONS",
-    0x40000000 : "S_ATTR_NO_TOC",
-    0x20000000 : "S_ATTR_STRIP_STATIC_SYMS",
-    0x10000000 : "S_ATTR_NO_DEAD_STRIP",
-    0x08000000 : "S_ATTR_LIVE_SUPPORT",
-    0x04000000 : "S_ATTR_SELF_MODIFYING_CODE",
-    0x02000000 : "S_ATTR_DEBUG",
-    0x00000400 : "S_ATTR_SOME_INSTRUCTIONS",
-    0x00000200 : "S_ATTR_EXT_RELOC",
-    0x00000100 : "S_ATTR_LOC_RELOC"
-}
-
-SECTION_ATTRIBUTES_USR = 0xff000000
-S_ATTR_PURE_INSTRUCTIONS = 0x80000000
-S_ATTR_NO_TOC = 0x40000000
-S_ATTR_STRIP_STATIC_SYMS = 0x20000000
 SECTION_ATTRIBUTES_SYS = 0x00ffff00
 S_ATTR_SOME_INSTRUCTIONS = 0x00000400
 S_ATTR_EXT_RELOC = 0x00000200
 S_ATTR_LOC_RELOC = 0x00000100
+
+FLAG_SECTION_ATTRIBUTES = {
+    S_ATTR_PURE_INSTRUCTIONS : "S_ATTR_PURE_INSTRUCTIONS",
+    S_ATTR_NO_TOC : "S_ATTR_NO_TOC",
+    S_ATTR_STRIP_STATIC_SYMS : "S_ATTR_STRIP_STATIC_SYMS",
+    S_ATTR_NO_DEAD_STRIP : "S_ATTR_NO_DEAD_STRIP",
+    S_ATTR_LIVE_SUPPORT : "S_ATTR_LIVE_SUPPORT",
+    S_ATTR_SELF_MODIFYING_CODE : "S_ATTR_SELF_MODIFYING_CODE",
+    S_ATTR_DEBUG : "S_ATTR_DEBUG",
+    S_ATTR_SOME_INSTRUCTIONS : "S_ATTR_SOME_INSTRUCTIONS",
+    S_ATTR_EXT_RELOC : "S_ATTR_EXT_RELOC",
+    S_ATTR_LOC_RELOC : "S_ATTR_LOC_RELOC"
+}
+
 
 
 SEG_PAGEZERO =    "__PAGEZERO"
@@ -694,6 +720,7 @@ SECT_ICON_HEADER = "__header"
 SECT_ICON_TIFF =   "__tiff"
 SEG_LINKEDIT =    "__LINKEDIT"
 SEG_UNIXSTACK =   "__UNIXSTACK"
+SEG_IMPORT = "__IMPORT"
 
 #
 #  I really should remove all these _command classes because they
@@ -1090,6 +1117,41 @@ class source_version_command (Structure):
         r = str(a)+'.'+str(b)+'.'+str(c)+'.'+str(d)+'.'+str(e)
         return {'version': r}
 
+class data_in_code_entry (Structure):
+    _fields_ = (
+        ('offset', p_uint32),
+        ('length', p_uint32),
+        ('kind', p_uint32),
+    )
+
+    def describe(self):
+        return { 'offset': self.offset, 'length': self.length, 'kind': self.kind }
+
+DICE_KIND_DATA              = 0x0001
+DICE_KIND_JUMP_TABLE8       = 0x0002
+DICE_KIND_JUMP_TABLE16      = 0x0003
+DICE_KIND_JUMP_TABLE32      = 0x0004
+DICE_KIND_ABS_JUMP_TABLE32  = 0x0005
+
+DATA_IN_CODE_KINDS = {
+    DICE_KIND_DATA: 'DICE_KIND_DATA',
+    DICE_KIND_JUMP_TABLE8: 'DICE_KIND_JUMP_TABLE8',
+    DICE_KIND_JUMP_TABLE16: 'DICE_KIND_JUMP_TABLE16',
+    DICE_KIND_JUMP_TABLE32: 'DICE_KIND_JUMP_TABLE32',
+    DICE_KIND_ABS_JUMP_TABLE32: 'DICE_KIND_ABS_JUMP_TABLE32',
+}
+
+class tlv_descriptor (Structure):
+    _fields_ = (
+        ('thunk', p_long), # Actually a pointer to a function
+        ('key', p_ulong),
+        ('offset', p_ulong),
+    )
+
+    def describe(self):
+        return { 'thunk': self.thunk, 'key': self.key, 'offset': self.offset }
+
+
 class encryption_info_command (Structure):
     _fields_ = (
         ('cryptoff',    p_uint32),
@@ -1295,6 +1357,12 @@ N_INDR = 0xa
 NO_SECT = 0
 MAX_SECT = 255
 
+def GET_COMM_ALIGN(n_desc):
+    return (n_desc >> 8) & 0x0f
+
+def SET_COMM_ALIGN(n_desc, align):
+    return (n_desc & 0xf0ff) | ((align & 0x0f) << 8)
+
 REFERENCE_TYPE = 0xf
 REFERENCE_FLAG_UNDEFINED_NON_LAZY = 0
 REFERENCE_FLAG_UNDEFINED_LAZY = 1
@@ -1316,12 +1384,21 @@ MAX_LIBRARY_ORDINAL = 0xfd
 DYNAMIC_LOOKUP_ORDINAL = 0xfe
 EXECUTABLE_ORDINAL = 0xff
 
+N_NO_DEAD_STRIP = 0x0020
 N_DESC_DISCARDED = 0x0020
 N_WEAK_REF = 0x0040
 N_WEAK_DEF = 0x0080
+N_REF_TO_WEAK = 0x0080
+N_ARM_THUMB_DEF = 0x0008
+N_SYMBOL_RESOLVER = 0x0100
+N_ALT_ENTRY = 0x0200
 
 # /usr/include/mach-o/fat.h
 FAT_MAGIC = 0xcafebabe
+FAT_CIGAM = 0xbebafeca
+FAT_MAGIC_64 = 0xcafebabf
+FAT_CIGAM_64 = 0xbfbafeca
+
 class fat_header(Structure):
     _fields_ = (
         ('magic', p_uint32),
@@ -1336,3 +1413,65 @@ class fat_arch(Structure):
         ('size', p_uint32),
         ('align', p_uint32),
     )
+
+class fat_arch64(Structure):
+    _fields_ = (
+        ('cputype', cpu_type_t),
+        ('cpusubtype', cpu_subtype_t),
+        ('offset', p_uint64),
+        ('size', p_uint64),
+        ('align', p_uint32),
+        ('reserved', p_uint32),
+    )
+
+
+REBASE_TYPE_POINTER                                     = 1
+REBASE_TYPE_TEXT_ABSOLUTE32                             = 2
+REBASE_TYPE_TEXT_PCREL32                                = 3
+
+REBASE_OPCODE_MASK                                      = 0xF0
+REBASE_IMMEDIATE_MASK                                   = 0x0F
+REBASE_OPCODE_DONE                                      = 0x00
+REBASE_OPCODE_SET_TYPE_IMM                              = 0x10
+REBASE_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB               = 0x20
+REBASE_OPCODE_ADD_ADDR_ULEB                             = 0x30
+REBASE_OPCODE_ADD_ADDR_IMM_SCALED                       = 0x40
+REBASE_OPCODE_DO_REBASE_IMM_TIMES                       = 0x50
+REBASE_OPCODE_DO_REBASE_ULEB_TIMES                      = 0x60
+REBASE_OPCODE_DO_REBASE_ADD_ADDR_ULEB                   = 0x70
+REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB        = 0x80
+
+BIND_TYPE_POINTER                                       = 1
+BIND_TYPE_TEXT_ABSOLUTE32                               = 2
+BIND_TYPE_TEXT_PCREL32                                  = 3
+
+BIND_SPECIAL_DYLIB_SELF                                 =  0
+BIND_SPECIAL_DYLIB_MAIN_EXECUTABLE                      = -1
+BIND_SPECIAL_DYLIB_FLAT_LOOKUP                          = -2
+
+BIND_SYMBOL_FLAGS_WEAK_IMPORT                           = 0x1
+BIND_SYMBOL_FLAGS_NON_WEAK_DEFINITION                   = 0x8
+
+BIND_OPCODE_MASK                                        = 0xF0
+BIND_IMMEDIATE_MASK                                     = 0x0F
+BIND_OPCODE_DONE                                        = 0x00
+BIND_OPCODE_SET_DYLIB_ORDINAL_IMM                       = 0x10
+BIND_OPCODE_SET_DYLIB_ORDINAL_ULEB                      = 0x20
+BIND_OPCODE_SET_DYLIB_SPECIAL_IMM                       = 0x30
+BIND_OPCODE_SET_SYMBOL_TRAILING_FLAGS_IMM               = 0x40
+BIND_OPCODE_SET_TYPE_IMM                                = 0x50
+BIND_OPCODE_SET_ADDEND_SLEB                             = 0x60
+BIND_OPCODE_SET_SEGMENT_AND_OFFSET_ULEB                 = 0x70
+BIND_OPCODE_ADD_ADDR_ULEB                               = 0x80
+BIND_OPCODE_DO_BIND                                     = 0x90
+BIND_OPCODE_DO_BIND_ADD_ADDR_ULEB                       = 0xA0
+BIND_OPCODE_DO_BIND_ADD_ADDR_IMM_SCALED                 = 0xB0
+BIND_OPCODE_DO_BIND_ULEB_TIMES_SKIPPING_ULEB            = 0xC0
+
+EXPORT_SYMBOL_FLAGS_KIND_MASK                           = 0x03
+EXPORT_SYMBOL_FLAGS_KIND_REGULAR                        = 0x00
+EXPORT_SYMBOL_FLAGS_KIND_THREAD_LOCAL                   = 0x01
+EXPORT_SYMBOL_FLAGS_WEAK_DEFINITION                     = 0x04
+EXPORT_SYMBOL_FLAGS_REEXPORT                            = 0x08
+EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER                   = 0x10
+

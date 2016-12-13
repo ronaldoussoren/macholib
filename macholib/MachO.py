@@ -19,6 +19,9 @@ try:
 except NameError:
     unicode = str
 
+if sys.version_info[0] == 2:
+    range = xrange
+
 __all__ = ['MachO']
 
 _RELOCATABLE = set((
@@ -77,7 +80,7 @@ class MachO(object):
         assert fh.tell() == 0
         header = struct.unpack('>I', fh.read(4))[0]
         fh.seek(0)
-        if header == FAT_MAGIC:
+        if header in (FAT_MAGIC, FAT_MAGIC_64):
             self.load_fat(fh)
         else:
             fh.seek(0, 2)
@@ -87,7 +90,14 @@ class MachO(object):
 
     def load_fat(self, fh):
         self.fat = fat_header.from_fileobj(fh)
-        archs = [fat_arch.from_fileobj(fh) for i in range(self.fat.nfat_arch)]
+        if self.fat.magic == FAT_MAGIC:
+            archs = [fat_arch.from_fileobj(fh) for i in range(self.fat.nfat_arch)]
+        elif self.fat.magic == FAT_MAGIC_64:
+            archs = [fat_arch_64.from_fileobj(fh) for i in range(self.fat.nfat_arch)]
+        else:
+            raise ValueError("Unknown fat header magic: %r"%(self.fat.magic))
+
+
         for arch in archs:
             self.load_header(fh, arch.offset, arch.size)
 

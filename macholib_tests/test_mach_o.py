@@ -15,7 +15,18 @@ class TestMachO (unittest.TestCase):
     # The definitions will get exercised by the
     # other tests, therefore testing is ignored
     # for now.
-    pass
+
+    def test_consistency(self):
+        self.assertEqual(
+            mach_o.MH_FLAGS_DESCRIPTIONS.keys(),
+            mach_o.MH_FLAGS_NAMES.keys()
+        )
+        for k in dir (mach_o):
+            if not k.startswith('MH_'): continue
+            v = getattr(mach_o, k)
+            if isinstance(v, int) and any(v == 1 << x for x in range(31)):
+                self.assertTrue(v in mach_o.MH_FLAGS_NAMES, "No NAME and DESCRIPTION for %s"%(k,))
+
 
 if __name__ == "__main__":
     unittest.main()

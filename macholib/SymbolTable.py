@@ -7,6 +7,8 @@ from macholib.mach_o import *
 
 __all__ = ['SymbolTable']
 
+if sys.version_info[0] == 2:
+    range = xrange
 
 class SymbolTable(object):
     def __init__(self, macho, header=None, openfile=None):

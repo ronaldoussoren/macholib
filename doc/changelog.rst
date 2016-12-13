@@ -10,7 +10,8 @@ macholib 1.8
 
 * Added support for new load commands
 
-  Patch by David Dorsey <trogdorsey@gmail.com>
+  Patch by David Dorsey <trogdorsey@gmail.com>,
+  with enhancements by Ronald Oussoren.
 
 * Fix procesing DSYM file from XCODE 6.x
 
@@ -36,11 +37,17 @@ macholib 1.8
 
   Patch by Christian Klein <chris@5711.org>
 
-* Strip local keyword arguments before calling super
+* Issue #14: Strip local keyword arguments before calling super
 
   Patch by Christian Klein <chris@5711.org>
 
 * Issue #17: add LC_LOAD_UPWARD_DYLIB to _RELOCATABLE set
+
+* Issue #16: macholib "hangs" on invalid input
+
+  Due to the use of the range function on untrusted input
+  the python process could hang when reading invalid input, due
+  to trying to construct an enormous list.
 
 
 macholib 1.7
