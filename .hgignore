@@ -4,6 +4,7 @@ __pycache__
 build
 dist
 .DS_Store
+.tox
 
 syntax: glob
 *.pyc
