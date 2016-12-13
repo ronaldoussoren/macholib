@@ -12,6 +12,7 @@ try:
 except ImportError:
     from cStringIO import StringIO as BytesIO
 import mmap
+import struct
 
 try:
     long
@@ -186,6 +187,15 @@ class TestPTypesSimple (unittest.TestCase):
             myFunStructure.to_mmap(mm, ptypes.sizeof(MyFunStructure))
             self.assertEqual(mm[:], MYFUNSTRUCTURE + MYFUNSTRUCTURE)
             self.assertEqual(MyFunStructure.from_mmap(mm, ptypes.sizeof(MyFunStructure), **kw), myFunStructure)
+
+    def test_issue14(self):
+        raw=b'\x01\x00\x00\x00\x00\x00\x00\x00'
+        v = ptypes.p_uint64.from_str(raw, _endian_='<')
+        self.assertEqual(v, struct.unpack('<q', raw)[0])
+
+        v = ptypes.p_uint64.from_str(raw, _endian_='>')
+        self.assertEqual(v, struct.unpack('>q', raw)[0])
+
 
 if __name__ == "__main__":
     unittest.main()
