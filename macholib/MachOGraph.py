@@ -43,10 +43,12 @@ class MachOGraph(ObjectGraph):
         if filename.startswith('@loader_path/') and loader is not None:
             fn = self.trans_table.get((loader.filename, filename))
             if fn is None:
+                loader_path = loader.loader_path
+
                 try:
                     fn = dyld_find(filename, env=self.env,
                         executable_path=self.executable_path,
-                        loader_path=loader.filename)
+                        loader_path=loader_path)
                     self.trans_table[(loader.filename, filename)] = fn
                 except ValueError:
                     return None
@@ -87,8 +89,8 @@ class MachOGraph(ObjectGraph):
 
     def load_file(self, name, caller=None):
         assert isinstance(name, (str, unicode))
-        self.msgin(2, "load_file", name)
-        m = self.findNode(name)
+        self.msgin(2, "load_file", name, caller)
+        m = self.findNode(name, loader=caller)
         if m is None:
             newname = self.locate(name, loader=caller)
             if newname is not None and newname != name:

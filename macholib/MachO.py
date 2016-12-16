@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import sys
 import struct
+import os
 
 from macholib.mach_o import *
 from macholib.dyld import dyld_find, framework_info
@@ -66,6 +67,7 @@ class MachO(object):
         # supports the ObjectGraph protocol
         self.graphident = filename
         self.filename = filename
+        self.loader_path = os.path.dirname(filename)
 
         # initialized by load
         self.fat = None

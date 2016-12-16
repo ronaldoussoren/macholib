@@ -17,13 +17,13 @@ class FilteredMachOGraph(MachOGraph):
     def createNode(self, cls, name):
         cls = self.delegate.getClass(name, cls)
         res = super(FilteredMachOGraph, self).createNode(cls, name)
-        return res
+        return self.delegate.update_node(res)
 
     def locate(self, filename, loader=None):
         newname = super(FilteredMachOGraph, self).locate(filename, loader)
         if newname is None:
             return None
-        return self.delegate.locate(newname)
+        return self.delegate.locate(newname, loader=loader)
 
 class MachOStandalone(object):
     def __init__(self, base, dest=None, graph=None, env=None,
@@ -38,6 +38,9 @@ class MachOStandalone(object):
         self.excludes = []
         self.pending = deque()
 
+    def update_node(self, m):
+        return m
+
     def getClass(self, name, cls):
         if in_system_path(name):
             return ExcludedMachO
@@ -46,7 +49,7 @@ class MachOStandalone(object):
                 return ExcludedMachO
         return cls
 
-    def locate(self, filename):
+    def locate(self, filename, loader=None):
         if in_system_path(filename):
             return filename
         if filename.startswith(self.base):
@@ -69,7 +72,7 @@ class MachOStandalone(object):
     def copy_dylib(self, filename):
         # When the filename is a symlink use the basename of the target of the link
         # as the name in standalone bundle. This avoids problems when two libraries
-        # link to the same dylib but using different symlinks.
+        #  link to the same dylib but using different symlinks.
         if os.path.islink(filename):
             dest = os.path.join(self.dest, os.path.basename(os.path.realpath(filename)))
         else:
@@ -121,7 +124,10 @@ class MachOStandalone(object):
 
         def changefunc(path):
             res = mm.locate(path)
-            return changemap.get(res)
+            rv =  changemap.get(res)
+            if rv is None and path.startswith('@loader_path/'):
+                rv = changemap.get(mm.locate(mm.trans_table.get((node.filename, path))))
+            return rv
 
         for node in machfiles:
             fn = mm.locate(node.filename)
