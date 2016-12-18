@@ -37,10 +37,6 @@ macholib 1.8
 
   Patch by Christian Klein <chris@5711.org>
 
-* Issue #14: Strip local keyword arguments before calling super
-
-  Patch by Christian Klein <chris@5711.org>
-
 * Issue #17: add LC_LOAD_UPWARD_DYLIB to _RELOCATABLE set
 
 * Issue #16: macholib "hangs" on invalid input
