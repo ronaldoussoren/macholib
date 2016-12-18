@@ -146,22 +146,35 @@ class TestPTypesSimple (unittest.TestCase):
     # Moving these in a structured manner to TestPTypes
     # would be nice, but is not extremely important.
 
+    if not hasattr(unittest.TestCase, 'subTest'):
+        def subTest(self, msg, **kw):
+            class STHelper (object):
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, type, value, traceback):
+                    return False
+
+            return STHelper()
+
     def testBasic(self):
         for endian in '><':
             kw = dict(_endian_=endian)
-            MYSTRUCTURE = b'\x00\x11\x22\x33\xFF'
+            MYSTRUCTURE = b'\x00\x01\x02\x03\xFF'
             for fn, args in [
                         ('from_str', (MYSTRUCTURE,)),
                         ('from_mmap', (MYSTRUCTURE, 0)),
                         ('from_fileobj', (BytesIO(MYSTRUCTURE),)),
                     ]:
-                myStructure = getattr(MyStructure, fn)(*args, **kw)
-                if endian == '>':
-                    self.assertEqual(myStructure.foo, 0x00112233)
-                else:
-                    self.assertEqual( myStructure.foo, 0x33221100)
-                self.assertEqual(myStructure.bar, 0xFF)
-                self.assertEqual(myStructure.to_str(), MYSTRUCTURE)
+                with self.subTest("MYSTRUCTURE", endian=endian, fn=fn):
+                    myStructure = getattr(MyStructure, fn)(*args, **kw)
+                    if endian == '>':
+                        self.assertEqual(myStructure.foo, 0x00010203)
+                    else:
+                        self.assertEqual( myStructure.foo, 0x03020100)
+                    self.assertEqual(myStructure.bar, 0xFF)
+                    self.assertEqual(myStructure._endian_, endian)
+                    self.assertEqual(myStructure.to_str(), MYSTRUCTURE)
 
             MYFUNSTRUCTURE = b'!' + MYSTRUCTURE
             for fn, args in [
@@ -169,10 +182,11 @@ class TestPTypesSimple (unittest.TestCase):
                         ('from_mmap', (MYFUNSTRUCTURE, 0)),
                         ('from_fileobj', (BytesIO(MYFUNSTRUCTURE),)),
                     ]:
-                myFunStructure = getattr(MyFunStructure, fn)(*args, **kw)
-                self.assertEqual(myFunStructure.mystruct, myStructure)
-                self.assertEqual(myFunStructure.fun, b'!', (myFunStructure.fun, b'!'))
-                self.assertEqual(myFunStructure.to_str(), MYFUNSTRUCTURE)
+                with self.subTest("MYFUNSTRUCTURE", fn=fn):
+                    myFunStructure = getattr(MyFunStructure, fn)(*args, **kw)
+                    self.assertEqual(myFunStructure.mystruct, myStructure)
+                    self.assertEqual(myFunStructure.fun, b'!', (myFunStructure.fun, b'!'))
+                    self.assertEqual(myFunStructure.to_str(), MYFUNSTRUCTURE)
 
             sio = BytesIO()
             myFunStructure.to_fileobj(sio)
