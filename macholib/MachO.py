@@ -329,7 +329,8 @@ class MachOHeader(object):
 
     def synchronize_size(self):
         if (self.total_size + self.sizediff) > self.low_offset:
-            raise ValueError("New Mach-O header is too large to relocate in %r"%(self.parent.filename,))
+            raise ValueError("New Mach-O header is too large to relocate in %r (new size=%r, max size=%r, delta=%r)"%(
+                self.parent.filename, self.total_size + self.sizediff, self.low_offset, self.sizediff))
         self.header.sizeofcmds += self.sizediff
         self.total_size = sizeof(self.mach_header) + self.header.sizeofcmds
         self.sizediff = 0
