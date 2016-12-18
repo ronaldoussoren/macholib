@@ -196,15 +196,20 @@ def _make():
     @as_method
     def _get_packables(self):
         for obj in imap(self._objects_.__getitem__, self._names_):
-            if obj._items_ == 1:
-                yield obj
-            else:
+            if hasattr(obj, '_get_packables'):
                 for obj in obj._get_packables():
                     yield obj
 
+            else:
+                yield obj
+
     @as_method
     def to_str(self):
-        return struct.pack(self._endian_ + self._format_, *self._get_packables())
+        try:
+            return struct.pack(self._endian_ + self._format_, *self._get_packables())
+        except struct.error as exc:
+            print(exc, self._endian_, self._format_, tuple(self._get_packables()))
+            raise
 
     @as_method
     def __cmp__(self, other):

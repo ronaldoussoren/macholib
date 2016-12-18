@@ -321,10 +321,33 @@ MH_FLAGS_DESCRIPTIONS = {
 
 class mach_version_helper(Structure):
     _fields_ = (
-        ('rev', p_uint8),
-        ('minor', p_uint8),
-        ('major', p_uint16),
+        ('_version', p_uint32),
     )
+
+    @property
+    def major(self):
+        return self._version >> 16 & 0xffff
+
+    @major.setter
+    def major(self, v):
+        self._version = (self._version & 0xffff) | (v << 16)
+
+    @property
+    def minor(self):
+        return self._version >> 8 &  0xff
+
+    @minor.setter
+    def minor(self, v):
+        self._version = (self._version & 0xffff00ff) | (v << 8)
+
+    @property
+    def rev(self):
+        return self._version & 0xff
+
+    @rev.setter
+    def rev(self, v):
+        return (self._version & 0xffffff00) | v
+
     def __str__(self):
         return '%s.%s.%s' % (self.major, self.minor, self.rev)
 
