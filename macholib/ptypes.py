@@ -205,11 +205,7 @@ def _make():
 
     @as_method
     def to_str(self):
-        try:
-            return struct.pack(self._endian_ + self._format_, *self._get_packables())
-        except struct.error as exc:
-            print(exc, self._endian_, self._format_, tuple(self._get_packables()))
-            raise
+        return struct.pack(self._endian_ + self._format_, *self._get_packables())
 
     @as_method
     def __cmp__(self, other):
