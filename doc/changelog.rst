@@ -1,6 +1,17 @@
 Release history
 ===============
 
+macholib 1.9
+------------
+
+Features:
+
+* (none yet)
+
+Bug fixes:
+
+* (none yet)
+
 macholib 1.8
 ------------
 
