@@ -1,4 +1,4 @@
-include *.txt MANIFEST.in *.py
+include *.txt MANIFEST.in *.py tox.ini
 graft doc
 graft doc/_static
 graft doc/_templates
