@@ -119,7 +119,7 @@ class MachOStandalone(object):
 
         for node in mm.flatten(has_filename_filter):
             machfiles.append(node)
-            dest = os.path.join(contents, node.filename[len(skipcontents):])
+            dest = os.path.join(contents, os.path.normpath(node.filename[len(skipcontents):]))
             changemap[node.filename] = dest
 
         def changefunc(path):
