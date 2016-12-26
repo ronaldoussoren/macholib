@@ -54,6 +54,8 @@ macholib 1.8
 
   Patch by Brendan Simon
 
+* Fix issue #14: Can't pass endian argument to p_uint64.from_str
+
 
 macholib 1.7
 ------------

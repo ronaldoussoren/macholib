@@ -102,10 +102,23 @@ def pypackable(name, pytype, format):
     Packable with the given struct format
     """
     size, items = _formatinfo(format)
+
+    def __new__(cls, *args, **kwds):
+        if '_endian_' in kwds:
+            _endian_ = kwds.pop('_endian_')
+        else:
+            _endian_ = cls._endian_
+
+        result = pytype.__new__(cls, *args, **kwds)
+        result._endian_ = _endian_
+        return result
+
+
     return type(Packable)(name, (pytype, Packable), {
         '_format_': format,
         '_size_': size,
         '_items_': items,
+        '__new__': __new__,
     })
 
 def _formatinfo(format):
