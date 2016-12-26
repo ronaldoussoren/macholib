@@ -19,7 +19,6 @@ ARCH_MAP={
 def print_file(fp, path):
     print(path, file=fp)
     m = MachO(path)
-    print(m)
     for header in m.headers:
         seen = set()
 
