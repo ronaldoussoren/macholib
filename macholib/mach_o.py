@@ -843,7 +843,7 @@ class thread_command(Structure):
 
     def describe(self):
         s = {}
-        s['flavor'] = int(self.flavour)
+        s['flavor'] = int(self.flavor)
         s['count'] = int(self.count)
         return s
 
