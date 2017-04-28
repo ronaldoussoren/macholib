@@ -48,6 +48,15 @@ def _shouldRelocateCommand(cmd):
     """
     return cmd in _RELOCATABLE
 
+def lc_str_value(offset, cmd_info):
+    """
+    Fetch the actual value of a field of type "lc_str"
+    """
+    cmd_load, cmd_cmd, cmd_data = cmd_info
+
+    offset -= sizeof(cmd_load) + sizeof(cmd_cmd)
+    return cmd_data[offset:].strip(b'\x00')
+
 class MachO(object):
     """
     Provides reading/writing the Mach-O header of a specific existing file

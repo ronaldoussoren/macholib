@@ -272,6 +272,17 @@ def _make():
         r = self.__cmp__(other)
         return r >= 0
 
+
+    @as_method
+    def __repr__(self):
+        result = []
+        result.append('<')
+        result.append(type(self).__name__)
+        for nm in self._names_:
+            result.append(' %s=%r'%(nm, getattr(self, nm)))
+        result.append('>')
+        return ''.join(result)
+
     return MetaStructure("Structure", (BasePackable,), class_dict)
 Structure = _make()
 del _make
