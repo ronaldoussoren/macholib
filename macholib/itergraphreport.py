@@ -13,10 +13,10 @@ except ImportError:
 
 __all__ = ['itergraphreport']
 
+
 def itergraphreport(nodes, describe_edge, name='G'):
     edges = deque()
     nodetoident = {}
-    mainedges = set()
 
     def nodevisitor(node, data, outgoing, incoming):
         return {'label': str(node)}
@@ -26,7 +26,7 @@ def itergraphreport(nodes, describe_edge, name='G'):
 
     yield 'digraph %s {\n' % (name,)
     attr = dict(rankdir='LR', concentrate='true')
-    cpatt  = '%s="%s"'
+    cpatt = '%s="%s"'
     for item in attr.iteritems():
         yield '\t%s;\n' % (cpatt % item,)
 

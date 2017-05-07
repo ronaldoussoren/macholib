@@ -5,10 +5,8 @@ Utilities for reading and writing Mach-O headers
 import os
 import sys
 
-from altgraph.Graph import Graph
 from altgraph.ObjectGraph import ObjectGraph
 
-from macholib.mach_o import *
 from macholib.dyld import dyld_find
 from macholib.MachO import MachO
 from macholib.itergraphreport import itergraphreport
@@ -20,6 +18,7 @@ try:
 except NameError:
     unicode = str
 
+
 class MissingMachO(object):
     def __init__(self, filename):
         self.graphident = filename
@@ -27,6 +26,7 @@ class MissingMachO(object):
 
     def __repr__(self):
         return '<%s graphident=%r>' % (type(self).__name__, self.graphident)
+
 
 class MachOGraph(ObjectGraph):
     """
@@ -46,7 +46,8 @@ class MachOGraph(ObjectGraph):
                 loader_path = loader.loader_path
 
                 try:
-                    fn = dyld_find(filename, env=self.env,
+                    fn = dyld_find(
+                        filename, env=self.env,
                         executable_path=self.executable_path,
                         loader_path=loader_path)
                     self.trans_table[(loader.filename, filename)] = fn
@@ -57,8 +58,9 @@ class MachOGraph(ObjectGraph):
             fn = self.trans_table.get(filename)
             if fn is None:
                 try:
-                    fn = dyld_find(filename, env=self.env,
-                        executable_path=self.executable_path)
+                    fn = dyld_find(
+                            filename, env=self.env,
+                            executable_path=self.executable_path)
                     self.trans_table[filename] = fn
                 except ValueError:
                     return None
@@ -123,11 +125,13 @@ class MachOGraph(ObjectGraph):
             fileobj = sys.stdout
         fileobj.writelines(self.itergraphreport())
 
+
 def main(args):
     g = MachOGraph()
     for arg in args:
         g.run_file(arg)
     g.graphreport()
+
 
 if __name__ == '__main__':
     main(sys.argv[1:] or ['/bin/ls'])

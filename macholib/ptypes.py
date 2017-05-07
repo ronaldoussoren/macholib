@@ -1,6 +1,6 @@
 """
-This module defines packable types, that is types than can be easily converted to a binary format
-as used in MachO headers.
+This module defines packable types, that is types than can be easily
+converted to a binary format as used in MachO headers.
 """
 import struct
 import sys
@@ -10,7 +10,6 @@ try:
 except ImportError:
     izip, imap = zip, map
 from itertools import chain, starmap
-import warnings
 
 __all__ = """
 sizeof
@@ -40,6 +39,7 @@ p_float
 p_double
 """.split()
 
+
 def sizeof(s):
     """
     Return the size of an object when packed
@@ -52,9 +52,11 @@ def sizeof(s):
 
     raise ValueError(s)
 
+
 class MetaPackable(type):
     """
-    Fixed size struct.unpack-able types use from_tuple as their designated initializer
+    Fixed size struct.unpack-able types use from_tuple as their designated
+    initializer
     """
     def from_mmap(cls, mm, ptr, **kw):
         return cls.from_str(mm[ptr:ptr+cls._size_], **kw)
@@ -68,6 +70,7 @@ class MetaPackable(type):
 
     def from_tuple(cls, tpl, **kw):
         return cls(tpl[0], **kw)
+
 
 class BasePackable(object):
     _endian_ = '>'
@@ -92,6 +95,8 @@ def _make():
         endian = getattr(self, '_endian_', cls._endian_)
         return struct.pack(endian + cls._format_, self)
     return MetaPackable("Packable", (BasePackable,), {'to_str': to_str})
+
+
 Packable = _make()
 del _make
 
@@ -113,7 +118,6 @@ def pypackable(name, pytype, format):
         result._endian_ = _endian_
         return result
 
-
     return type(Packable)(name, (pytype, Packable), {
         '_format_': format,
         '_size_': size,
@@ -121,12 +125,14 @@ def pypackable(name, pytype, format):
         '__new__': __new__,
     })
 
+
 def _formatinfo(format):
     """
     Calculate the size and number of items in a struct format.
     """
     size = struct.calcsize(format)
     return size, len(struct.unpack(format, b'\x00' * size))
+
 
 class MetaStructure(MetaPackable):
     """
@@ -146,12 +152,15 @@ class MetaStructure(MetaPackable):
         size = 0
 
         def struct_property(name, typ):
+
             def _get(self):
                 return self._objects_[name]
+
             def _set(self, obj):
                 if type(obj) is not typ:
                     obj = typ(obj)
                 self._objects_[name] = obj
+
             return property(_get, _set, typ.__name__)
 
         for name, typ in fields:
@@ -183,9 +192,10 @@ class MetaStructure(MetaPackable):
         values.extend(tpl[current:])
         return cls(*values, **kw)
 
+
 # See metaclass discussion earlier in this file
 def _make():
-    class_dict={}
+    class_dict = {}
     class_dict['_fields_'] = ()
 
     def as_method(function):
@@ -218,12 +228,15 @@ def _make():
 
     @as_method
     def to_str(self):
-        return struct.pack(self._endian_ + self._format_, *self._get_packables())
+        return struct.pack(
+            self._endian_ + self._format_, *self._get_packables())
 
     @as_method
     def __cmp__(self, other):
         if type(other) is not type(self):
-            raise TypeError('Cannot compare objects of type %r to objects of type %r' % (type(other), type(self)))
+            raise TypeError(
+                'Cannot compare objects of type %r to objects of type %r' % (
+                    type(other), type(self)))
         if sys.version_info[0] == 2:
             _cmp = cmp
         else:
@@ -237,7 +250,8 @@ def _make():
                 else:
                     raise TypeError()
 
-        for cmpval in starmap(_cmp, izip(self._get_packables(), other._get_packables())):
+        for cmpval in starmap(
+                _cmp, izip(self._get_packables(), other._get_packables())):
             if cmpval != 0:
                 return cmpval
         return 0
@@ -272,18 +286,19 @@ def _make():
         r = self.__cmp__(other)
         return r >= 0
 
-
     @as_method
     def __repr__(self):
         result = []
         result.append('<')
         result.append(type(self).__name__)
         for nm in self._names_:
-            result.append(' %s=%r'%(nm, getattr(self, nm)))
+            result.append(' %s=%r' % (nm, getattr(self, nm)))
         result.append('>')
         return ''.join(result)
 
     return MetaStructure("Structure", (BasePackable,), class_dict)
+
+
 Structure = _make()
 del _make
 

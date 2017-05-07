@@ -6,8 +6,10 @@ from macholib.util import iter_platform_files, in_system_path, mergecopy, \
 from macholib.dyld import framework_info
 from collections import deque
 
+
 class ExcludedMachO(MissingMachO):
     pass
+
 
 class FilteredMachOGraph(MachOGraph):
     def __init__(self, delegate, *args, **kwargs):
@@ -25,15 +27,17 @@ class FilteredMachOGraph(MachOGraph):
             return None
         return self.delegate.locate(newname, loader=loader)
 
+
 class MachOStandalone(object):
-    def __init__(self, base, dest=None, graph=None, env=None,
+    def __init__(
+            self, base, dest=None, graph=None, env=None,
             executable_path=None):
         self.base = os.path.join(os.path.abspath(base), '')
         if dest is None:
             dest = os.path.join(self.base, 'Contents', 'Frameworks')
         self.dest = dest
-        self.mm = FilteredMachOGraph(self, graph=graph, env=env,
-            executable_path=executable_path)
+        self.mm = FilteredMachOGraph(
+            self, graph=graph, env=env, executable_path=executable_path)
         self.changemap = {}
         self.excludes = []
         self.pending = deque()
@@ -70,11 +74,13 @@ class MachOStandalone(object):
             return res
 
     def copy_dylib(self, filename):
-        # When the filename is a symlink use the basename of the target of the link
-        # as the name in standalone bundle. This avoids problems when two libraries
-        #  link to the same dylib but using different symlinks.
+        # When the filename is a symlink use the basename of the target of
+        # the link as the name in standalone bundle. This avoids problems
+        # when two libraries link to the same dylib but using different
+        # symlinks.
         if os.path.islink(filename):
-            dest = os.path.join(self.dest, os.path.basename(os.path.realpath(filename)))
+            dest = os.path.join(
+                self.dest, os.path.basename(os.path.realpath(filename)))
         else:
             dest = os.path.join(self.dest, os.path.basename(filename))
 
@@ -119,14 +125,16 @@ class MachOStandalone(object):
 
         for node in mm.flatten(has_filename_filter):
             machfiles.append(node)
-            dest = os.path.join(contents, os.path.normpath(node.filename[len(skipcontents):]))
+            dest = os.path.join(
+                contents, os.path.normpath(node.filename[len(skipcontents):]))
             changemap[node.filename] = dest
 
         def changefunc(path):
             res = mm.locate(path)
-            rv =  changemap.get(res)
+            rv = changemap.get(res)
             if rv is None and path.startswith('@loader_path/'):
-                rv = changemap.get(mm.locate(mm.trans_table.get((node.filename, path))))
+                rv = changemap.get(mm.locate(mm.trans_table.get(
+                        (node.filename, path))))
             return rv
 
         for node in machfiles:
