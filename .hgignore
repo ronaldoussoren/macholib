@@ -5,6 +5,8 @@ build
 dist
 .DS_Store
 .tox
+.coverage
+htmlcov
 
 syntax: glob
 *.pyc
