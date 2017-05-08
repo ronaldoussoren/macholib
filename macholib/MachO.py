@@ -8,13 +8,14 @@ import struct
 import os
 
 from .mach_o import MH_FILETYPE_SHORTNAMES, LC_DYSYMTAB, LC_SYMTAB
-from .mach_o import sizeof, load_command, S_ZEROFILL, section_64, section
+from .mach_o import load_command, S_ZEROFILL, section_64, section
 from .mach_o import LC_REGISTRY, LC_ID_DYLIB, LC_SEGMENT, fat_header
 from .mach_o import LC_SEGMENT_64, MH_CIGAM_64, MH_MAGIC_64, FAT_MAGIC
-from .mach_o import mach_header, fat_arch_64, FAT_MAGIC_64, fat_arch
+from .mach_o import mach_header, fat_arch64, FAT_MAGIC_64, fat_arch
 from .mach_o import LC_REEXPORT_DYLIB, LC_PREBOUND_DYLIB, LC_LOAD_WEAK_DYLIB
 from .mach_o import LC_LOAD_UPWARD_DYLIB, LC_LOAD_DYLIB, mach_header_64
 from .mach_o import MH_CIGAM, MH_MAGIC
+from .ptypes import sizeof
 
 from macholib.util import fileview
 try:
@@ -114,7 +115,7 @@ class MachO(object):
             archs = [fat_arch.from_fileobj(fh)
                      for i in range(self.fat.nfat_arch)]
         elif self.fat.magic == FAT_MAGIC_64:
-            archs = [fat_arch_64.from_fileobj(fh)
+            archs = [fat_arch64.from_fileobj(fh)
                      for i in range(self.fat.nfat_arch)]
         else:
             raise ValueError("Unknown fat header magic: %r" % (self.fat.magic))
