@@ -6,6 +6,8 @@ macholib 1.9
 
 Features:
 
+* #22: Add LICENSE file
+
 * #23: Added "--help" option for "python -m macholib"
 
 * Added function ``macholib.MachO.lc_str_value`` which should
