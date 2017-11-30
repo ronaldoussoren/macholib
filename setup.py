@@ -730,8 +730,10 @@ def importExternalTestCases(unittest,
         try:
             module = __import__(modName)
         except ImportError:
-            print("SKIP %s: %s"%(modName, sys.exc_info()[1]))
-            continue
+            # XXX: Skipping is unsafe
+            #print("SKIP %s: %s"%(modName, sys.exc_info()[1]))
+            #continue
+            raise
 
         if '.' in modName:
             for elem in modName.split('.')[1:]:
