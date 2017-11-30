@@ -1460,6 +1460,20 @@ NO_SECT = 0
 MAX_SECT = 255
 
 
+class relocation_info(Structure):
+    # XXX: Need to add code for decoding the bitfield!
+    _fields_ = (
+        ('r_address', p_uint32),
+        ('_r_bitfield', p_uint32),
+    )
+
+    def _describe(self):
+        return (
+            ('r_address', self.r_address),
+            ('_r_bitfield', self._r_bitfield),
+        )
+
+
 def GET_COMM_ALIGN(n_desc):
     return (n_desc >> 8) & 0x0f
 
