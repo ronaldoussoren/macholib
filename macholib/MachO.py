@@ -29,7 +29,7 @@ except NameError:
     unicode = str
 
 if sys.version_info[0] == 2:
-    range = xrange
+    range = xrange  # noqa: F821
 
 __all__ = ['MachO']
 

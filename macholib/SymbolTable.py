@@ -11,7 +11,7 @@ import sys
 __all__ = ['SymbolTable']
 
 if sys.version_info[0] == 2:
-    range = xrange
+    range = xrange  # noqa: F821
 
 
 class SymbolTable(object):

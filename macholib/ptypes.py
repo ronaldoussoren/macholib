@@ -238,7 +238,7 @@ def _make():
                 'Cannot compare objects of type %r to objects of type %r' % (
                     type(other), type(self)))
         if sys.version_info[0] == 2:
-            _cmp = cmp
+            _cmp = cmp  # noqa: F821
         else:
             def _cmp(a, b):
                 if a < b:
