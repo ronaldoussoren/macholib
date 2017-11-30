@@ -6,11 +6,20 @@ macholib 1.9
 
 Features:
 
-* (none yet)
+* #23: Added "--help" option for "python -m macholib"
+
+* Added function ``macholib.MachO.lc_str_value`` which should
+  help in decoding value of ``macholib.mach_o.lc_str``. Those
+  values are offsets in the data of a load command, the function
+  will return the actually value as a byte string.
+
+  See also issue #21.
 
 Bug fixes:
 
-* (none yet)
+* Pull request #15: Fix typo in thread_command class
+
+  Patch by user "phdphuc" on bitbucket.
 
 macholib 1.8
 ------------
