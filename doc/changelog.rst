@@ -6,6 +6,9 @@ macholib 1.9
 
 Features:
 
+* Add definition for ``macholib.mach_o.reloc_type_generic``, which
+  was used in code but never defined.
+
 * #22: Add LICENSE file
 
 * #23: Added "--help" option for "python -m macholib"
