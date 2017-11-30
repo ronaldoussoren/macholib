@@ -39,7 +39,8 @@ class MachOGraph(ObjectGraph):
         self.executable_path = executable_path
 
     def locate(self, filename, loader=None):
-        assert isinstance(filename, (str, unicode))
+        if not isinstance(filename, (str, unicode)):
+            raise TypeError("%r is not a string"%(filename,))
         if filename.startswith('@loader_path/') and loader is not None:
             fn = self.trans_table.get((loader.filename, filename))
             if fn is None:

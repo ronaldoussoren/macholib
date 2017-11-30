@@ -231,6 +231,7 @@ def parse_setup_cfg():
             fp.close()
 
         metadata['long_description'] = '\n\n'.join(parts)
+        metadata['long_description_content_type'] = 'text/x-rst; charset=UTF-8'
 
 
     try:
@@ -531,6 +532,7 @@ except ImportError:
     use_setuptools()
 
 from setuptools import setup
+from setuptools.command import egg_info
 
 try:
     from distutils.core import PyPIRCCommand
@@ -741,8 +743,17 @@ def importExternalTestCases(unittest,
     return unittest.TestSuite(suites)
 
 
+class my_egg_info (egg_info.egg_info):
+    def run(self):
+        egg_info.egg_info.run(self)
 
-class test (Command):
+        path = os.path.join(self.egg_info, 'PKG-INFO')
+        with open(path, 'a+') as fp:
+            fp.write('Project-URL: Documentation, https://macholib.readthedocs.io/en/latest/\n')
+            fp.write('Project-URL: Issue tracker, https://bitbucket.org/ronaldoussoren/macholib/issues?status=new&status=open\n')
+
+
+class my_test (Command):
     description = "run test suite"
     user_options = [
         ('verbosity=', None, "print what tests are run"),
@@ -863,7 +874,8 @@ metadata = parse_setup_cfg()
 setup(
     cmdclass=dict(
         upload_docs=upload_docs,
-        test=test,
+        test=my_test,
+        egg_info=my_egg_info,
     ),
     **metadata
 )
