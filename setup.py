@@ -178,25 +178,25 @@ def parse_setup_cfg():
         sys.exit(1)
 
     metadata = dict(
-            name        = cfg.get('metadata', 'name'),
-            version     = cfg.get('metadata', 'version'),
-            description = cfg.get('metadata', 'description'),
+            name        = cfg.get('x-metadata', 'name'),
+            version     = cfg.get('x-metadata', 'version'),
+            description = cfg.get('x-metadata', 'description'),
     )
 
-    _opt_value(cfg, metadata, 'metadata', 'license')
-    _opt_value(cfg, metadata, 'metadata', 'maintainer')
-    _opt_value(cfg, metadata, 'metadata', 'maintainer_email')
-    _opt_value(cfg, metadata, 'metadata', 'author')
-    _opt_value(cfg, metadata, 'metadata', 'author_email')
-    _opt_value(cfg, metadata, 'metadata', 'url')
-    _opt_value(cfg, metadata, 'metadata', 'download_url')
-    _opt_value(cfg, metadata, 'metadata', 'classifiers', _as_lines)
-    _opt_value(cfg, metadata, 'metadata', 'platforms', _as_list)
-    _opt_value(cfg, metadata, 'metadata', 'packages', _as_list)
-    _opt_value(cfg, metadata, 'metadata', 'keywords', _as_list)
+    _opt_value(cfg, metadata, 'x-metadata', 'license')
+    _opt_value(cfg, metadata, 'x-metadata', 'maintainer')
+    _opt_value(cfg, metadata, 'x-metadata', 'maintainer_email')
+    _opt_value(cfg, metadata, 'x-metadata', 'author')
+    _opt_value(cfg, metadata, 'x-metadata', 'author_email')
+    _opt_value(cfg, metadata, 'x-metadata', 'url')
+    _opt_value(cfg, metadata, 'x-metadata', 'download_url')
+    _opt_value(cfg, metadata, 'x-metadata', 'classifiers', _as_lines)
+    _opt_value(cfg, metadata, 'x-metadata', 'platforms', _as_list)
+    _opt_value(cfg, metadata, 'x-metadata', 'packages', _as_list)
+    _opt_value(cfg, metadata, 'x-metadata', 'keywords', _as_list)
 
     try:
-        v = cfg.get('metadata', 'requires-dist')
+        v = cfg.get('x-metadata', 'requires-dist')
 
     except (NoOptionError, NoSectionError):
         pass
@@ -207,7 +207,7 @@ def parse_setup_cfg():
             metadata['install_requires'] = requires
 
     try:
-        v = cfg.get('metadata', 'requires-test')
+        v = cfg.get('x-metadata', 'requires-test')
 
     except (NoOptionError, NoSectionError):
         pass
@@ -219,7 +219,7 @@ def parse_setup_cfg():
 
 
     try:
-        v = cfg.get('metadata', 'long_description_file')
+        v = cfg.get('x-metadata', 'long_description_file')
     except (NoOptionError, NoSectionError):
         pass
 
@@ -235,7 +235,7 @@ def parse_setup_cfg():
 
 
     try:
-        v = cfg.get('metadata', 'zip-safe')
+        v = cfg.get('x-metadata', 'zip-safe')
     except (NoOptionError, NoSectionError):
         pass
 
@@ -243,7 +243,7 @@ def parse_setup_cfg():
         metadata['zip_safe'] = _as_bool(v)
 
     try:
-        v = cfg.get('metadata', 'console_scripts')
+        v = cfg.get('x-metadata', 'console_scripts')
     except (NoOptionError, NoSectionError):
         pass
 
