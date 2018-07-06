@@ -14,7 +14,7 @@ See /usr/include/mach-o and friends.
 import time
 
 from macholib.ptypes import p_uint32, p_uint64, Structure, p_long, pypackable
-from macholib.ptypes import p_int64, p_short, p_uint8, p_int32, p_ulong
+from macholib.ptypes import p_int64, p_short, p_uint8, p_int32, p_ulong, p_uint64
 
 _CPU_ARCH_ABI64 = 0x01000000
 
@@ -474,6 +474,8 @@ LC_LINKER_OPTION = 0x2d
 LC_LINKER_OPTIMIZATION_HINT = 0x2e
 LC_VERSION_MIN_TVOS = 0x2f
 LC_VERSION_MIN_WATCHOS = 0x30
+LC_NOTE = 0x31
+LC_BUILD_VERSION = 0x32
 
 
 # this is really a union.. but whatever
@@ -899,8 +901,8 @@ class thread_command(Structure):
 
 class entry_point_command(Structure):
     _fields_ = (
-        ('entryoff', 	p_uint64),
-        ('stacksize', 	p_uint64),
+        ('entryoff', p_uint64),
+        ('stacksize', p_uint64),
     )
 
     def describe(self):
@@ -1211,6 +1213,30 @@ class source_version_command (Structure):
         return {'version': r}
 
 
+class note_command (Structure):
+    _fields_ = (
+       ('data_owner', p_str16),
+       ('offset', p_uint64),
+       ('size', p_uint64),
+    )
+
+class build_version_command (Structure):
+    _fields_ = (
+      ('platform', p_uint32),
+      ('minos', p_uint32),
+      ('sdk', p_uint32),
+      ('ntools', p_uint32),
+   )
+
+   # XXX: Add computed field for accessing 'tools' array
+
+class build_tool_version (Structure):
+    _fields_ = (
+        ('tool', p_uint32),
+        ('version', p_uint32),
+    )
+
+
 class data_in_code_entry (Structure):
     _fields_ = (
         ('offset', p_uint32),
@@ -1359,15 +1385,17 @@ LC_REGISTRY = {
     LC_VERSION_MIN_IPHONEOS: version_min_command,
     LC_FUNCTION_STARTS:  linkedit_data_command,
     LC_DYLD_ENVIRONMENT: dylinker_command,
-    LC_MAIN: 		entry_point_command,
-    LC_DATA_IN_CODE:	linkedit_data_command,
-    LC_SOURCE_VERSION:	source_version_command,
+    LC_MAIN: entry_point_command,
+    LC_DATA_IN_CODE: linkedit_data_command,
+    LC_SOURCE_VERSION: source_version_command,
     LC_DYLIB_CODE_SIGN_DRS:  linkedit_data_command,
     LC_ENCRYPTION_INFO_64: encryption_info_command_64,
     LC_LINKER_OPTION:  linker_option_command,
     LC_LINKER_OPTIMIZATION_HINT:  linkedit_data_command,
     LC_VERSION_MIN_TVOS: version_min_command,
     LC_VERSION_MIN_WATCHOS: version_min_command,
+    LC_NOTE: note_command,
+    LC_BUILD_VERSION: build_version_command,
 }
 
 LC_NAMES = {
@@ -1417,6 +1445,8 @@ LC_NAMES = {
     LC_LINKER_OPTIMIZATION_HINT:    'LC_LINKER_OPTIMIZATION_HINT',
     LC_VERSION_MIN_TVOS:            'LC_VERSION_MIN_TVOS',
     LC_VERSION_MIN_WATCHOS:         'LC_VERSION_MIN_WATCHOS',
+    LC_NOTE:                        'LC_NOTE',
+    LC_BUILD_VERSION:               'LC_BUILD_VERSION',
 }
 
 
@@ -1599,3 +1629,18 @@ EXPORT_SYMBOL_FLAGS_KIND_THREAD_LOCAL                   = 0x01  # noqa: E221
 EXPORT_SYMBOL_FLAGS_WEAK_DEFINITION                     = 0x04  # noqa: E221
 EXPORT_SYMBOL_FLAGS_REEXPORT                            = 0x08  # noqa: E221
 EXPORT_SYMBOL_FLAGS_STUB_AND_RESOLVER                   = 0x10  # noqa: E221
+
+#define PLATFORM_MACOS 1
+#define PLATFORM_IOS 2
+#define PLATFORM_TVOS 3
+#define PLATFORM_WATCHOS 4
+#define PLATFORM_BRIDGEOS 5
+#define PLATFORM_IOSMAC 6
+#define PLATFORM_IOSSIMULATOR 7
+#define PLATFORM_TVOSSIMULATOR 8
+#define PLATFORM_WATCHOSSIMULATOR 9
+
+#define TOOL_CLANG 1
+#define TOOL_SWIFT 2
+#define TOOL_LD 3
+
