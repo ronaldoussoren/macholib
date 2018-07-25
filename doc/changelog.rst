@@ -4,7 +4,7 @@ Release history
 macholib 1.10
 -------------
 
-* Add support for LC_NOTE and LC_BUILD_VERSION
+* #25: Add support for LC_NOTE and LC_BUILD_VERSION
 
 macholib 1.9
 ------------
