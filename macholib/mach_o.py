@@ -14,7 +14,7 @@ See /usr/include/mach-o and friends.
 import time
 
 from macholib.ptypes import p_uint32, p_uint64, Structure, p_long, pypackable
-from macholib.ptypes import p_int64, p_short, p_uint8, p_int32, p_ulong, p_uint64
+from macholib.ptypes import p_int64, p_short, p_uint8, p_int32, p_ulong
 
 _CPU_ARCH_ABI64 = 0x01000000
 
@@ -1220,15 +1220,17 @@ class note_command (Structure):
        ('size', p_uint64),
     )
 
+
 class build_version_command (Structure):
     _fields_ = (
       ('platform', p_uint32),
       ('minos', p_uint32),
       ('sdk', p_uint32),
       ('ntools', p_uint32),
-   )
+    )
 
-   # XXX: Add computed field for accessing 'tools' array
+    # XXX: Add computed field for accessing 'tools' array
+
 
 class build_tool_version (Structure):
     _fields_ = (
@@ -1648,7 +1650,7 @@ PLATFORM_NAMES = {
     PLATFORM_BRIDGEOS: 'bridgeOS',
     PLATFORM_IOSMAC: 'ios-on-mac',
     PLATFORM_IOSSIMULATOR: 'iOS simulator',
-    PLATFORM_TVOSSIMULATOR' 'tvOS simulator',
+    PLATFORM_TVOSSIMULATOR: 'tvOS simulator',
     PLATFORM_WATCHOSSIMULATOR: 'watchOS simulator',
 }
 
