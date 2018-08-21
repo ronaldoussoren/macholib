@@ -1,6 +1,13 @@
 Release history
 ===============
 
+macholib 1.11
+-------------
+
+* Add very hacky limited support for @loader_path. This is just
+  enough to deal with extensions and dylibs found in Python
+  binary wheels.
+
 macholib 1.10
 -------------
 

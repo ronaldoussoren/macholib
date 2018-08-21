@@ -23,6 +23,7 @@ class FilteredMachOGraph(MachOGraph):
 
     def locate(self, filename, loader=None):
         newname = super(FilteredMachOGraph, self).locate(filename, loader)
+        print("locate", filename, loader, "->", newname)
         if newname is None:
             return None
         return self.delegate.locate(newname, loader=loader)
@@ -130,6 +131,13 @@ class MachOStandalone(object):
             changemap[node.filename] = dest
 
         def changefunc(path):
+            if path.startswith('@loader_path/'):
+                # XXX: This is a quick hack for py2app: In that
+                # usecase paths like this are found in the load
+                # commands of relocatable wheels. Those don't
+                # need rewriting.
+                return path
+
             res = mm.locate(path)
             rv = changemap.get(res)
             if rv is None and path.startswith('@loader_path/'):
