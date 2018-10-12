@@ -1229,6 +1229,9 @@ class build_version_command (Structure):
       ('ntools', p_uint32),
     )
 
+    def describe(self):
+        return {}
+
     # XXX: Add computed field for accessing 'tools' array
 
 

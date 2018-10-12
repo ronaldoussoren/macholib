@@ -1,6 +1,11 @@
 Release history
 ===============
 
+macholib 1.12
+-------------
+
+* #27: Missing describe method for build_version_command
+
 macholib 1.11
 -------------
 
