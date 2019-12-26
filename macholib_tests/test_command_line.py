@@ -133,6 +133,7 @@ class TestCmdLine (unittest.TestCase):
 
             lc = 0
             while idx < len(lines):
+                print('X', idx, repr(lines[idx]))
                 if not lines[idx].startswith('\t'):
                     break
 
@@ -140,7 +141,7 @@ class TestCmdLine (unittest.TestCase):
                 self.assertTrue(os.path.exists(lines[idx].lstrip()))
                 idx += 1
 
-            self.assertTrue(lc > 1)
+            self.assertTrue(lc > 0)
 
 
 if __name__ == "__main__":
