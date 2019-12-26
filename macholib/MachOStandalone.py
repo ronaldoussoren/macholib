@@ -23,7 +23,6 @@ class FilteredMachOGraph(MachOGraph):
 
     def locate(self, filename, loader=None):
         newname = super(FilteredMachOGraph, self).locate(filename, loader)
-        print("locate", filename, loader, "->", newname)
         if newname is None:
             return None
         return self.delegate.locate(newname, loader=loader)

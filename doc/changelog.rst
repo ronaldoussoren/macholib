@@ -1,6 +1,11 @@
 Release history
 ===============
 
+macholib 1.13
+-------------
+
+# 31: Add two new load commands introduced in macOS 10.15
+
 macholib 1.12
 -------------
 

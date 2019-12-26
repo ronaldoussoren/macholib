@@ -476,6 +476,8 @@ LC_VERSION_MIN_TVOS = 0x2f
 LC_VERSION_MIN_WATCHOS = 0x30
 LC_NOTE = 0x31
 LC_BUILD_VERSION = 0x32
+LC_DYLD_EXPORTS_TRIE = 0x33 | LC_REQ_DYLD
+LC_DYLD_CHAINED_FIXUPS = 0x34 | LC_REQ_DYLD
 
 
 # this is really a union.. but whatever
@@ -1401,6 +1403,8 @@ LC_REGISTRY = {
     LC_VERSION_MIN_WATCHOS: version_min_command,
     LC_NOTE: note_command,
     LC_BUILD_VERSION: build_version_command,
+    LC_DYLD_EXPORTS_TRIE: linkedit_data_command,
+    LC_DYLD_CHAINED_FIXUPS: linkedit_data_command,
 }
 
 LC_NAMES = {
@@ -1452,6 +1456,8 @@ LC_NAMES = {
     LC_VERSION_MIN_WATCHOS:         'LC_VERSION_MIN_WATCHOS',
     LC_NOTE:                        'LC_NOTE',
     LC_BUILD_VERSION:               'LC_BUILD_VERSION',
+    LC_DYLD_EXPORTS_TRIE:           'LC_DYLD_EXPORTS_TRIE',
+    LC_DYLD_CHAINED_FIXUPS:         'LC_DYLD_CHAINED_FIXUPS',
 }
 
 
