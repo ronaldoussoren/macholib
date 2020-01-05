@@ -1,13 +1,10 @@
-from macholib import macho_dump
-from macholib import macho_find
-from macholib import _cmdline
-from macholib import util
-
-import sys
-import shutil
 import os
+import shutil
+import sys
 
-if sys.version_info[:2] <= (2,6):
+from macholib import _cmdline, macho_dump, macho_find, util
+
+if sys.version_info[:2] <= (2, 6):
     import unittest2 as unittest
 else:
     import unittest
@@ -17,7 +14,8 @@ try:
 except ImportError:
     from io import StringIO
 
-class TestCmdLine (unittest.TestCase):
+
+class TestCmdLine(unittest.TestCase):
 
     # This test is no longer valid:
     def no_test_main_is_shared(self):
@@ -26,39 +24,47 @@ class TestCmdLine (unittest.TestCase):
 
     def test_check_file(self):
         record = []
+
         def record_cb(fp, path):
             record.append((fp, path))
 
-        self.assertEqual(_cmdline.check_file(sys.stdout, '/bin/sh', record_cb), 0)
-        self.assertEqual(record, [(sys.stdout, '/bin/sh')])
+        self.assertEqual(_cmdline.check_file(sys.stdout, "/bin/sh", record_cb), 0)
+        self.assertEqual(record, [(sys.stdout, "/bin/sh")])
 
         saved_stderr = sys.stderr
         saved_argv = sys.argv
         try:
             sys.stderr = StringIO()
-            sys.argv = ['macho_test']
+            sys.argv = ["macho_test"]
 
             record[:] = []
-            self.assertEqual(_cmdline.check_file(sys.stdout, '/bin/no-shell', record_cb), 1)
+            self.assertEqual(
+                _cmdline.check_file(sys.stdout, "/bin/no-shell", record_cb), 1
+            )
             self.assertEqual(record, [])
-            self.assertEqual(sys.stderr.getvalue(), "macho_test: /bin/no-shell: No such file or directory\n")
+            self.assertEqual(
+                sys.stderr.getvalue(),
+                "macho_test: /bin/no-shell: No such file or directory\n",
+            )
             self.assertEqual(record, [])
 
-            shutil.copy('/bin/sh', 'test.exec')
-            os.chmod('test.exec', 0)
+            shutil.copy("/bin/sh", "test.exec")
+            os.chmod("test.exec", 0)
 
             sys.stderr = StringIO()
-            self.assertEqual(_cmdline.check_file(sys.stdout, 'test.exec', record_cb), 1)
+            self.assertEqual(_cmdline.check_file(sys.stdout, "test.exec", record_cb), 1)
             self.assertEqual(record, [])
-            self.assertEqual(sys.stderr.getvalue(), "macho_test: test.exec: [Errno 13] Permission denied: 'test.exec'\n")
+            self.assertEqual(
+                sys.stderr.getvalue(),
+                "macho_test: test.exec: [Errno 13] Permission denied: 'test.exec'\n",
+            )
             self.assertEqual(record, [])
-
 
         finally:
             sys.stderr = sys.stderr
             sys.argv = saved_argv
-            if os.path.exists('test.exec'):
-                os.unlink('test.exec')
+            if os.path.exists("test.exec"):
+                os.unlink("test.exec")
 
     def test_shared_main(self):
 
@@ -67,40 +73,42 @@ class TestCmdLine (unittest.TestCase):
         try:
             sys.stderr = StringIO()
 
-            sys.argv = ['macho_tool']
+            sys.argv = ["macho_tool"]
 
             self.assertEqual(_cmdline.main(lambda *args: None), 1)
-            self.assertEqual(sys.stderr.getvalue(), 'Usage: macho_tool filename...\n')
+            self.assertEqual(sys.stderr.getvalue(), "Usage: macho_tool filename...\n")
 
             names = []
+
             def record_names(fp, name):
                 self.assertEqual(fp, sys.stdout)
                 names.append(name)
 
-
             sys.stderr = StringIO()
-            sys.argv = ['macho_tool', '/bin/sh']
+            sys.argv = ["macho_tool", "/bin/sh"]
             self.assertEqual(_cmdline.main(record_names), 0)
-            self.assertEqual(sys.stderr.getvalue(), '')
-            self.assertEqual(names, ['/bin/sh'])
-
-            names = []
-            sys.stderr = StringIO()
-            sys.argv = ['macho_tool', '/bin/sh', '/bin/ls']
-            self.assertEqual(_cmdline.main(record_names), 0)
-            self.assertEqual(sys.stderr.getvalue(), '')
-            self.assertEqual(names, ['/bin/sh', '/bin/ls'])
+            self.assertEqual(sys.stderr.getvalue(), "")
+            self.assertEqual(names, ["/bin/sh"])
 
             names = []
             sys.stderr = StringIO()
-            sys.argv = ['macho_tool', '/bin']
+            sys.argv = ["macho_tool", "/bin/sh", "/bin/ls"]
             self.assertEqual(_cmdline.main(record_names), 0)
-            self.assertEqual(sys.stderr.getvalue(), '')
+            self.assertEqual(sys.stderr.getvalue(), "")
+            self.assertEqual(names, ["/bin/sh", "/bin/ls"])
+
+            names = []
+            sys.stderr = StringIO()
+            sys.argv = ["macho_tool", "/bin"]
+            self.assertEqual(_cmdline.main(record_names), 0)
+            self.assertEqual(sys.stderr.getvalue(), "")
             names.sort()
-            dn = '/bin'
+            dn = "/bin"
             real_names = [
-                    os.path.join(dn, fn) for fn in os.listdir(dn)
-                    if util.is_platform_file(os.path.join(dn, fn)) ]
+                os.path.join(dn, fn)
+                for fn in os.listdir(dn)
+                if util.is_platform_file(os.path.join(dn, fn))
+            ]
             real_names.sort()
 
             self.assertEqual(names, real_names)
@@ -123,21 +131,21 @@ class TestCmdLine (unittest.TestCase):
         self.assertEqual(lines[0], "/bin/sh")
         self.assertTrue(len(lines) > 3)
 
-        self.assertEqual(lines[-1], '')
+        self.assertEqual(lines[-1], "")
         del lines[-1]
 
         idx = 1
         while idx < len(lines):
-            self.assertTrue(lines[idx].startswith('    [MachOHeader endian'))
-            idx+=1
+            self.assertTrue(lines[idx].startswith("    [MachOHeader endian"))
+            idx += 1
 
             lc = 0
             while idx < len(lines):
-                print('X', idx, repr(lines[idx]))
-                if not lines[idx].startswith('\t'):
+                print("X", idx, repr(lines[idx]))
+                if not lines[idx].startswith("\t"):
                     break
 
-                lc +=1
+                lc += 1
                 self.assertTrue(os.path.exists(lines[idx].lstrip()))
                 idx += 1
 

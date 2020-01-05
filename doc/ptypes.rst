@@ -34,7 +34,7 @@ Packable types
 
    .. data:: _endian_
 
-      The byteorder of a packed value. This will be ``"<"` for 
+      The byteorder of a packed value. This will be ``"<"` for
       little endian values and ``">"`` for big-endian ones.
 
       .. note:: the endianness option is a public value to be
@@ -46,8 +46,8 @@ Packable types
 
    .. method:: from_mmap(mmap, ptr, \**kw)
 
-      This class method constructs the value from a subview of a 
-      :class:`mmap.mmap` object. It uses bytes starting at offset *ptr* and 
+      This class method constructs the value from a subview of a
+      :class:`mmap.mmap` object. It uses bytes starting at offset *ptr* and
       reads just enough bytes to read the entire object.
 
    .. method:: from_fileobj(fp, \**kw)
@@ -73,7 +73,7 @@ Packable types
 
    .. method:: to_str()
 
-      Returns a byte representation of the value. 
+      Returns a byte representation of the value.
 
       .. note:: there is no default implementation for this method
 
@@ -84,7 +84,7 @@ Packable types
 
    .. method:: to_mmap(mmap, ptr)
 
-      Write the byte representation of the value to a :class:`mmap.mmap` 
+      Write the byte representation of the value to a :class:`mmap.mmap`
       object, starting at offset *ptr*.
 
 
@@ -92,9 +92,9 @@ Packable types
 
    .. data:: _fields_
 
-      This class attribute is a list that contains the fields of the 
-      structure in the right order. Every item of this list is a tuple 
-      with 2 arguments: the first element is the name of the field, and 
+      This class attribute is a list that contains the fields of the
+      structure in the right order. Every item of this list is a tuple
+      with 2 arguments: the first element is the name of the field, and
       the second the packable type for the field.
 
       Every subclass of :class:`Structure` must define *_fields_* to be
@@ -105,7 +105,7 @@ Packable types
 Basic packables
 ---------------
 
-Other than the core functionality this module defines a number of 
+Other than the core functionality this module defines a number of
 :func:`pypackable` types that correspond to useful basic C types.
 
 .. class:: p_char([value])

@@ -39,9 +39,9 @@ Reference Guide
 Online Resources
 ----------------
 
-* `Sourcecode repository on bitbucket <http://bitbucket.org/ronaldoussoren/macholib/>`_
+* `Sourcecode repository on bitbucket <https://github.com/ronaldoussoren/macholib/>`_
 
-* `The issue tracker <http://bitbucket.org/ronaldoussoren/macholib/issues>`_
+* `The issue tracker <https://github.com/ronaldoussoren/macholib/issues>`_
 
 * `Mac OS X ABI Mach-O File Format Reference at Apple <http://developer.apple.com/library/mac/#documentation/DeveloperTools/Conceptual/MachORuntime/Reference/reference.html>`_
 
@@ -56,4 +56,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

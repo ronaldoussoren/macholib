@@ -20,7 +20,7 @@ useful information from the name of a dynamic library.
    * ``Location/Name.dylib``
 
    Returns None if not found or a mapping equivalent to::
-   
+
      dict(
          location='Location',
          name='Name.SomeVersion_Suffix.dylib',

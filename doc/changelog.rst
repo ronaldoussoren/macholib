@@ -1,6 +1,11 @@
 Release history
 ===============
 
+macholib 1.14
+-------------
+
+* Repository moved to GitHub
+
 macholib 1.13
 -------------
 

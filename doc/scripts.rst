@@ -18,7 +18,7 @@ Usage::
 
         $ python -m macholib standalone appbundle...
 
-Convert one or more application bundles into 
+Convert one or more application bundles into
 standalone bundles. That is, copy all non-system
 shared libraries and frameworks used by the bundle
 into the bundle and rewrite load commands.
@@ -27,9 +27,9 @@ python -mmacholib dump
 ----------------------
 
 Usage::
-        
+
         $ python -mmacholib dump dir...
 
-Prints information about all architectures in a 
-Mach-O file as well as all libraries it links 
+Prints information about all architectures in a
+Mach-O file as well as all libraries it links
 to.

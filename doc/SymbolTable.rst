@@ -11,7 +11,7 @@ and likely contains bugs. It also does not work for 64-bit binaries.
 
    Reads the SymbolTable for the given Mach-O object.
 
-   The option argument *openfile* specifies the 
+   The option argument *openfile* specifies the
    function to use to open the file, defaulting to
    the builtin :func:`open` function.
 

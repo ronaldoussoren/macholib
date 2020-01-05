@@ -13,3 +13,4 @@ syntax: glob
 *.pyo
 *.dSYM
 *.swp
+.coverage*
