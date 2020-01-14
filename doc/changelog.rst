@@ -6,6 +6,8 @@ macholib 1.14
 
 * Repository moved to GitHub
 
+* #32: Update the LC_NAMES table
+
 macholib 1.13
 -------------
 
