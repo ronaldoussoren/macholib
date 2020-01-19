@@ -12,6 +12,6 @@ Project links
 
 * `Documentation <https://macholib.readthedocs.io/en/latest/>`_
 
-* `Issue Tracker <https://bitbucket.org/ronaldoussoren/macholib/issues?status=new&status=open>`_
+* `Issue Tracker <https://github.com/ronaldoussoren/macholib>`_
 
-* `Repository <https://bitbucket.org/ronaldoussoren/macholib/>`_
+* `Repository <https://github.com/ronaldoussoren/macholib/>`_

@@ -1,6 +1,11 @@
 Release history
 ===============
 
+macholib 1.14.1
+---------------
+
+* Fix link to repository in README.rst
+
 macholib 1.14
 -------------
 
