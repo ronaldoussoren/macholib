@@ -7,6 +7,12 @@ references in Mach-O headers to be @executable_path relative.
 Though this tool targets a platform specific file format, it is pure python
 code that is platform and endian independent.
 
+CI Status
+---------
+
+* .. image:: https://github.com/ronaldoussoren/macholib/workflows/Lint/badge.svg
+* .. image:: https://github.com/ronaldoussoren/macholib/workflows/Test/badge.svg
+
 Project links
 -------------
 
