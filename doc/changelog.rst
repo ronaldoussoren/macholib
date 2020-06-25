@@ -1,8 +1,10 @@
 Release history
 ===============
 
-macholib 1.14.1
+macholib 1.15
 ---------------
+
+* Add support for new features in the macOS 11 SDK
 
 * Fix link to repository in README.rst
 

@@ -221,6 +221,8 @@ MH_DYLINKER_SYM = "_mh_dylinker_header"
     MH_DSYM,
 ) = range(0x1, 0xB)
 
+MH_FILESET = 0xC
+
 (
     MH_NOUNDEFS,
     MH_INCRLINK,
@@ -270,6 +272,7 @@ MH_FILETYPE_NAMES = {
     MH_BUNDLE: "dynamically bound bundle",
     MH_DYLIB_STUB: "shared library stub for static linking",
     MH_DSYM: "symbol information",
+    MH_FILESET: "fileset object",
 }
 
 MH_FILETYPE_SHORTNAMES = {
@@ -502,6 +505,7 @@ LC_NOTE = 0x31
 LC_BUILD_VERSION = 0x32
 LC_DYLD_EXPORTS_TRIE = 0x33 | LC_REQ_DYLD
 LC_DYLD_CHAINED_FIXUPS = 0x34 | LC_REQ_DYLD
+LC_FILESET_ENTRY = 0x35 | LC_REQ_DYLD
 
 
 # this is really a union.. but whatever
@@ -1309,6 +1313,15 @@ class linker_option_command(Structure):
         return {"count": int(self.count)}
 
 
+class fileset_entry_command(Structure):
+    _fields_ = (
+        ("vmaddr", p_uint64),
+        ("fileoff", p_uint64),
+        ("entry_id", lc_str),
+        ("reserved", p_uint32),
+    )
+
+
 LC_REGISTRY = {
     LC_SEGMENT: segment_command,
     LC_IDFVMLIB: fvmlib_command,
@@ -1362,6 +1375,7 @@ LC_REGISTRY = {
     LC_BUILD_VERSION: build_version_command,
     LC_DYLD_EXPORTS_TRIE: linkedit_data_command,
     LC_DYLD_CHAINED_FIXUPS: linkedit_data_command,
+    LC_FILESET_ENTRY: fileset_entry_command,
 }
 
 LC_NAMES = {
@@ -1418,6 +1432,7 @@ LC_NAMES = {
     LC_ENCRYPTION_INFO_64: "LC_ENCRYPTION_INFO_64",
     LC_LINKER_OPTION: "LC_LINKER_OPTION",
     LC_PREPAGE: "LC_PREPAGE",
+    LC_FILESET_ENTRY: "LC_FILESET_ENTRY",
 }
 
 
@@ -1597,6 +1612,7 @@ PLATFORM_TVOS = 3
 PLATFORM_WATCHOS = 4
 PLATFORM_BRIDGEOS = 5
 PLATFORM_IOSMAC = 6
+PLATFORM_MACCATALYST = 6
 PLATFORM_IOSSIMULATOR = 7
 PLATFORM_TVOSSIMULATOR = 8
 PLATFORM_WATCHOSSIMULATOR = 9
@@ -1607,7 +1623,7 @@ PLATFORM_NAMES = {
     PLATFORM_TVOS: "tvOS",
     PLATFORM_WATCHOS: "watchOS",
     PLATFORM_BRIDGEOS: "bridgeOS",
-    PLATFORM_IOSMAC: "ios-on-mac",
+    PLATFORM_MACCATALYST: "catalyst",
     PLATFORM_IOSSIMULATOR: "iOS simulator",
     PLATFORM_TVOSSIMULATOR: "tvOS simulator",
     PLATFORM_WATCHOSSIMULATOR: "watchOS simulator",
