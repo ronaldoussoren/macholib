@@ -8,6 +8,8 @@ macholib 1.15
 
 * Fix link to repository in README.rst
 
+* Fix ``macholib.dyld.dyld_find`` for system libraries on macOS 11 or later
+
 macholib 1.14
 -------------
 
