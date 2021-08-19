@@ -13,11 +13,13 @@ from macholib.framework import framework_info
 
 __all__ = ["dyld_find", "framework_find", "framework_info", "dylib_info"]
 
-if sys.platform == "darwin" and [int(x) for x in platform.mac_ver()[0].split('.')[:2]] >= [10, 16]:
+if sys.platform == "darwin" and [
+    int(x) for x in platform.mac_ver()[0].split(".")[:2]
+] >= [10, 16]:
     try:
         libc = ctypes.CDLL("libSystem.dylib")
 
-    except OSError: 
+    except OSError:
         _dyld_shared_cache_contains_path = None
 
     else:
@@ -31,12 +33,12 @@ if sys.platform == "darwin" and [int(x) for x in platform.mac_ver()[0].split('.'
             _dyld_shared_cache_contains_path.argtypes = [ctypes.c_char_p]
 
             if sys.version_info[0] != 2:
-                __dyld_shared_cache_contains_path= _dyld_shared_cache_contains_path
+                __dyld_shared_cache_contains_path = _dyld_shared_cache_contains_path
+
                 def _dyld_shared_cache_contains_path(path):
                     return __dyld_shared_cache_contains_path(path.encode())
 
     print(libc)
-
 
 
 else:
@@ -199,7 +201,10 @@ def dyld_find(name, executable_path=None, env=None, loader_path=None):
         ),
         env,
     ):
-        if _dyld_shared_cache_contains_path is not None and _dyld_shared_cache_contains_path(path):
+        if (
+            _dyld_shared_cache_contains_path is not None
+            and _dyld_shared_cache_contains_path(path)
+        ):
             return path
         if os.path.isfile(path):
             return path

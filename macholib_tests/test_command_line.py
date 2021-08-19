@@ -145,7 +145,7 @@ class TestCmdLine(unittest.TestCase):
                     break
 
                 lc += 1
-                #self.assertTrue(os.path.exists(lines[idx].lstrip()))
+                # self.assertTrue(os.path.exists(lines[idx].lstrip()))
                 idx += 1
 
             self.assertTrue(lc > 0)
