@@ -1,6 +1,11 @@
 Release history
 ===============
 
+macholib 1.15.1
+---------------
+
+* Remove a debug print introduced in the previous release.
+
 macholib 1.15
 ---------------
 

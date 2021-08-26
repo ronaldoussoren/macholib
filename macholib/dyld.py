@@ -38,9 +38,6 @@ if sys.platform == "darwin" and [
                 def _dyld_shared_cache_contains_path(path):
                     return __dyld_shared_cache_contains_path(path.encode())
 
-    print(libc)
-
-
 else:
     _dyld_shared_cache_contains_path = None
 
