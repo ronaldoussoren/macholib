@@ -4,8 +4,8 @@ Release history
 macholib 1.16
 -------------
 
-* Add ``allow_unknown_load_commands`` option to :class:`macholib.MachO` and
-  :class:`macholib.MachOHeader`
+* Add ``allow_unknown_load_commands`` option to ``MachO`` and
+  ```macholib.MachOHeader``.
 
   PR by github user bhamiltoncx.
 
