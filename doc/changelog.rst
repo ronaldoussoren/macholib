@@ -1,6 +1,11 @@
 Release history
 ===============
 
+macholib 1.16.1
+---------------
+
+* Added some new CPU subtype definitions
+
 macholib 1.16
 -------------
 
