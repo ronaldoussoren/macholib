@@ -169,7 +169,9 @@ class MachO(object):
             magic, hdr, endian = MH_CIGAM_64, mach_header_64, "<"
         else:
             raise ValueError("Unknown Mach-O header: 0x%08x in %r" % (header, fh))
-        hdr = MachOHeader(self, fh, offset, size, magic, hdr, endian, self.allow_unknown_load_commands)
+        hdr = MachOHeader(
+            self, fh, offset, size, magic, hdr, endian, self.allow_unknown_load_commands
+        )
         self.headers.append(hdr)
 
     def write(self, f):
@@ -194,7 +196,17 @@ class MachOHeader(object):
     #   low_offset - essentially, the maximum mach-o header size
     #   id_cmd     - the index of my id command, or None
 
-    def __init__(self, parent, fh, offset, size, magic, hdr, endian, allow_unknown_load_commands=False):
+    def __init__(
+        self,
+        parent,
+        fh,
+        offset,
+        size,
+        magic,
+        hdr,
+        endian,
+        allow_unknown_load_commands=False,
+    ):
         self.MH_MAGIC = magic
         self.mach_header = hdr
 

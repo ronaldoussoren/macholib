@@ -38,7 +38,6 @@ if sys.platform == "darwin" and [
                 def _dyld_shared_cache_contains_path(path):
                     return __dyld_shared_cache_contains_path(path.encode())
 
-
 else:
     _dyld_shared_cache_contains_path = None
 
@@ -64,7 +63,6 @@ if sys.version_info[0] == 2:
         if isinstance(s, unicode):  # noqa: F821
             return s.encode("utf8")
         return s
-
 
 else:
 
