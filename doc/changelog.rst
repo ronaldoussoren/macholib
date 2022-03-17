@@ -1,6 +1,11 @@
 Release history
 ===============
 
+macholib 1.15.2
+---------------
+
+* Explicitly mention Python 3.10 in the project metadata
+
 macholib 1.15.1
 ---------------
 

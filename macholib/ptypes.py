@@ -7,7 +7,7 @@ import sys
 from itertools import chain, starmap
 
 try:
-    from itertools import izip, imap
+    from itertools import imap, izip
 except ImportError:
     izip, imap = zip, map
 

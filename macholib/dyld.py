@@ -2,10 +2,10 @@
 dyld emulation
 """
 
-import os
-import sys
 import ctypes
+import os
 import platform
+import sys
 from itertools import chain
 
 from macholib.dylib import dylib_info
@@ -37,6 +37,7 @@ if sys.platform == "darwin" and [
 
                 def _dyld_shared_cache_contains_path(path):
                     return __dyld_shared_cache_contains_path(path.encode())
+
 
 else:
     _dyld_shared_cache_contains_path = None
