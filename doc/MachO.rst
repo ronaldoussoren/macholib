@@ -16,12 +16,20 @@ library on MacOS X.
    and item in the ``commands`` attribute of a MachOHeader instance.
 
 
-.. class:: MachO(filename)
+.. class:: MachO(filename, allow_unknown_load_commands=False)
 
    Creates a MachO object by reading the Mach-O headers from
    *filename*.
 
    The *filename* should refer to an existing file in Mach-O
    format, and can refer to fat (universal) binaries.
+
+   When *allow_unknown_load_commands* is false the instance will
+   raise an error when the specified file contains unknown
+   load commands.
+
+   .. versionchanged: 1.16
+
+      Added the *allow_unknown_load_commands* argument.
 
 .. note:: more information will be added later
