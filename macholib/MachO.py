@@ -92,7 +92,10 @@ def lc_str_value(offset, cmd_info):
 
 class MachO(object):
     """
-    Provides reading/writing the Mach-O header of a specific existing file
+    Provides reading/writing the Mach-O header of a specific existing file.
+
+    If allow_unknown_load_commands is True, allows unknown load commands.
+    Otherwise, raises ValueError if the file contains an unknown load command.
     """
 
     #   filename   - the original filename of this mach-o
@@ -104,7 +107,7 @@ class MachO(object):
     #   low_offset - essentially, the maximum mach-o header size
     #   id_cmd     - the index of my id command, or None
 
-    def __init__(self, filename):
+    def __init__(self, filename, allow_unknown_load_commands=False):
 
         # supports the ObjectGraph protocol
         self.graphident = filename
@@ -114,6 +117,7 @@ class MachO(object):
         # initialized by load
         self.fat = None
         self.headers = []
+        self.allow_unknown_load_commands = allow_unknown_load_commands
         with open(filename, "rb") as fp:
             self.load(fp)
 
@@ -165,7 +169,7 @@ class MachO(object):
             magic, hdr, endian = MH_CIGAM_64, mach_header_64, "<"
         else:
             raise ValueError("Unknown Mach-O header: 0x%08x in %r" % (header, fh))
-        hdr = MachOHeader(self, fh, offset, size, magic, hdr, endian)
+        hdr = MachOHeader(self, fh, offset, size, magic, hdr, endian, self.allow_unknown_load_commands)
         self.headers.append(hdr)
 
     def write(self, f):
@@ -175,7 +179,10 @@ class MachO(object):
 
 class MachOHeader(object):
     """
-    Provides reading/writing the Mach-O header of a specific existing file
+    Provides reading/writing the Mach-O header of a specific existing file.
+
+    If allow_unknown_load_commands is True, allows unknown load commands.
+    Otherwise, raises ValueError if the file contains an unknown load command.
     """
 
     #   filename   - the original filename of this mach-o
@@ -187,7 +194,7 @@ class MachOHeader(object):
     #   low_offset - essentially, the maximum mach-o header size
     #   id_cmd     - the index of my id command, or None
 
-    def __init__(self, parent, fh, offset, size, magic, hdr, endian):
+    def __init__(self, parent, fh, offset, size, magic, hdr, endian, allow_unknown_load_commands=False):
         self.MH_MAGIC = magic
         self.mach_header = hdr
 
@@ -205,6 +212,8 @@ class MachOHeader(object):
         self.low_offset = None
         self.filetype = None
         self.headers = []
+
+        self.allow_unknown_load_commands = allow_unknown_load_commands
 
         self.load(fh)
 
@@ -242,7 +251,16 @@ class MachOHeader(object):
             # read the specific command
             klass = LC_REGISTRY.get(cmd_load.cmd, None)
             if klass is None:
-                raise ValueError("Unknown load command: %d" % (cmd_load.cmd,))
+                if not self.allow_unknown_load_commands:
+                    raise ValueError("Unknown load command: %d" % (cmd_load.cmd,))
+                # No load command in the registry, so append the load command itself
+                # instead of trying to deserialize the data after the header.
+                data_size = cmd_load.cmdsize - sizeof(load_command)
+                cmd_data = fh.read(data_size)
+                cmd.append((cmd_load, cmd_load, cmd_data))
+                read_bytes += cmd_load.cmdsize
+                continue
+
             cmd_cmd = klass.from_fileobj(fh, **kw)
 
             if cmd_load.cmd == LC_ID_DYLIB:
