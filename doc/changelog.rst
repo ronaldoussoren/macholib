@@ -1,6 +1,11 @@
 Release history
 ===============
 
+macholib 1.16.2
+---------------
+
+* Update classifiers for Python 3.11
+
 macholib 1.16.1
 ---------------
 
