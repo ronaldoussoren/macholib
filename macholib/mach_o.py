@@ -538,7 +538,7 @@ class segment_command(Structure):
 
     def describe(self):
         s = {}
-        s["segname"] = self.segname.rstrip("\x00")
+        s["segname"] = self.segname.rstrip(b"\x00")
         s["vmaddr"] = int(self.vmaddr)
         s["vmsize"] = int(self.vmsize)
         s["fileoff"] = int(self.fileoff)
@@ -591,7 +591,7 @@ class segment_command_64(Structure):
 
     def describe(self):
         s = {}
-        s["segname"] = self.segname.rstrip("\x00")
+        s["segname"] = self.segname.rstrip(b"\x00")
         s["vmaddr"] = int(self.vmaddr)
         s["vmsize"] = int(self.vmsize)
         s["fileoff"] = int(self.fileoff)
@@ -652,8 +652,8 @@ class section(Structure):
 
     def describe(self):
         s = {}
-        s["sectname"] = self.sectname.rstrip("\x00")
-        s["segname"] = self.segname.rstrip("\x00")
+        s["sectname"] = self.sectname.rstrip(b"\x00")
+        s["segname"] = self.segname.rstrip(b"\x00")
         s["addr"] = int(self.addr)
         s["size"] = int(self.size)
         s["offset"] = int(self.offset)
@@ -695,8 +695,8 @@ class section_64(Structure):
 
     def describe(self):
         s = {}
-        s["sectname"] = self.sectname.rstrip("\x00")
-        s["segname"] = self.segname.rstrip("\x00")
+        s["sectname"] = self.sectname.rstrip(b"\x00")
+        s["segname"] = self.segname.rstrip(b"\x00")
         s["addr"] = int(self.addr)
         s["size"] = int(self.size)
         s["offset"] = int(self.offset)
@@ -1142,7 +1142,7 @@ class uuid_command(Structure):
     _fields_ = (("uuid", p_str16),)
 
     def describe(self):
-        return {"uuid": self.uuid.rstrip("\x00")}
+        return {"uuid": self.uuid.rstrip(b"\x00")}
 
 
 class rpath_command(Structure):
