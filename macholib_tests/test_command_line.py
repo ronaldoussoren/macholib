@@ -16,7 +16,6 @@ except ImportError:
 
 
 class TestCmdLine(unittest.TestCase):
-
     # This test is no longer valid:
     def no_test_main_is_shared(self):
         self.assertTrue(macho_dump.main is _cmdline.main)
@@ -67,7 +66,6 @@ class TestCmdLine(unittest.TestCase):
                 os.unlink("test.exec")
 
     def test_shared_main(self):
-
         saved_stderr = sys.stderr
         saved_argv = sys.argv
         try:

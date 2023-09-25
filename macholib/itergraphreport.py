@@ -29,11 +29,11 @@ def itergraphreport(nodes, describe_edge, name="G"):
         yield "\t%s;\n" % (cpatt % item,)
 
     # find all packages (subgraphs)
-    for (node, data, _outgoing, _incoming) in nodes:
+    for node, data, _outgoing, _incoming in nodes:
         nodetoident[node] = getattr(data, "identifier", node)
 
     # create sets for subgraph, write out descriptions
-    for (node, data, outgoing, incoming) in nodes:
+    for node, data, outgoing, incoming in nodes:
         # update edges
         for edge in imap(describe_edge, outgoing):
             edges.append(edge)
@@ -59,7 +59,7 @@ def itergraphreport(nodes, describe_edge, name="G"):
     def do_graph(edges, tabs):
         edgestr = tabs + '"%s" -> "%s" [%s];\n'
         # describe edge
-        for (edge, data, head, tail) in edges:
+        for edge, data, head, tail in edges:
             attribs = edgevisitor(edge, data, head, tail)
             yield edgestr % (
                 head,

@@ -221,8 +221,8 @@ def _make():
     def _get_packables(self):
         for obj in imap(self._objects_.__getitem__, self._names_):
             if hasattr(obj, "_get_packables"):
-                for obj in obj._get_packables():
-                    yield obj
+                for value in obj._get_packables():
+                    yield value
 
             else:
                 yield obj

@@ -136,6 +136,7 @@ class MachOStandalone(object):
             changemap[node.filename] = dest
 
         def changefunc(path):
+            print("changefunc: ", path)
             if path.startswith("@loader_path/"):
                 # This is a quick hack for py2app: In that
                 # usecase paths like this are found in the load
@@ -143,9 +144,16 @@ class MachOStandalone(object):
                 # need rewriting.
                 return path
 
+            elif path.startswith("@rpath/"):
+                # Another hack for py2app: In most cases an
+                # @rpath path doesn't require updates.
+                return path
+
             res = mm.locate(path)
             rv = changemap.get(res)
             if rv is None and path.startswith("@loader_path/"):
+                rv = changemap.get(mm.locate(mm.trans_table.get((node.filename, path))))
+            if rv is None and path.startswith("@rpath/"):
                 rv = changemap.get(mm.locate(mm.trans_table.get((node.filename, path))))
             return rv
 

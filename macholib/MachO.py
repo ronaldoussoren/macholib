@@ -108,7 +108,6 @@ class MachO(object):
     #   id_cmd     - the index of my id command, or None
 
     def __init__(self, filename, allow_unknown_load_commands=False):
-
         # supports the ObjectGraph protocol
         self.graphident = filename
         self.filename = filename
@@ -355,7 +354,7 @@ class MachOHeader(object):
         for all relocatable commands
         yield (command_index, command_name, filename)
         """
-        for (idx, (lc, cmd, data)) in enumerate(self.commands):
+        for idx, (lc, cmd, data) in enumerate(self.commands):
             if shouldRelocateCommand(lc.cmd):
                 name = _RELOCATABLE_NAMES[lc.cmd]
                 ofs = cmd.name - sizeof(lc.__class__) - sizeof(cmd.__class__)
