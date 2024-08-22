@@ -580,6 +580,12 @@ class TestTrivialDyld(unittest.TestCase):
             "/System/Library/Frameworks/System.framework/System",
         )
 
+    def testReal(self):
+        if os.getenv("READ_REAL_DYLIB", "no") == "yes":
+            return
+        info = dyld.dyld_find("libuv.dylib")
+        self.assertTrue(os.path.exists(info))
+
 
 if __name__ == "__main__":
     unittest.main()
