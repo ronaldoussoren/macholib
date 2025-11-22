@@ -1,1 +1,1 @@
-""" macholib_tests package """
+"""macholib_tests package"""

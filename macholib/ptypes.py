@@ -2,6 +2,7 @@
 This module defines packable types, that is types than can be easily
 converted to a binary format as used in MachO headers.
 """
+
 import struct
 import sys
 from itertools import chain, starmap

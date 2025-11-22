@@ -1,6 +1,7 @@
 """
 Class to read the symbol table from a Mach-O header
 """
+
 from __future__ import with_statement
 
 import sys

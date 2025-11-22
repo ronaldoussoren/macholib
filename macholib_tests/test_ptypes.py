@@ -95,14 +95,10 @@ class TestPTypes(unittest.TestCase):
         self.verifyType(ptypes.p_int16, 2, int, [1, 400, -10, -5000])
         self.verifyType(ptypes.p_uint16, 2, int, [1, 400, 65000])
 
-        self.verifyType(
-            ptypes.p_int32, 4, int, [1, 400, 2**24, -10, -5000, -(2**24)]
-        )
+        self.verifyType(ptypes.p_int32, 4, int, [1, 400, 2**24, -10, -5000, -(2**24)])
         self.verifyType(ptypes.p_uint32, 4, long, [1, 400, 2 * 31 + 5, 65000])
 
-        self.verifyType(
-            ptypes.p_int64, 8, long, [1, 400, 2**43, -10, -5000, -(2**43)]
-        )
+        self.verifyType(ptypes.p_int64, 8, long, [1, 400, 2**43, -10, -5000, -(2**43)])
         self.verifyType(ptypes.p_uint64, 8, long, [1, 400, 2 * 63 + 5, 65000])
 
         self.verifyType(ptypes.p_float, 4, float, [1.0, 42.5])
@@ -118,9 +114,7 @@ class TestPTypes(unittest.TestCase):
         self.verifyType(ptypes.p_int, 4, int, [1, 400, 2**24, -10, -5000, -(2**24)])
         self.verifyType(ptypes.p_uint, 4, long, [1, 400, 2 * 31 + 5, 65000])
 
-        self.verifyType(
-            ptypes.p_long, 4, int, [1, 400, 2**24, -10, -5000, -(2**24)]
-        )
+        self.verifyType(ptypes.p_long, 4, int, [1, 400, 2**24, -10, -5000, -(2**24)])
         self.verifyType(ptypes.p_ulong, 4, long, [1, 400, 2 * 31 + 5, 65000])
 
         self.verifyType(
@@ -172,7 +166,7 @@ class TestPTypesSimple(unittest.TestCase):
     def testBasic(self):
         for endian in "><":
             kw = dict(_endian_=endian)
-            MYSTRUCTURE = b"\x00\x01\x02\x03\xFF"
+            MYSTRUCTURE = b"\x00\x01\x02\x03\xff"
             for fn, args in [
                 ("from_str", (MYSTRUCTURE,)),
                 ("from_mmap", (MYSTRUCTURE, 0)),

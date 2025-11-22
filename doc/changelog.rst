@@ -1,6 +1,16 @@
 Release history
 ===============
 
+macholib 1.16.4
+---------------
+
+* Update classifiers for Python 3.13 and 3.14
+
+macholib 1.16.3
+---------------
+
+* Update classifiers for Python 3.12
+
 macholib 1.16.2
 ---------------
 

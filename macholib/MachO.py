@@ -1,6 +1,7 @@
 """
 Utilities for reading and writing Mach-O headers
 """
+
 from __future__ import print_function
 
 import os

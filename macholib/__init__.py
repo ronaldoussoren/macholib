@@ -5,4 +5,5 @@ See the relevant header files in /usr/include/mach-o
 
 And also Apple's documentation.
 """
-__version__ = "1.16.3"
+
+__version__ = "1.16.4"
