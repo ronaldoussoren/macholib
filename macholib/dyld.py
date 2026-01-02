@@ -204,8 +204,44 @@ def dyld_find(name, executable_path=None, env=None, loader_path=None):
             return path
         if os.path.isfile(path):
             return path
+    info = _dyld_find_in_new_macos_lib_path(name)
+    if info is not None:
+        return info
     raise ValueError("dylib %s could not be found" % (name,))
 
+
+def _dyld_find_in_new_macos_lib_path(name):
+    """
+    Find the dynamic library path for a given library name in newer macOS versions.
+
+    In recent macOS versions, especially on Apple Silicon, the structure of library
+    paths has changed. Libraries installed via Homebrew are now typically found under
+    '/opt/homebrew' instead of '/usr/local'.
+
+    Args:
+        name (str): The name of the library to locate.
+
+    Returns:
+        str or None: The path to the library if found, otherwise None.
+    """
+    lib_info = dylib_info(name)  # Extract library info, including its short name
+    lib_short_name = lib_info["shortname"]
+    lib_dir_path = f"/opt/homebrew/opt/{lib_short_name}/lib"  # New potential library path
+
+    if os.path.isdir(lib_dir_path):  # Check if the directory exists
+        lib_path = os.path.join(lib_dir_path, lib_info["name"])
+
+        # Example: /opt/homebrew/opt/libuv/lib/libuv.dylib
+        if os.path.isfile(lib_path):  # Check if the exact library file exists
+            return lib_path
+
+        # Example: /opt/homebrew/opt/libuv/lib/libuv.1.dylib
+        all_files_in_lib_path = os.listdir(lib_dir_path)  # List all files in the directory
+        for dylib in all_files_in_lib_path:
+            if dylib.startswith(lib_short_name + ".") and dylib.endswith(".dylib"):
+                return os.path.join(lib_dir_path, dylib)  # Return the first matching dylib
+
+    return None  # Return None if the library is not found
 
 def framework_find(fn, executable_path=None, env=None):
     """
