@@ -864,6 +864,10 @@ class dylib_command(Structure):
         return s
 
 
+class weak_dylib_command(dylib_command):
+    pass
+
+
 class sub_framework_command(Structure):
     _fields_ = (("umbrella", lc_str),)
 
@@ -1333,7 +1337,7 @@ LC_REGISTRY = {
     LC_LOADFVMLIB: fvmlib_command,
     LC_ID_DYLIB: dylib_command,
     LC_LOAD_DYLIB: dylib_command,
-    LC_LOAD_WEAK_DYLIB: dylib_command,
+    LC_LOAD_WEAK_DYLIB: weak_dylib_command,
     LC_SUB_FRAMEWORK: sub_framework_command,
     LC_SUB_CLIENT: sub_client_command,
     LC_SUB_UMBRELLA: sub_umbrella_command,
