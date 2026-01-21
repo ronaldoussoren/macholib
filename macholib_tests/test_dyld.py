@@ -402,6 +402,9 @@ class TestDyld(unittest.TestCase):
             ],
         )
 
+    @unittest.skipUnless(
+        "darwin" == sys.platform, """'/usr/lib/libSystem.dylib' only exists on macOS"""
+    )
     def test_dyld_find(self):
         result = dyld.dyld_find("/usr/lib/libSystem.dylib")
         self.assertEqual(result, "/usr/lib/libSystem.dylib")
@@ -487,6 +490,10 @@ class TestDyld(unittest.TestCase):
         finally:
             patcher.cleanup()
 
+    @unittest.skipUnless(
+        "darwin" == sys.platform,
+        """'/System/Library/Framworks/Cocoa.framework' only exists on macOS""",
+    )
     def test_framework_find(self):
         result = dyld.framework_find(
             "/System/Library/Frameworks/Cocoa.framework/Versions/Current/Cocoa"
@@ -573,6 +580,10 @@ class TestDyld(unittest.TestCase):
 
 class TestTrivialDyld(unittest.TestCase):
     # Tests ported from the implementation file
+    @unittest.skipUnless(
+        "darwin" == sys.platform,
+        """'libSystem.dylib'/'System.framework' only exist on OSX""",
+    )
     def testBasic(self):
         self.assertEqual(dyld.dyld_find("libSystem.dylib"), "/usr/lib/libSystem.dylib")
         self.assertEqual(
