@@ -67,6 +67,11 @@ class MetaPackable(type):
         return cls.from_str(f.read(cls._size_), **kw)
 
     def from_str(cls, s, **kw):
+        if len(s) < cls._size_:
+            raise ValueError(
+                "Not enough data to unpack %s: expected %d bytes, got %d"
+                % (cls.__name__, cls._size_, len(s))
+            )
         endian = kw.get("_endian_", cls._endian_)
         return cls.from_tuple(struct.unpack(endian + cls._format_, s), **kw)
 

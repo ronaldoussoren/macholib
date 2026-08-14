@@ -57,6 +57,24 @@ def lc_unknown():
 
 
 class TestMachO(unittest.TestCase):
+    def test_truncated_file_raises_valueerror(self):
+        # A file too short for the Mach-O magic or header must raise a
+        # ValueError rather than a bare struct.error.
+        truncated = [
+            b'',
+            bytes([0xCA, 0xFE]),
+            struct.pack('>I', mach_o.MH_MAGIC_64),
+            struct.pack('>IIII', mach_o.MH_MAGIC_64, 0x100000C, 0, 0x2),
+        ]
+        for data in truncated:
+            with tempfile.NamedTemporaryFile(suffix='.dylib', delete=False) as f:
+                f.write(data)
+                name = f.name
+            try:
+                self.assertRaises(ValueError, MachO.MachO, name)
+            finally:
+                os.remove(name)
+
     def test_known_load_command_should_succeed(self):
         macho_uuid = uuid.UUID("6894C0AE-C8B7-4E0B-A529-30BBEBA3703B")
         with temporary_macho_file([lc_uuid(macho_uuid)]) as macho_filename:

@@ -123,6 +123,13 @@ class TestPTypes(unittest.TestCase):
         self.verifyType(ptypes.p_ulonglong, 8, long, [1, 400, 2 * 63 + 5, 65000])
 
 
+    def test_from_str_too_short_raises_valueerror(self):
+        # Fewer bytes than the type's size must raise ValueError, not a
+        # bare struct.error, so callers can handle truncated input.
+        self.assertRaises(ValueError, ptypes.p_uint32.from_str, b'')
+        self.assertRaises(ValueError, ptypes.p_uint32.from_str, bytes(1))
+
+
 class TestPTypesPrivate(unittest.TestCase):
     # These are tests for functions that aren't part of the public
     # API.

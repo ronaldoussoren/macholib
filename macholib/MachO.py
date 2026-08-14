@@ -126,7 +126,10 @@ class MachO(object):
 
     def load(self, fh):
         assert fh.tell() == 0
-        header = struct.unpack(">I", fh.read(4))[0]
+        magic = fh.read(4)
+        if len(magic) < 4:
+            raise ValueError("File is too short to be a Mach-O file")
+        header = struct.unpack(">I", magic)[0]
         fh.seek(0)
         if header in (FAT_MAGIC, FAT_MAGIC_64):
             self.load_fat(fh)
@@ -157,7 +160,10 @@ class MachO(object):
 
     def load_header(self, fh, offset, size):
         fh.seek(offset)
-        header = struct.unpack(">I", fh.read(4))[0]
+        magic = fh.read(4)
+        if len(magic) < 4:
+            raise ValueError("File is too short to be a Mach-O file")
+        header = struct.unpack(">I", magic)[0]
         fh.seek(offset)
         if header == MH_MAGIC:
             magic, hdr, endian = MH_MAGIC, mach_header, ">"
