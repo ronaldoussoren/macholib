@@ -1,4 +1,5 @@
 import contextlib
+import io
 import os
 import struct
 import sys
@@ -14,8 +15,8 @@ else:
 
 
 @contextlib.contextmanager
-def temporary_macho_file(load_commands):
-    struct_mach_header_64_format = ">IIIIIIII"
+def temporary_macho_file(load_commands, endian=">"):
+    struct_mach_header_64_format = endian + "IIIIIIII"
     cpu_type_arm64 = 0x100000C
     cpu_subtype_arm_all = 0x0
     mh_filetype_execute = 0x2
@@ -66,6 +67,57 @@ class TestMachO(unittest.TestCase):
             load_command, command, _ = macho.headers[0].commands[0]
             self.assertEqual(load_command.cmd, mach_o.LC_UUID)
             self.assertEqual(uuid.UUID(bytes=command.uuid), macho_uuid)
+
+    def test_modern_linkedit_load_commands(self):
+        commands = (
+            (0x36, "LC_ATOM_INFO"),
+            (0x37, "LC_FUNCTION_VARIANTS"),
+            (0x38, "LC_FUNCTION_VARIANT_FIXUPS"),
+            (0x3A, "LC_LAZY_LOAD_DYLIB_INFO"),
+        )
+        for endian in (">", "<"):
+            for value, name in commands:
+                raw = struct.pack(endian + "IIII", value, 16, 0x1234, 0x5678)
+                with temporary_macho_file([raw], endian) as filename:
+                    command_info = MachO.MachO(filename).headers[0].commands[0]
+                    load_command, command, data = command_info
+                    self.assertEqual(getattr(mach_o, name), value)
+                    self.assertEqual(mach_o.LC_NAMES[value], name)
+                    self.assertIsInstance(command, mach_o.linkedit_data_command)
+                    self.assertEqual(command.dataoff, 0x1234)
+                    self.assertEqual(command.datasize, 0x5678)
+                    self.assertEqual(data, b"")
+                    output = io.BytesIO()
+                    load_command.to_fileobj(output)
+                    command.to_fileobj(output)
+                    self.assertEqual(output.getvalue(), raw)
+
+    def test_target_triple_load_command(self):
+        triple = b"arm64e-apple-macosx15.0.0"
+        for endian in (">", "<"):
+            for offset in (12, 20):
+                payload = b"x" * (offset - 12) + triple + b"\x00"
+                payload += b"\x00" * (-(12 + len(payload)) % 8)
+                raw = (
+                    struct.pack(endian + "III", 0x39, 12 + len(payload), offset)
+                    + payload
+                )
+                with temporary_macho_file([raw], endian) as filename:
+                    command_info = MachO.MachO(filename).headers[0].commands[0]
+                    load_command, command, data = command_info
+                    self.assertEqual(mach_o.LC_TARGET_TRIPLE, 0x39)
+                    self.assertEqual(mach_o.LC_NAMES[0x39], "LC_TARGET_TRIPLE")
+                    self.assertIsInstance(command, mach_o.target_triple_command)
+                    self.assertEqual(command.triple, offset)
+                    self.assertEqual(
+                        MachO.lc_str_value(command.triple, command_info), triple
+                    )
+                    self.assertEqual(command.describe(), {})
+                    output = io.BytesIO()
+                    load_command.to_fileobj(output)
+                    command.to_fileobj(output)
+                    output.write(data)
+                    self.assertEqual(output.getvalue(), raw)
 
     def test_unknown_load_command_should_fail(self):
         with temporary_macho_file([lc_unknown()]) as macho_filename:

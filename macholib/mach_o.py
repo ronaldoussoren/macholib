@@ -511,6 +511,11 @@ LC_BUILD_VERSION = 0x32
 LC_DYLD_EXPORTS_TRIE = 0x33 | LC_REQ_DYLD
 LC_DYLD_CHAINED_FIXUPS = 0x34 | LC_REQ_DYLD
 LC_FILESET_ENTRY = 0x35 | LC_REQ_DYLD
+LC_ATOM_INFO = 0x36
+LC_FUNCTION_VARIANTS = 0x37
+LC_FUNCTION_VARIANT_FIXUPS = 0x38
+LC_TARGET_TRIPLE = 0x39
+LC_LAZY_LOAD_DYLIB_INFO = 0x3A
 
 
 # this is really a union.. but whatever
@@ -1152,6 +1157,13 @@ class rpath_command(Structure):
         return {}
 
 
+class target_triple_command(Structure):
+    _fields_ = (("triple", lc_str),)
+
+    def describe(self):
+        return {}
+
+
 class linkedit_data_command(Structure):
     _fields_ = (("dataoff", p_uint32), ("datasize", p_uint32))
 
@@ -1381,6 +1393,11 @@ LC_REGISTRY = {
     LC_DYLD_EXPORTS_TRIE: linkedit_data_command,
     LC_DYLD_CHAINED_FIXUPS: linkedit_data_command,
     LC_FILESET_ENTRY: fileset_entry_command,
+    LC_ATOM_INFO: linkedit_data_command,
+    LC_FUNCTION_VARIANTS: linkedit_data_command,
+    LC_FUNCTION_VARIANT_FIXUPS: linkedit_data_command,
+    LC_TARGET_TRIPLE: target_triple_command,
+    LC_LAZY_LOAD_DYLIB_INFO: linkedit_data_command,
 }
 
 LC_NAMES = {
@@ -1438,6 +1455,11 @@ LC_NAMES = {
     LC_LINKER_OPTION: "LC_LINKER_OPTION",
     LC_PREPAGE: "LC_PREPAGE",
     LC_FILESET_ENTRY: "LC_FILESET_ENTRY",
+    LC_ATOM_INFO: "LC_ATOM_INFO",
+    LC_FUNCTION_VARIANTS: "LC_FUNCTION_VARIANTS",
+    LC_FUNCTION_VARIANT_FIXUPS: "LC_FUNCTION_VARIANT_FIXUPS",
+    LC_TARGET_TRIPLE: "LC_TARGET_TRIPLE",
+    LC_LAZY_LOAD_DYLIB_INFO: "LC_LAZY_LOAD_DYLIB_INFO",
 }
 
 
