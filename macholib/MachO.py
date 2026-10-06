@@ -83,12 +83,12 @@ def _shouldRelocateCommand(cmd):
 
 def lc_str_value(offset, cmd_info):
     """
-    Fetch the actual value of a field of type "lc_str"
+    fetch a string terminated by a nul byte from a field of type "lc_str"
     """
     cmd_load, cmd_cmd, cmd_data = cmd_info
 
     offset -= sizeof(cmd_load) + sizeof(cmd_cmd)
-    return cmd_data[offset:].strip(b"\x00")
+    return cmd_data[offset:].split(b"\x00", 1)[0]
 
 
 class MachO(object):

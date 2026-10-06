@@ -67,6 +67,42 @@ class TestMachO(unittest.TestCase):
             self.assertEqual(load_command.cmd, mach_o.LC_UUID)
             self.assertEqual(uuid.UUID(bytes=command.uuid), macho_uuid)
 
+    def test_lc_str_value_stops_at_terminator(self):
+        name = b"libexample.dylib"
+        for gap in (b"", b"gap!"):
+            name_offset = 20 + len(gap)
+            modules_offset = name_offset + len(name) + 1
+            payload = gap + name + b"\x00" + b"\xa5"
+            payload += b"\x00" * (-(20 + len(payload)) % 8)
+            raw = (
+                struct.pack(
+                    ">IIIII",
+                    mach_o.LC_PREBOUND_DYLIB,
+                    20 + len(payload),
+                    name_offset,
+                    8,
+                    modules_offset,
+                )
+                + payload
+            )
+            with temporary_macho_file([raw]) as filename:
+                header = MachO.MachO(filename).headers[0]
+                command_info = header.commands[0]
+                command = command_info[1]
+                self.assertEqual(MachO.lc_str_value(command.name, command_info), name)
+                self.assertEqual(
+                    list(header.walkRelocatables())[0][2], name.decode("ascii")
+                )
+
+    def test_lc_str_value_empty_and_unterminated_strings(self):
+        for data, expected in (
+            (b"\x00other", b""),
+            (b"path", b"path"),
+            (b"path\x00\x00", b"path"),
+        ):
+            command_info = (mach_o.load_command(), mach_o.rpath_command(), data)
+            self.assertEqual(MachO.lc_str_value(12, command_info), expected)
+
     def test_unknown_load_command_should_fail(self):
         with temporary_macho_file([lc_unknown()]) as macho_filename:
             with self.assertRaises(ValueError) as assert_context:
